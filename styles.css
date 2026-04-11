@@ -312,6 +312,33 @@ h3 {
   border: 1px solid rgba(31, 43, 38, 0.08);
 }
 
+.hero-portrait {
+  margin: 0 0 18px;
+  border-radius: calc(var(--radius-lg) - 10px);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(31, 43, 38, 0.08);
+}
+
+.hero-portrait img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1.15 / 1;
+  object-fit: cover;
+  object-position: center 18%;
+}
+
+.hero-portrait figcaption {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px 16px;
+}
+
+.hero-portrait span {
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
 .signal-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -557,6 +584,19 @@ h3 {
 .footer-meta {
   margin-top: 8px;
   font-size: 0.94rem;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.footer-links a {
+  color: var(--secondary);
+  font-weight: 800;
+  text-decoration: none;
 }
 
 .reveal {
