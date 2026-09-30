@@ -323,9 +323,9 @@ h3 {
 .hero-portrait img {
   display: block;
   width: 100%;
-  aspect-ratio: 1.15 / 1;
+  aspect-ratio: 4 / 5;
   object-fit: cover;
-  object-position: center 18%;
+  object-position: center 34%;
 }
 
 .hero-portrait figcaption {
