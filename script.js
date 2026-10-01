@@ -246,6 +246,10 @@ const template = document.querySelector("#case-study-template");
 const filterButtons = Array.from(document.querySelectorAll("[data-filter]"));
 
 function renderCaseStudies(activeFilter = "all") {
+  if (!grid || !template) {
+    return;
+  }
+
   grid.innerHTML = "";
 
   const visibleStudies =
@@ -275,7 +279,7 @@ function renderCaseStudies(activeFilter = "all") {
       const heading = document.createElement("strong");
       const copy = document.createElement("p");
 
-      block.className = "case-study-section";
+      block.className = `case-study-section case-study-section-${item.label.toLowerCase()}`;
       heading.textContent = item.label;
       copy.textContent = item.text;
 
