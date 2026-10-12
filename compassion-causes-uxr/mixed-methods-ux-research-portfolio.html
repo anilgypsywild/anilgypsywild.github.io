@@ -1,0 +1,1342 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Anil Wild | Mixed Methods UX Research Portfolio</title>
+    <script>if (sessionStorage.getItem("agw_causes_portfolio_access") !== "granted") document.documentElement.classList.add("locked");</script>
+    <style>html.locked body > :not(.password-gate) { display: none !important; }</style>
+    <script src="password-gate.js" defer></script>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #050505;
+        --muted: #555555;
+        --subtle: #eeeeee;
+        --line: #d7d7d7;
+        --paper: #f5f5f5;
+        --panel: #ffffff;
+        --shadow: 0 14px 38px rgba(0, 0, 0, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: #ffffff;
+        line-height: 1.55;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .skip {
+        position: absolute;
+        left: -999px;
+        top: 12px;
+      }
+
+      .skip:focus {
+        left: 12px;
+        z-index: 10;
+        background: #fff;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+      }
+
+      header {
+        background: #ffffff;
+        color: #050505;
+        border-bottom: 1px solid var(--line);
+      }
+
+      nav {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: center;
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 18px 0;
+        font-size: 0.92rem;
+        font-family: inherit;
+      }
+
+      nav .name {
+        font-weight: 850;
+        letter-spacing: 0;
+      }
+
+      nav .navlinks {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      nav a {
+        color: #111111;
+        text-decoration: none;
+        border-bottom: 1px solid #bdbdbd;
+      }
+
+      .hero {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: clamp(54px, 10vw, 104px) 0 64px;
+      }
+
+      .eyebrow {
+        margin: 0 0 16px;
+        font-size: 0.86rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      h1 {
+        margin: 0;
+        max-width: 900px;
+        font-size: clamp(2.05rem, 5.4vw, 4.45rem);
+        line-height: 1.04;
+        letter-spacing: 0;
+        font-weight: 760;
+      }
+
+      .hero p {
+        max-width: 780px;
+        font-size: clamp(1.05rem, 2vw, 1.35rem);
+        margin: 24px 0 0;
+        color: var(--muted);
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 32px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        padding: 10px 14px;
+        border: 1px solid #111111;
+        border-radius: 8px;
+        background: #111111;
+        color: #ffffff;
+        font-weight: 900;
+        text-decoration: none;
+      }
+
+      .button + .button {
+        background: #ffffff;
+        color: #111111;
+      }
+
+      .decision-strip {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 18px;
+        margin-top: 30px;
+      }
+
+      .decision-box {
+        background: #f6f6f6;
+        border: 1px solid #d7d7d7;
+        border-radius: 8px;
+        padding: 18px;
+      }
+
+      .decision-box strong {
+        display: block;
+        color: #050505;
+        font-size: 1.08rem;
+        text-decoration: underline;
+        text-decoration-thickness: 3px;
+        text-underline-offset: 4px;
+      }
+
+      .decision-box p {
+        margin: 10px 0 0;
+        color: var(--muted);
+        font-size: 0.98rem;
+      }
+
+      main {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      section {
+        padding: clamp(38px, 7vw, 72px) 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .section-kicker {
+        color: var(--muted);
+        text-transform: uppercase;
+        font-weight: 900;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        margin: 0 0 10px;
+      }
+
+      h2 {
+        margin: 0 0 18px;
+        font-size: clamp(1.7rem, 4vw, 3rem);
+        line-height: 1.05;
+        letter-spacing: 0;
+      }
+
+      h3 {
+        margin: 0 0 10px;
+        font-size: 1.15rem;
+        letter-spacing: 0;
+      }
+
+      p {
+        color: var(--muted);
+        margin: 0 0 16px;
+      }
+
+      .lead {
+        max-width: 880px;
+        font-size: 1.12rem;
+      }
+
+      .stack-top {
+        margin-top: 24px;
+      }
+
+      .grid {
+        display: grid;
+        gap: 18px;
+      }
+
+      .grid.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .grid.four {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .panel,
+      .metric,
+      .timeline-item {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      .panel {
+        padding: 22px;
+      }
+
+      .case-image {
+        margin: 24px 0 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+        background: #fff;
+      }
+
+      .case-image img {
+        display: block;
+        width: 100%;
+        max-height: 360px;
+        object-fit: cover;
+        filter: grayscale(100%);
+      }
+
+      .case-image figcaption {
+        padding: 12px 14px;
+        color: var(--muted);
+        font-size: 0.9rem;
+        border-top: 1px solid var(--line);
+      }
+
+      .impact-panel {
+        border-top: 6px solid #111111;
+      }
+
+      .impact-panel h3 {
+        text-decoration: underline;
+        text-decoration-color: #9a9a9a;
+        text-decoration-thickness: 4px;
+        text-underline-offset: 5px;
+      }
+
+      .metric {
+        padding: 18px;
+      }
+
+      .metric strong {
+        display: block;
+        font-size: clamp(1.7rem, 4vw, 2.8rem);
+        line-height: 1;
+        color: var(--ink);
+      }
+
+      .metric span {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 0.94rem;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 34px;
+        padding: 6px 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        color: var(--ink);
+        font-weight: 750;
+        font-size: 0.88rem;
+      }
+
+      .timeline {
+        display: grid;
+        gap: 14px;
+      }
+
+      .timeline-item {
+        display: grid;
+        grid-template-columns: 170px 1fr;
+        gap: 20px;
+        padding: 18px;
+      }
+
+      .timeline-item .date {
+        color: var(--ink);
+        font-weight: 900;
+      }
+
+      ul {
+        margin: 12px 0 0;
+        padding-left: 1.1rem;
+        color: var(--muted);
+      }
+
+      li {
+        margin: 8px 0;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: var(--shadow);
+      }
+
+      table {
+        width: 100%;
+        min-width: 720px;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+      }
+
+      th,
+      td {
+        padding: 13px 14px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: #f1f1f1;
+        color: var(--ink);
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .bar-row {
+        display: grid;
+        grid-template-columns: 190px 1fr 80px;
+        gap: 12px;
+        align-items: center;
+        margin: 12px 0;
+      }
+
+      .bar-track {
+        height: 13px;
+        background: var(--subtle);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .bar-fill {
+        height: 100%;
+        background: #111111;
+      }
+
+      .bar-fill.red {
+        background: #555555;
+      }
+
+      .bar-fill.gold {
+        background: #777777;
+      }
+
+      .bar-fill.blue {
+        background: #333333;
+      }
+
+      .callout {
+        border-left: 6px solid #111111;
+        padding: 18px 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      .callout.caution {
+        border-left-color: #777777;
+      }
+
+      .callout.impact {
+        border-left-color: #111111;
+      }
+
+      .surprise {
+        border-top: 6px solid #111111;
+        background: #f6f6f6;
+      }
+
+      .surprise-label {
+        display: inline-block;
+        margin-bottom: 10px;
+        font-size: 0.76rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #555555;
+      }
+
+      mark {
+        background: linear-gradient(transparent 58%, rgba(0, 0, 0, 0.16) 58%);
+        color: var(--ink);
+        padding: 0 2px;
+      }
+
+      .source-note {
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .evidence-quote {
+        margin: 0;
+        color: var(--ink);
+        font-size: 1.02rem;
+      }
+
+      .evidence-quote cite {
+        display: block;
+        margin-top: 10px;
+        color: var(--muted);
+        font-style: normal;
+        font-size: 0.9rem;
+      }
+
+      pre {
+        margin: 0;
+        overflow-x: auto;
+        background: #111111;
+        color: #eef5f7;
+        border-radius: 8px;
+        padding: 18px;
+        font-size: 0.86rem;
+        line-height: 1.5;
+      }
+
+      code {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      }
+
+      .stat-note {
+        font-size: 0.88rem;
+        color: var(--muted);
+      }
+
+      .quote {
+        font-size: clamp(1.35rem, 3vw, 2.15rem);
+        line-height: 1.15;
+        color: var(--ink);
+        margin: 0;
+      }
+
+      footer {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 34px 0 52px;
+        color: var(--muted);
+      }
+
+      footer a {
+        color: var(--ink);
+        text-decoration: underline;
+        text-decoration-color: #bdbdbd;
+        text-underline-offset: 3px;
+      }
+
+      @media (max-width: 860px) {
+        nav {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .decision-strip {
+          grid-template-columns: 1fr;
+        }
+
+        nav .navlinks {
+          justify-content: flex-start;
+        }
+
+        .grid.two,
+        .grid.three,
+        .grid.four {
+          grid-template-columns: 1fr;
+        }
+
+        .timeline-item {
+          grid-template-columns: 1fr;
+        }
+
+        .bar-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#content">Skip to content</a>
+    <header>
+      <nav aria-label="Page navigation">
+        <div class="name"><a href="https://www.linkedin.com/in/anilwild/" target="_blank" rel="noopener">AGW Anil Wild Research Portfolio</a></div>
+        <div class="navlinks">
+          <a href="#takeaways">Research value</a>
+          <a href="#cases">Case study</a>
+          <a href="#methods">Toolkit</a>
+          <a href="#collaboration">Process</a>
+          <a href="senior-ux-researcher-cv.html">CV</a>
+        </div>
+      </nav>
+      <div class="hero">
+        <p class="eyebrow">Mixed Methods User Experience Research</p>
+        <h1>Mixed-methods research for product discovery, navigation, and decision confidence.</h1>
+        <p>
+          A case study in product information, navigation, taxonomy, card sorting,
+          usability benchmarking, prototype testing, and decision-ready statistics
+          working together.
+        </p>
+        <div class="hero-actions">
+          <a class="button" href="#cases">Read the case study</a>
+          <a class="button" href="senior-ux-researcher-cv.html">View CV</a>
+        </div>
+        <div class="decision-strip" aria-label="Case study summary">
+          <div class="decision-box">
+            <strong>Product context</strong>
+            <p>
+              I led research for <a href="https://compassioncauses.com/en" target="_blank" rel="noopener">Compassion Causes</a>,
+              moving the experience from a product-listing browse model
+              toward an outcome-based, mobile-first discovery model, while preserving the
+              trust cues users needed before giving.
+            </p>
+          </div>
+          <div class="decision-box">
+            <strong>Decision impact</strong>
+            <p>
+              The work gave Product and Design a decision-ready path: ship the clearer
+              Story Behind the Story (SBS)
+              browse structure, keep Causes-style proof/detail, and measure conversion using
+              domain-specific donor intent metrics.
+            </p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="content">
+      <section id="background">
+        <p class="section-kicker">Project background</p>
+        <h2>Compassion Causes needed a clearer path from browsing to confident giving.</h2>
+        <div class="grid two">
+          <article class="panel highlight">
+            <h3>Product context</h3>
+            <p>
+              <a href="https://compassioncauses.com/en" target="_blank" rel="noopener">Compassion Causes</a>
+              helps supporters discover and fund urgent needs submitted by church partners
+              around the world. The product challenge was not only whether people could
+              donate; it was whether new visitors could quickly understand what causes
+              existed, why they mattered, and which one felt personally meaningful enough
+              to support.
+            </p>
+            <figure class="case-image">
+              <img
+                src="https://compassioncauses.com/_next/image?q=75&amp;url=https%3A%2F%2Fcdn01.cot-assets.com%2Fn2n%2F52fe1f7b-18e0-44b9-b892-f463a899ba04&amp;w=3840"
+                alt="Children near a water storage area from a Compassion Causes water project">
+              <figcaption>
+                Live Compassion Causes example: a water project where the product page connects cause discovery,
+                child impact, urgency, funding progress, and donor confidence.
+              </figcaption>
+            </figure>
+          </article>
+          <article class="panel highlight">
+            <h3>Problem to solve</h3>
+            <p>
+              The live category model was visually consistent but conceptually hard to use.
+              Categories such as <strong>Technology</strong>, <strong>Infrastructure</strong>,
+              and <strong>Income Generation</strong> described how help was delivered or how
+              Compassion organized work internally. Supporters were trying to answer a
+              different question: <strong>what human outcome will my donation create?</strong>
+            </p>
+          </article>
+        </div>
+        <div class="grid three stack-top">
+          <article class="panel">
+            <h3>User problem</h3>
+            <p>
+              Visitors had to translate labels into meaning: a laptop cause might really be
+              about education, a water system about health and basic needs, and a retaining
+              wall about community safety. That extra interpretation burden slowed discovery
+              and weakened emotional momentum.
+            </p>
+          </article>
+          <article class="panel">
+            <h3>Product risk</h3>
+            <p>
+              The business risk was <strong>early discovery drop-off</strong>: users could
+              leave before reaching the moments that build donor confidence:
+              <strong>cause detail</strong>, <strong>trust proof</strong>,
+              <strong>allocation clarity</strong>, and <strong>checkout intent</strong>.
+            </p>
+          </article>
+          <article class="panel">
+            <h3>Research response</h3>
+            <p>
+              I designed a full research arc: baseline usability benchmark, heuristic review,
+              open and closed card sorting, MaxDiff motivation research, and a counterbalanced
+              SBS prototype benchmark against the existing Causes experience.
+            </p>
+          </article>
+        </div>
+        <div class="table-wrap stack-top">
+          <table>
+            <thead>
+              <tr>
+                <th>What users saw</th>
+                <th>Why it created friction</th>
+                <th>Research-backed reframing</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Technology</strong> category containing causes such as laptops for education, prosthetics for health, and innovation labs.</td>
+                <td>One label bundled unrelated outcomes under an abstract mechanism. Users had to infer what the cause actually changed.</td>
+                <td><strong>Outcome framing:</strong> Education access, health/mobility, job skills, or community capacity depending on the cause.</td>
+              </tr>
+              <tr>
+                <td><strong>Infrastructure</strong> causes such as retaining wall safety, church roof safety, modern bathrooms, or water systems.</td>
+                <td>The label described the asset, not the donor-relevant benefit. Supporters needed to understand safety, sanitation, and basic needs.</td>
+                <td><strong>Outcome framing:</strong> Safety and Essential Infrastructure, including clean water, sanitation, health, and community protection.</td>
+              </tr>
+              <tr>
+                <td><strong>Income Generation</strong> causes such as pig farming livelihood or community garden.</td>
+                <td>Participants often saw income as a downstream outcome, not always a primary cause type.</td>
+                <td><strong>Outcome framing:</strong> Skills and Livelihood, with agriculture or income as subcategory language where needed.</td>
+              </tr>
+              <tr>
+                <td><strong>Water</strong> causes such as water well systems.</td>
+                <td>This category worked better because the label naturally aligned the asset with the human outcome.</td>
+                <td><strong>Preserve the pattern:</strong> clear labels work when the mechanism and human outcome are obvious.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid four stack-top" aria-label="Research program numbers">
+          <div class="metric">
+            <strong>P0</strong>
+            <span>Technology and Infrastructure ambiguity identified as high-priority discovery risk.</span>
+          </div>
+          <div class="metric">
+            <strong>23</strong>
+            <span>open card-sort participants used to identify natural outcome groupings.</span>
+          </div>
+          <div class="metric">
+            <strong>20</strong>
+            <span>cause cards used in closed card-sort validation of category hypotheses.</span>
+          </div>
+          <div class="metric">
+            <strong>50</strong>
+            <span>cleaned SBS benchmark participants comparing redesigned browse vs existing Causes.</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="takeaways">
+        <p class="section-kicker">Research value</p>
+        <h2>Compassion Causes decisions supported by this research.</h2>
+        <div class="grid three">
+          <article class="panel impact-panel">
+            <h3>1. Advance Story Behind the Story browse</h3>
+            <p>
+              <mark>Story Behind the Story (SBS) was statistically clearer for discovery</mark>: clarity rose from
+              5.76 to 6.28 out of 7, p = 0.0133, Cohen dz = 0.36. The strongest result
+              supported the new browse/category direction.
+            </p>
+          </article>
+          <article class="panel impact-panel">
+            <h3>2. Preserve decision cues</h3>
+            <p>
+              Trust, confidence, and SUS did not separate strongly. The recommendation was
+              to carry forward the browse model while retaining urgency, allocation,
+              proof, and cause-detail cues.
+            </p>
+          </article>
+          <article class="panel impact-panel">
+            <h3>3. Refine IA around outcomes</h3>
+            <p>
+              Card sorting showed users grouped causes by outcomes, not internal program
+              language. The IA recommendation was a five-category outcome model with
+              ambiguous cases handled as subcategories.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="fit">
+        <p class="section-kicker">Relevant methods</p>
+        <h2>Methods used to improve Compassion Causes discovery and navigation.</h2>
+        <p class="lead">
+          This work combines qualitative, generative, evaluative, information architecture,
+          card sorting, tree-testing-style validation, usability, concept testing, and
+          consumer product research through one connected product arc rather than isolated
+          method samples.
+        </p>
+        <div class="grid four stack-top" aria-label="Mixed methods proof points">
+          <div class="metric">
+            <strong>23</strong>
+            <span>open card-sort participants translated into an outcome-based IA tree</span>
+          </div>
+          <div class="metric">
+            <strong>20</strong>
+            <span>cause cards validated in closed card-sort follow-up</span>
+          </div>
+          <div class="metric">
+            <strong>50</strong>
+            <span>cleaned SBS benchmark participants in counterbalanced comparison</span>
+          </div>
+          <div class="metric">
+            <strong>5</strong>
+            <span>top-level categories stabilized for navigation and discovery</span>
+          </div>
+        </div>
+        <div class="chips" aria-label="Methods used">
+          <span class="chip">Qualitative synthesis</span>
+          <span class="chip">Generative discovery</span>
+          <span class="chip">Evaluative usability</span>
+          <span class="chip">Information architecture</span>
+          <span class="chip">Taxonomy and labels</span>
+          <span class="chip">Card-sort style synthesis</span>
+          <span class="chip">Tree-test style validation</span>
+          <span class="chip">Prototype testing</span>
+          <span class="chip">Consumer conversion</span>
+          <span class="chip">R and statistics</span>
+          <span class="chip">Stakeholder collaboration</span>
+        </div>
+      </section>
+
+      <section id="program">
+        <p class="section-kicker">Process</p>
+        <h2>Compassion Causes research arc: benchmark, taxonomy, mobile-first redesign.</h2>
+        <div class="timeline">
+          <article class="timeline-item">
+            <div class="date">Dec 2024</div>
+            <div>
+              <h3>Qualitative issue discovery</h3>
+              <p>
+                Synthesized user concerns around privacy, donation transparency, navigation,
+                inconsistent labels, and insufficient cause detail. These themes became the
+                first product research backlog.
+              </p>
+            </div>
+          </article>
+          <article class="timeline-item">
+            <div class="date">Apr to Jul 2025</div>
+            <div>
+              <h3>Post-production usability benchmark</h3>
+              <p>
+                Designed repeatable task flows for the live <a href="https://compassioncauses.com/en" target="_blank" rel="noopener">Compassion Causes</a>
+                experience: discovery, cause detail comprehension,
+                donation simulation, filters, trust indicators, and error recovery. The study
+                created the baseline that made later redesign comparisons fair.
+              </p>
+            </div>
+          </article>
+          <article class="timeline-item">
+            <div class="date">Jan to Feb 2026</div>
+            <div>
+              <h3>Outcome-based IA and card sorting</h3>
+              <p>
+                Ran open card-sort synthesis and closed card-sort validation to learn how
+                supporters grouped causes. The work produced a five-category IA tree and
+                identified ambiguous cards that needed clearer outcome-forward labels.
+              </p>
+            </div>
+          </article>
+          <article class="timeline-item">
+            <div class="date">Post launch</div>
+            <div>
+              <h3>Telemetry-informed research direction</h3>
+              <p>
+                Directional funnel and device analytics suggested that the real discovery
+                audience was more mobile-first than the initial testing setup. I used this as
+                a research prioritization signal, not as a standalone causal claim.
+              </p>
+            </div>
+          </article>
+          <article class="timeline-item">
+            <div class="date">Oct 2025</div>
+            <div>
+              <h3>MaxDiff motivation segmentation</h3>
+              <p>
+                Modeled what mattered most to prospects and donors. Prospects prioritized
+                clarity, control, simplicity, and tangible impact before deeper emotional or
+                faith-based appeals.
+              </p>
+            </div>
+          </article>
+          <article class="timeline-item">
+            <div class="date">Apr to May 2026</div>
+            <div>
+              <h3>SBS mobile-first prototype validation</h3>
+              <p>
+                Tested the Story Behind the Story browse model against the existing Causes
+                browse experience with counterbalanced within-subject research and product
+                decision metrics.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="cases">
+        <p class="section-kicker">Representative research engagement</p>
+        <h2>Compassion Causes mixed-methods program for discovery, trust, and conversion.</h2>
+        <div class="grid two">
+          <article class="panel">
+            <h3>1. Baseline usability benchmark</h3>
+            <p>
+              I designed a benchmark around the core <a href="https://compassioncauses.com/en" target="_blank" rel="noopener">Compassion Causes</a>
+              consumer journey: discover a cause,
+              understand the cause detail page, simulate donation intent, use filters,
+              evaluate trust indicators, and recover from a search dead end.
+            </p>
+            <ul>
+              <li>Methods: unmoderated usability, task-based testing, open-ended probes, controlled failure task.</li>
+              <li>Metrics: task success, time on task, ease, CSAT, NPS, trust confidence.</li>
+              <li>Influence: created a repeatable scorecard and revealed navigation, transparency, and product information gaps.</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>2. Product information and trust synthesis</h3>
+            <p>
+              The early thematic analysis showed that users needed donation transparency,
+              consistent language, stronger detail pages, and clearer labels before they
+              could confidently continue toward donation.
+            </p>
+            <ul>
+              <li>Methods: thematic analysis, journey synthesis, UX tenet mapping.</li>
+              <li>Influence: reframed the problem from “make it easier to browse” to “make the decision feel clear and trustworthy.”</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>3. Card sorting and taxonomy validation</h3>
+            <p>
+              I translated participant mental models into an outcome-based navigation
+              structure, then validated category hypotheses with a closed sort requested by
+              Product and Design.
+            </p>
+            <ul>
+              <li>Methods: open card sort, similarity clustering, entropy review, label normalization, closed card-sort validation.</li>
+              <li>Influence: stabilized a five-category IA and clarified edge cases through subcategory framing.</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>4. SBS prototype validation and iteration</h3>
+            <p>
+              SBS was a risky redesign because it changed the browse model. I used the
+              prior benchmark task family so the comparison stayed fair and tied to product
+              goals rather than surface-level preference claims.
+            </p>
+            <ul>
+              <li>Methods: counterbalanced within-subject Lyssna test, qualitative/video review, paired statistics.</li>
+              <li>Influence: supported SBS browse clarity while preserving existing Causes trust and detail cues.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="ia">
+        <p class="section-kicker">IA and taxonomy evidence</p>
+        <h2>Card sorting clarified how Compassion Causes supporters expected to browse.</h2>
+        <div class="grid two">
+          <div class="callout">
+            <p class="quote">
+              Participants grouped “Water well system” with clean water and basic needs,
+              “Preschool learning center” with education, and “Barber skills training”
+              with livelihood, showing that the browse model needed to lead with outcomes.
+            </p>
+            <p class="source-note">
+              Open card sort, n = 23, with similarity clustering, entropy review, and label normalization.
+            </p>
+          </div>
+          <div>
+            <p>
+              The card-sort work produced a research-backed IA tree with five stable top-level
+              categories: Education and School Development, Skills and Livelihood, Safety and
+              Essential Infrastructure, Community and Youth Spaces, and Arts and Culture.
+            </p>
+            <p>
+              A follow-up closed card sort tested five Product and Design hypotheses:
+              Education, Training and Skill Building, Income Generation, Safety, and Basic Needs.
+              The output helped separate strong anchor categories from edge cases like health
+              centers, community gardens, pig farming, and arts/culture causes.
+            </p>
+          </div>
+        </div>
+        <div class="table-wrap stack-top">
+          <table>
+            <thead>
+              <tr>
+                <th>IA question</th>
+                <th>Method</th>
+                <th>Decision influenced</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Do users group causes by internal program type or human outcome?</td>
+                <td><strong>Open card sort</strong> with 23 participants, plus <strong>similarity clustering</strong>, <strong>entropy review</strong>, and label normalization.</td>
+                <td><strong>Decision:</strong> Move the IA toward outcome-based categories and away from asset/program-name labels.</td>
+              </tr>
+              <tr>
+                <td>Can Product and Design's five proposed buckets hold under constraint?</td>
+                <td><strong>Closed card sort</strong> with 20 cause cards and predefined categories.</td>
+                <td><strong>Decision:</strong> Keep the anchor categories, but resolve ambiguous edge cases with clearer subcategory framing.</td>
+              </tr>
+              <tr>
+                <td>How should SBS navigation be validated after taxonomy work?</td>
+                <td><strong>Tree-test-style task paths</strong> embedded in prototype testing: find education, urgent/basic-need, country, and outcome-based causes.</td>
+                <td><strong>Decision:</strong> Connect IA changes to task success, clarity, and intent-fit metrics in the SBS benchmark.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid two stack-top">
+          <article class="panel">
+            <h3>Example outcome-based navigation model</h3>
+            <p>
+              Instead of asking users to decode internal program names, the IA framed causes
+              around the benefit supporters expected to create.
+            </p>
+            <ul>
+              <li><strong>Education and School Development:</strong> preschool learning center, literacy program, classroom renovation.</li>
+              <li><strong>Skills and Livelihood:</strong> barber skills training, sewing workshop, 3D printing skills lab.</li>
+              <li><strong>Safety and Essential Infrastructure:</strong> water well system, modern bathrooms, retaining wall safety.</li>
+              <li><strong>Community and Youth Spaces:</strong> safe playground, safe recreation area, community garden.</li>
+              <li><strong>Arts and Culture:</strong> music and dance school, heritage workshops.</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>Example browse paths</h3>
+            <p>
+              These paths turned vague browsing into task-oriented discovery.
+            </p>
+            <ul>
+              <li><strong>“I care about school access”</strong> → Education and School Development → Literacy Program.</li>
+              <li><strong>“I want basic needs first”</strong> → Safety and Essential Infrastructure → Clean Water / Sanitation.</li>
+              <li><strong>“I want long-term self-sufficiency”</strong> → Skills and Livelihood → Job Skills Training.</li>
+              <li><strong>“I want a safe place for children”</strong> → Community and Youth Spaces → Safe Play Spaces.</li>
+            </ul>
+          </article>
+        </div>
+        <div class="callout caution stack-top">
+          <p>
+            <strong>Research interpretation:</strong> card sorting was used as IA validation,
+            not as an inferential test. With n = 23, agreement, ambiguity, entropy, and
+            clustering identified stable navigation anchors and risky labels. The SBS
+            benchmark then tested whether the resulting browse model improved clarity and
+            intent fit at the experience level.
+          </p>
+        </div>
+      </section>
+
+      <section id="methods">
+        <p class="section-kicker">Toolkit</p>
+        <h2>Research artifacts behind the Compassion Causes product recommendations.</h2>
+        <div class="grid two">
+          <article class="panel">
+            <h3>Sample usability and prototype test plan</h3>
+            <p>
+              The SBS Lyssna plan used a counterbalanced within-subject comparison so each
+              participant evaluated both the existing Causes experience and the SBS prototype.
+              The task set intentionally covered discovery, narrowing, labels, filters, trust,
+              and willingness to continue.
+            </p>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Study element</th>
+                    <th>Example from plan</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Task 1</td>
+                    <td>Find the cause you would be most likely to support.</td>
+                  </tr>
+                  <tr>
+                    <td>Task 2</td>
+                    <td>Use categories, filters, countries, or navigation options to narrow the choices.</td>
+                  </tr>
+                  <tr>
+                    <td>Ratings</td>
+                    <td>CSAT, ease, category clarity, trust, willingness to continue, NPS.</td>
+                  </tr>
+                  <tr>
+                    <td>Qual probes</td>
+                    <td>What helped you choose? What felt unclear? What influenced trust?</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+          <article class="panel">
+            <h3>Card-sort and tree-test bridge</h3>
+            <p>
+              The open sort identified the natural category structure. The closed sort tested
+              whether the proposed buckets worked when users had to choose one. The next
+              validation step used tree-test style top tasks inside the SBS prototype flow.
+            </p>
+            <pre><code># Card-sort analysis logic
+# 1. Normalize participant-authored labels.
+# 2. Build card-by-card similarity matrix.
+# 3. Cluster on distance = 1 - similarity.
+# 4. Review entropy to find ambiguous cards.
+# 5. Translate stable clusters into navigation labels.
+
+distance &lt;- 1 - similarity_matrix
+clusters &lt;- hclust(as.dist(distance), method = "average")
+groups &lt;- cutree(clusters, k = 5)</code></pre>
+          </article>
+          <article class="panel">
+            <h3>Qualitative synthesis from participant evidence</h3>
+            <p class="evidence-quote">
+              "I liked the filters right up top so I could see my options right away."
+              <cite>SBS participant quote used to support visible filter and category placement.</cite>
+            </p>
+            <p class="evidence-quote">
+              "It helps you evaluate which needs are more urgent."
+              <cite>Decision-support quote used to preserve urgency and proof cues from the existing experience.</cite>
+            </p>
+            <p class="evidence-quote">
+              "Use A but put in URGENT from B. Mix and match the best elements."
+              <cite>Hybrid recommendation that shaped the product readout.</cite>
+            </p>
+          </article>
+          <article class="panel">
+            <h3>R snippet for comparative usability analysis</h3>
+            <pre><code># Paired prototype comparison
+# Research question: does SBS improve browse clarity
+# for the same participants who used the existing Causes browse?
+
+paired &lt;- clean_results |&gt;
+  select(participant_id, clarity_sbs, clarity_causes) |&gt;
+  mutate(delta_clarity = clarity_sbs - clarity_causes)
+
+t.test(paired$clarity_sbs, paired$clarity_causes, paired = TRUE)
+wilcox.test(paired$clarity_sbs, paired$clarity_causes, paired = TRUE)
+
+# Product-friendly effect size for within-subject ratings
+cohen_dz &lt;- mean(paired$delta_clarity, na.rm = TRUE) /
+  sd(paired$delta_clarity, na.rm = TRUE)</code></pre>
+          </article>
+          <article class="panel">
+            <h3>R snippet for MaxDiff motivation modeling</h3>
+            <pre><code># Best-worst choices become winner-over-loser pairs.
+# Difference coding estimates which motivations matter most.
+
+fit_overall &lt;- glm(
+  y ~ . - 1,
+  family = binomial(),
+  data = cbind(y, X)
+)
+
+utilities &lt;- coef(fit_overall)
+relative_importance &lt;- scales::rescale(
+  utilities - mean(utilities, na.rm = TRUE),
+  to = c(0, 100)
+)</code></pre>
+          </article>
+          <article class="panel">
+            <h3>Mixed-methods integration</h3>
+            <p>
+              Qualitative evidence clarified the product problem, card sorting shaped the IA,
+              usability testing evaluated the flow, and R-based analysis made the results
+              decision-ready for product and design partners.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="metrics">
+        <p class="section-kicker">Results</p>
+        <h2>Story Behind the Story benchmark results for Compassion Causes browse redesign.</h2>
+        <p class="lead">
+          Story Behind the Story (SBS) was the outcome-based browse prototype: a redesigned
+          way to help supporters find causes by impact area, need, and relevance. The benchmark
+          compared SBS against the existing Compassion Causes browse experience.
+        </p>
+        <div class="table-wrap stack-top">
+          <table>
+            <thead>
+              <tr>
+                <th>Condition</th>
+                <th>What users saw</th>
+                <th>What changed</th>
+                <th>What the research tested</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Control: Existing Causes browse</strong></td>
+                <td>Current Compassion Causes browsing model with existing categories, cause cards, urgency cues, and richer cause-detail/trust information.</td>
+                <td>Baseline experience. Stronger proof/detail cues, but discovery relied more on users interpreting categories and scanning the list.</td>
+                <td>Could users find a relevant cause, understand the information, trust the experience, and continue toward giving?</td>
+              </tr>
+              <tr>
+                <td><strong>Variant: Story Behind the Story (SBS)</strong></td>
+                <td>Outcome-based browse prototype with more visible category/filter affordances and a clearer first-view discovery model.</td>
+                <td>More prominent browse controls, outcome-oriented categories, faster narrowing, and mobile-first discovery emphasis.</td>
+                <td>Did clearer browse structure improve discovery clarity and intent-fit without weakening trust or confidence?</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid three" aria-label="Key result metrics">
+          <div class="metric">
+            <strong>6.28 vs 5.76</strong>
+            <span>Clarity, SBS vs Causes, p = 0.0133</span>
+          </div>
+          <div class="metric">
+            <strong>31 vs 14</strong>
+            <span>Intent fit preference, SBS vs Causes, p = 0.0161</span>
+          </div>
+          <div class="metric">
+            <strong>81.5 vs 79.2</strong>
+            <span>SUS-equivalent, SBS vs Causes</span>
+          </div>
+        </div>
+        <div class="table-wrap stack-top">
+          <table>
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>SBS</th>
+                <th>Existing Causes</th>
+                <th>Statistical read</th>
+                <th>Actionable takeaway</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Clarity</td>
+                <td>6.28 / 7</td>
+                <td>5.76 / 7</td>
+                <td>p = 0.0133; Cohen dz = 0.36; 95% CI for mean diff: 0.11 to 0.93.</td>
+                <td><mark>Ship SBS-style browse/category structure.</mark></td>
+              </tr>
+              <tr>
+                <td>Intent fit preference</td>
+                <td>31</td>
+                <td>14</td>
+                <td>p = 0.0161 vs 50/50; Cohen h = 0.39; OR = 2.17.</td>
+                <td>Use SBS when the goal is helping new users find a cause that matches intent.</td>
+              </tr>
+              <tr>
+                <td>Overall preference</td>
+                <td>31</td>
+                <td>16</td>
+                <td>p = 0.04 vs 50/50; Cohen h = 0.32; OR = 1.91.</td>
+                <td>Use SBS as the next iteration baseline, not as an unqualified full replacement.</td>
+              </tr>
+              <tr>
+                <td>NPS</td>
+                <td>54</td>
+                <td>32</td>
+                <td>Directional scorecard lift; not the primary inferential proof point.</td>
+                <td>Track in production, but do not over-index on prototype NPS alone.</td>
+              </tr>
+              <tr>
+                <td>SUS equivalent</td>
+                <td>81.5</td>
+                <td>79.2</td>
+                <td>Mean diff = 2.28; 95% CI -1.29 to 5.84; dz = 0.18.</td>
+                <td>Both designs are usable; the product advantage is clarity, not generic usability.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="stat-note stack-top">
+          Product interpretation: the strongest evidence supports SBS clarity and intent fit.
+          The broader recommendation preserves trust and detail cues because donor confidence
+          did not separate as strongly.
+        </p>
+      </section>
+
+      <section id="maxdiff">
+        <p class="section-kicker">Motivation research</p>
+        <h2>MaxDiff evidence shaped Compassion Causes product information strategy.</h2>
+        <div class="grid two">
+          <div class="panel">
+            <h3>Prospect motivation hierarchy</h3>
+            <div class="bar-row">
+              <span>Money clarity</span>
+              <div class="bar-track"><div class="bar-fill" style="width: 100%;"></div></div>
+              <span>100.0</span>
+            </div>
+            <div class="bar-row">
+              <span>Tangible impact</span>
+              <div class="bar-track"><div class="bar-fill blue" style="width: 72.7%;"></div></div>
+              <span>72.7</span>
+            </div>
+            <div class="bar-row">
+              <span>Choose amount</span>
+              <div class="bar-track"><div class="bar-fill gold" style="width: 54.7%;"></div></div>
+              <span>54.7</span>
+            </div>
+            <div class="bar-row">
+              <span>Simple process</span>
+              <div class="bar-track"><div class="bar-fill red" style="width: 48.8%;"></div></div>
+              <span>48.8</span>
+            </div>
+          </div>
+          <div class="panel surprise">
+            <span class="surprise-label">Strategic surprise</span>
+            <h3>Prospects needed clarity and control before emotional storytelling.</h3>
+            <p>
+              The MaxDiff results challenged the obvious messaging instinct. For first-time
+              prospects, the strongest product move was not leading with urgency, faith, or
+              emotional imagery. It was showing stewardship first: where the money goes,
+              what impact it creates, how much control the donor has, and how simple the
+              giving path feels.
+            </p>
+            <p>
+              <mark>Product implication:</mark> Compassion Causes needed a product information
+              hierarchy that led with clarity, tangible impact, autonomy, and ease before
+              layering deeper faith or story-based appeals. This directly informed the SBS
+              direction: clearer browse categories, outcome language, and a mobile-first
+              discovery model that reduced the work required to find a meaningful cause.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="collaboration">
+        <p class="section-kicker">Product leadership influence</p>
+        <h2>Executive and product leadership used this research to guide Compassion Causes strategy.</h2>
+        <div class="grid three">
+          <article class="panel">
+            <h3>VP / executive alignment</h3>
+            <p>
+              Framed evidence for senior product and design stakeholders in terms of product
+              risk, strategic upside, confidence, and what could responsibly move forward.
+            </p>
+          </article>
+          <article class="panel">
+            <h3>Decision architecture</h3>
+            <p>
+              Used a 60 / 40 decision threshold, confidence intervals, effect sizes, and
+              qualitative evidence to separate directional signal from launch-risk claims.
+            </p>
+          </article>
+          <article class="panel">
+            <h3>Product direction</h3>
+            <p>
+              Influenced the next product direction: use Story Behind the Story for clearer
+              first-view discovery, preserve existing Causes urgency/proof/detail cues for
+              donor confidence, and use production telemetry to evaluate new-user conversion.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="close">
+        <div class="callout">
+          <p class="quote">
+            The research showed that Story Behind the Story improved browse clarity
+            (6.28 vs 5.76 / 7, p = 0.0133) and intent-fit preference (31 vs 14,
+            p = 0.0161), while trust and confidence remained less differentiated.
+            That evidence supported a hybrid product direction: use SBS for discovery,
+            preserve existing Causes urgency/proof/detail cues, and validate new-user
+            conversion in production.
+          </p>
+          <p class="source-note">
+            Source-backed artifacts used for this page: Causes benchmark plan, benchmark task set,
+            post-production scorecard strategy, thematic analysis, SBS Lyssna test plan, SBS Phase 2
+            results, MaxDiff donor/prospect motivation report, and the live
+            <a href="https://compassioncauses.com/en" target="_blank" rel="noopener">Compassion Causes</a> product context.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Case study focused on consumer product discovery, navigation, taxonomy, and product information pages.</p>
+      <p>
+        More context on my research and technical work lives at
+        <a href="https://github.com/anilgypsywild" target="_blank" rel="noopener">github.com/anilgypsywild</a>
+        and
+        <a href="https://scholar.google.com/citations?user=NjZEBmIAAAAJ&hl=en" target="_blank" rel="noopener">scholar.google.com/citations?user=NjZEBmIAAAAJ</a>.
+        Professional profile:
+        <a href="https://www.linkedin.com/in/anilwild/" target="_blank" rel="noopener">linkedin.com/in/anilwild</a>.
+      </p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Anil Wild | Senior UX Research CV</title>
+    <script>if (sessionStorage.getItem("agw_causes_portfolio_access") !== "granted") document.documentElement.classList.add("locked");</script>
+    <style>html.locked body > :not(.password-gate) { display: none !important; }</style>
+    <script src="password-gate.js" defer></script>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #050505;
+        --muted: #555555;
+        --line: #d7d7d7;
+        --soft: #f6f6f6;
+        --panel: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: #fff;
+        line-height: 1.55;
+      }
+
+      a {
+        color: var(--ink);
+        text-decoration: underline;
+        text-decoration-color: #bdbdbd;
+        text-underline-offset: 3px;
+      }
+
+      header,
+      main,
+      footer {
+        width: min(1120px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      nav {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: center;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 0.92rem;
+      }
+
+      nav .name {
+        font-weight: 850;
+      }
+
+      nav .links {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .hero {
+        padding: clamp(46px, 8vw, 86px) 0 42px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 220px;
+        gap: clamp(24px, 5vw, 56px);
+        align-items: center;
+      }
+
+      .portrait {
+        margin: 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+        background: var(--soft);
+      }
+
+      .portrait img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+        filter: grayscale(100%);
+      }
+
+      .eyebrow {
+        margin: 0 0 14px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      h1 {
+        margin: 0;
+        max-width: 850px;
+        font-size: clamp(2.1rem, 5.2vw, 4.4rem);
+        line-height: 1.04;
+        letter-spacing: 0;
+        font-weight: 760;
+      }
+
+      .subtitle {
+        max-width: 820px;
+        margin: 20px 0 0;
+        color: var(--muted);
+        font-size: 1.12rem;
+      }
+
+      .profile-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 26px;
+      }
+
+      .profile-links a {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px 12px;
+        text-decoration: none;
+        font-weight: 750;
+      }
+
+      section {
+        padding: clamp(30px, 6vw, 58px) 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      h2 {
+        margin: 0 0 18px;
+        font-size: clamp(1.5rem, 3vw, 2.4rem);
+        line-height: 1.1;
+      }
+
+      h3 {
+        margin: 0 0 8px;
+        font-size: 1.08rem;
+      }
+
+      p {
+        margin: 0 0 14px;
+        color: var(--muted);
+      }
+
+      ul {
+        margin: 10px 0 0;
+        padding-left: 1.1rem;
+        color: var(--muted);
+      }
+
+      li {
+        margin: 7px 0;
+      }
+
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .grid.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        padding: 20px;
+      }
+
+      .highlight {
+        background: var(--soft);
+        border-top: 6px solid #111;
+      }
+
+      .metric strong {
+        display: block;
+        color: var(--ink);
+        font-size: clamp(1.55rem, 3vw, 2.3rem);
+        line-height: 1;
+      }
+
+      .metric span {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+      }
+
+      .chip {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 7px 10px;
+        background: #fff;
+        font-weight: 720;
+        font-size: 0.9rem;
+      }
+
+      footer {
+        padding: 30px 0 46px;
+        color: var(--muted);
+      }
+
+      @media (max-width: 820px) {
+        nav {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .hero-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .portrait {
+          width: min(220px, 70vw);
+        }
+
+        .grid.two,
+        .grid.three {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav aria-label="Page navigation">
+        <div class="name"><a href="https://www.linkedin.com/in/anilwild/" target="_blank" rel="noopener">AGW Anil Wild Research Portfolio</a></div>
+        <div class="links">
+          <a href="mixed-methods-ux-research-portfolio.html">Case study</a>
+          <a href="https://anilgypsywild.github.io/">Portfolio home</a>
+        </div>
+      </nav>
+      <div class="hero">
+        <div class="hero-grid">
+          <div>
+            <p class="eyebrow">Senior UX Research CV</p>
+            <h1>Anil Wild</h1>
+            <p class="subtitle">
+              Mixed-methods UX researcher focused on product discovery,
+              information architecture, navigation, product information pages, and
+              consumer decision confidence.
+            </p>
+            <div class="profile-links">
+              <a href="https://github.com/anilgypsywild" target="_blank" rel="noopener">github.com/anilgypsywild</a>
+              <a href="https://www.linkedin.com/in/anilwild/" target="_blank" rel="noopener">linkedin.com/in/anilwild</a>
+              <a href="https://scholar.google.com/citations?user=NjZEBmIAAAAJ&hl=en" target="_blank" rel="noopener">Google Scholar</a>
+              <a href="https://compassioncauses.com/en" target="_blank" rel="noopener">Compassion Causes</a>
+            </div>
+          </div>
+          <figure class="portrait">
+            <img src="assets/anil-wild-portrait.png" alt="Portrait of Anil Wild">
+          </figure>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <h2>Research Focus</h2>
+        <p>
+          Mixed-methods UX researcher with hands-on experience taking consumer product
+          research from qualitative synthesis through card sorting, IA validation,
+          prototype evaluation, usability benchmarking, post-launch learning, and
+          iterative redesign.
+        </p>
+        <p>
+          My work combines user-centered research craft with quantitative rigor: task metrics,
+          SUS / UMUX-Lite, CSAT, NPS, preference testing, MaxDiff, effect sizes, confidence
+          intervals, and stakeholder-ready decision frameworks.
+        </p>
+      </section>
+
+      <section>
+        <h2>Compassion Causes product discovery and donor decision program</h2>
+        <p>
+          Compassion Causes is a consumer giving experience where supporters browse and fund
+          urgent needs submitted by church partners around the world. The research program
+          focused on a core product question: how can new visitors quickly find a cause that
+          feels personally meaningful, understand why it matters, trust the information, and
+          continue toward giving?
+        </p>
+        <p>
+          The work addressed discovery and navigation friction in the live experience,
+          including categories that described internal or functional structures such as
+          Technology, Infrastructure, and Income Generation more clearly than the human
+          outcomes supporters cared about. The program connected baseline usability,
+          outcome-based IA, motivational segmentation, prototype testing, and post-launch
+          measurement.
+        </p>
+        <div class="grid three">
+          <article class="panel metric">
+            <strong>6.28 vs 5.76</strong>
+            <span>Story Behind the Story clarity vs existing Causes browse, p = 0.0133.</span>
+          </article>
+          <article class="panel metric">
+            <strong>31 vs 14</strong>
+            <span>Intent-fit preference for Story Behind the Story, p = 0.0161, OR = 2.17.</span>
+          </article>
+          <article class="panel metric">
+            <strong>n = 23</strong>
+            <span>Open card-sort participants informing an outcome-based IA tree.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Selected Research Programs</h2>
+        <div class="grid two">
+          <article class="panel highlight">
+            <h3>Compassion Causes product discovery and donation experience</h3>
+            <p>
+              Owned research planning, task design, metric selection, analysis, synthesis,
+              and stakeholder readouts across baseline usability, taxonomy, motivational
+              segmentation, and prototype benchmarking.
+            </p>
+            <ul>
+              <li>Designed repeatable usability benchmarks for discovery, cause detail comprehension, donation simulation, filters, trust indicators, and error recovery.</li>
+              <li>Benchmarked Story Behind the Story against the existing Causes browse experience with a counterbalanced within-subject Lyssna study.</li>
+              <li>Recommended advancing SBS browse patterns while preserving Causes trust, proof, and cause-detail strengths.</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>Outcome-based cause categorization and IA validation</h3>
+            <p>
+              Translated participant mental models into a five-category outcome-based
+              navigation model for supporters browsing causes.
+            </p>
+            <ul>
+              <li>Used open card sorting, similarity clustering, entropy review, and label normalization.</li>
+              <li>Validated category hypotheses with a closed card sort using 20 cause cards.</li>
+              <li>Resolved ambiguous causes through outcome-forward subcategory framing.</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>Story Behind the Story mobile-first browse redesign</h3>
+            <p>
+              Evaluated a redesigned browse model intended to make cause discovery clearer
+              for mobile-first exploratory supporters.
+            </p>
+            <ul>
+              <li>Cleaned sample: n = 50.</li>
+              <li>Methods: prototype evaluation, comparative within-subject usability, qualitative review, paired statistics.</li>
+              <li>Measures: clarity, CSAT, trust, confidence, continue intent, NPS, SUS-equivalent usability.</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>Sponsor and donor motivations MaxDiff</h3>
+            <p>
+              Used best-worst scaling to understand what first-time prospects and existing
+              donors valued most in a giving experience.
+            </p>
+            <ul>
+              <li>Prospects prioritized clarity, autonomy, simplicity, and tangible impact.</li>
+              <li>Donors placed relatively more emphasis on faith alignment, urgency, and emotional storytelling once trust was established.</li>
+              <li>Product strategy shifted toward clarity, control, and tangible impact before deeper emotional appeals.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Core Methods</h2>
+        <div class="chips">
+          <span class="chip">User interviews</span>
+          <span class="chip">Thematic analysis</span>
+          <span class="chip">Open card sorting</span>
+          <span class="chip">Closed card sorting</span>
+          <span class="chip">Tree-test-style validation</span>
+          <span class="chip">Prototype testing</span>
+          <span class="chip">Unmoderated usability</span>
+          <span class="chip">Benchmark studies</span>
+          <span class="chip">SUS / UMUX-Lite</span>
+          <span class="chip">CSAT / NPS</span>
+          <span class="chip">MaxDiff</span>
+          <span class="chip">R analysis</span>
+          <span class="chip">Effect sizes</span>
+          <span class="chip">Executive readouts</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Selected Impact</h2>
+        <div class="grid two">
+          <article class="panel">
+            <h3>Product direction</h3>
+            <p>
+              Influenced a hybrid direction for Compassion Causes: use Story Behind the Story
+              for clearer first-view discovery, preserve existing Causes urgency/proof/detail
+              cues for donor confidence, and validate new-user conversion in production.
+            </p>
+          </article>
+          <article class="panel">
+            <h3>Executive decision support</h3>
+            <p>
+              Framed findings with thresholds, confidence intervals, effect sizes, and
+              qualitative evidence so senior stakeholders could distinguish directional
+              promise from launch-risk claims.
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        Companion case study:
+        <a href="mixed-methods-ux-research-portfolio.html">Compassion Causes mixed-methods research portfolio</a>.
+      </p>
+    </footer>
+  </body>
+</html>

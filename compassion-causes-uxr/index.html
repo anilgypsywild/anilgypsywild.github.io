@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Anil Wild | UX Research Portfolio</title>
+    <script>if (sessionStorage.getItem("agw_causes_portfolio_access") !== "granted") document.documentElement.classList.add("locked");</script>
+    <style>html.locked body > :not(.password-gate) { display: none !important; }</style>
+    <script src="password-gate.js" defer></script>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #17202a;
+        --muted: #5f6b7a;
+        --line: #d8dee8;
+        --paper: #f7f5ef;
+        --panel: #ffffff;
+        --teal: #087f8c;
+        --red: #b23a48;
+        --gold: #b88718;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: var(--paper);
+        line-height: 1.5;
+      }
+
+      main {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 48px 20px;
+      }
+
+      .shell {
+        width: min(880px, 100%);
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: clamp(28px, 5vw, 56px);
+        box-shadow: 0 18px 50px rgba(23, 32, 42, 0.08);
+      }
+
+      h1 {
+        font-size: clamp(2rem, 5vw, 4.5rem);
+        line-height: 0.98;
+        letter-spacing: 0;
+        margin: 0 0 20px;
+        max-width: 780px;
+      }
+
+      p {
+        font-size: 1.05rem;
+        color: var(--muted);
+        max-width: 680px;
+      }
+
+      .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      a {
+        color: var(--ink);
+        text-decoration: none;
+        border: 1px solid var(--line);
+        border-left: 5px solid var(--teal);
+        background: #fff;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-weight: 700;
+      }
+
+      a:nth-child(2) {
+        border-left-color: var(--red);
+      }
+
+      a:hover,
+      a:focus {
+        border-color: var(--ink);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="shell">
+        <h1>Anil Wild UX Research Portfolio</h1>
+        <p>
+          Mixed-methods product research for consumer discovery, information architecture,
+          product information pages, navigation, and donation decision support.
+        </p>
+        <div class="links">
+          <a href="mixed-methods-ux-research-portfolio.html">Open portfolio case study</a>
+          <a href="senior-ux-researcher-cv.html">Open CV</a>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
