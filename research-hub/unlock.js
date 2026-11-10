@@ -66,7 +66,12 @@ function show(){
   const inner=frame.contentDocument;if(!inner)return;
   inner.addEventListener('click',event=>{
    const a=event.target.closest?.('a[data-wiki]');if(!a)return;
-   event.preventDefault();if(a.dataset.wiki===location.href){const id=new URLSearchParams(location.hash.slice(1)).get('a');if(id)inner.getElementById(decodeURIComponent(id))?.scrollIntoView();}else location.hash=new URL(a.dataset.wiki).hash;
+   event.preventDefault();
+   if(new URL(a.dataset.wiki).hash === location.hash){const id=new URLSearchParams(location.hash.slice(1)).get('a');if(id)inner.getElementById(decodeURIComponent(id))?.scrollIntoView();}
+
+   else {
+  location.hash = new URL(a.dataset.wiki).hash;
+}
   });
   const filter=inner.querySelector('#q'), results=[...inner.querySelectorAll('#results li')], count=inner.querySelector('#matches');
   if(filter&&count)filter.addEventListener('input',()=>{const terms=filter.value.toLowerCase().trim().split(/\s+/);let n=0;for(const row of results){row.hidden=!terms.every(t=>row.textContent.toLowerCase().includes(t));if(!row.hidden)n++;}count.textContent=n+' pages';});
