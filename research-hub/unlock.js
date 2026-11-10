@@ -54,7 +54,8 @@ function show(){
   if(tag.localName==='link'&&tag.rel==='stylesheet'&&f.mime.startsWith('text/css')){
    const style=doc.createElement('style');style.textContent=decoder.decode(bytes(f.data));tag.replaceWith(style);
   }else if(f.mime.startsWith('text/html')&&tag.localName==='a'){
-   tag.href=route(dest.id,dest.anchor);tag.dataset.wiki=tag.href;
+   tag.setAttribute('href', '#');
+   tag.dataset.wiki = route(dest.id, dest.anchor);
   }else{
    tag.setAttribute(attr,assetURL(dest.id));
    if(tag.localName==='a')tag.download=f.path.split('/').at(-1);
