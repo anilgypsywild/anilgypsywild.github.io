@@ -10,16 +10,33 @@ function assetURL(id) {
  if(!assets.has(id)){const f=data[id];assets.set(id,URL.createObjectURL(new Blob([bytes(f.data)],{type:f.mime})));}
  return assets.get(id);
 }
-function targetFor(raw,path){
- try{
-  const u=new URL(raw,'https://wiki.invalid/'+path.split('/').map(encodeURIComponent).join('/'));
-  if(u.origin!=='https://wiki.invalid')return null;
-  let k=decodeURIComponent(u.pathname).replace(/^\//,'');
-  if(!k||k.endsWith('/'))k+='index.html';
-  const id=pathId.get(k)??pathId.get(k+'/index.html');
-  return id===undefined?null:{id,anchor:u.hash.slice(1)};
- }catch{return null;}
+function targetFor(raw, path) {
+  try {
+    if (!raw || /^(#|mailto:|tel:|javascript:|data:)/i.test(raw)) {
+      if (!raw?.startsWith('#')) return null;
+    }
+
+    const root = 'https://wiki.invalid/';
+    const current = new URL(path, root);
+    const u = new URL(raw, current);
+
+    if (u.origin !== current.origin) return null;
+
+    let k = decodeURIComponent(u.pathname).replace(/^\/+/, '');
+
+    if (!k || k.endsWith('/')) k += 'index.html';
+
+    const id = pathId.get(k) ?? pathId.get(k + '/index.html');
+
+    return id === undefined
+      ? null
+      : { id, anchor: decodeURIComponent(u.hash.slice(1)) };
+  } catch (error) {
+    console.error('Wiki link resolution failed:', raw, path, error);
+    return null;
+  }
 }
+
 function show(){
  if(!data)return;
  const query=new URLSearchParams(location.hash.slice(1));let id=Number(query.get('p')??pathId.get('index.html'));
