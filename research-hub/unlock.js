@@ -54,8 +54,9 @@ function show(){
   if(tag.localName==='link'&&tag.rel==='stylesheet'&&f.mime.startsWith('text/css')){
    const style=doc.createElement('style');style.textContent=decoder.decode(bytes(f.data));tag.replaceWith(style);
   }else if(f.mime.startsWith('text/html')&&tag.localName==='a'){
-   tag.setAttribute('href', '#');
-   tag.dataset.wiki = route(dest.id, dest.anchor);
+
+   tag.setAttribute('href', route(dest.id, dest.anchor));
+tag.dataset.wiki = route(dest.id, dest.anchor);
   }else{
    tag.setAttribute(attr,assetURL(dest.id));
    if(tag.localName==='a')tag.download=f.path.split('/').at(-1);
@@ -64,15 +65,22 @@ function show(){
  const title=doc.title||'CVG Research Hub';document.title=title;
  frame.addEventListener('load',()=>{
   const inner=frame.contentDocument;if(!inner)return;
-  inner.addEventListener('click',event=>{
-   const a=event.target.closest?.('a[data-wiki]');if(!a)return;
-   event.preventDefault();
-   if(new URL(a.dataset.wiki).hash === location.hash){const id=new URLSearchParams(location.hash.slice(1)).get('a');if(id)inner.getElementById(decodeURIComponent(id))?.scrollIntoView();}
+  inner.addEventListener('click', event => {
+  const a = event.target.closest?.('a[data-wiki]');
+  if (!a) return;
 
-   else {
-  location.hash = new URL(a.dataset.wiki).hash;
-}
-  });
+  event.preventDefault();
+
+  const destination = new URL(a.dataset.wiki);
+  const nextHash = destination.hash;
+
+  if (location.hash !== nextHash) {
+    location.hash = nextHash;
+  } else {
+    show();
+  }
+});
+  
   const filter=inner.querySelector('#q'), results=[...inner.querySelectorAll('#results li')], count=inner.querySelector('#matches');
   if(filter&&count)filter.addEventListener('input',()=>{const terms=filter.value.toLowerCase().trim().split(/\s+/);let n=0;for(const row of results){row.hidden=!terms.every(t=>row.textContent.toLowerCase().includes(t));if(!row.hidden)n++;}count.textContent=n+' pages';});
   const anchor=query.get('a');if(anchor)try{inner.getElementById(decodeURIComponent(anchor))?.scrollIntoView();}catch{}
