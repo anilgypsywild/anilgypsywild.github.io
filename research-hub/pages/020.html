@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="noindex,nofollow" name="robots"/><title>Google Analytics Instrumentation Plan for In-App Intercept Surveys · CVG Research Hub</title><link href="../wiki.css" rel="stylesheet"/></head><body><a class="skip" href="#main">Skip to content</a><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span aria-hidden="true" class="brand-icon">CVG</span>Research Hub</a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../search.html">Search the wiki</a></nav></div></header><div class="shell"><aside class="side"><p class="kicker">Research library</p><nav aria-label="Wiki sections"><a aria-current="true" href="080.html">Causes research</a><a href="095.html">Research summaries</a><a href="132.html">Methods and toolkit</a><a href="205.html">Research portfolio</a><a href="207.html">Templates</a><a href="187.html">Community research</a></nav></aside><main id="main"><nav aria-label="Breadcrumb" class="crumb"><a href="../index.html">Home</a> <span aria-hidden="true">/</span> <a href="080.html">Causes research</a> <span aria-hidden="true">/</span> <a href="050.html">Causes: Core Flows Usability Research Nov '24</a> <span aria-hidden="true">/</span> <a href="036.html">Causes Usability Benchmark Re Test July 2025</a> <span aria-hidden="true">/</span> <a href="021.html">Causes Intercept Survey Study</a> <span aria-hidden="true">/</span> Instrumentation Plan for In App Intercept Surveys</nav><article class="doc"><p class="kicker">Research article</p><h1 id="google-analytics-instrumentation-plan-for-in-app-intercept-surveys">Google Analytics Instrumentation Plan for In-App Intercept Surveys</h1>
+<p><strong>Focus:</strong> Capturing intercept survey data natively in Causes and linking it to donor behavior</p>
+<hr/>
+<h2 id="1-purpose">1. Purpose</h2>
+<p>To enable in-app intercept surveys to capture <strong>trust, clarity, and satisfaction signals</strong> directly inside Causes, and link these self-reports to <strong>observed donor behavior</strong> in GA4. This gives us a unified dataset for testing design hypotheses about Current Gen donors.</p>
+<hr/>
+<h2 id="2-instrumentation-requirements">2. Instrumentation Requirements</h2>
+<h3 id="a-survey-triggering">A. Survey Triggering</h3>
+<ul>
+<li><strong>Confirmation page intercept:</strong> Trigger after successful donation, once per user per 2 weeks.</li>
+<li><strong>Cause detail intercept:</strong> Trigger if user dwells ≥60s or navigates away without donating.</li>
+<li><strong>No results intercept:</strong> Trigger once per week on first no-results query.</li>
+</ul>
+<h3 id="b-ga-event-lifecycle">B. GA Event Lifecycle</h3>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Parameters</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>survey_shown</code></td>
+<td><code>location</code> (confirmation, cause_detail, no_results) <code>question_set_id</code></td>
+<td>Fires when survey is presented</td>
+</tr>
+<tr>
+<td><code>survey_started</code></td>
+<td><code>location</code>, <code>question_set_id</code></td>
+<td>Fires when user interacts with first survey element</td>
+</tr>
+<tr>
+<td><code>survey_response</code></td>
+<td><code>location</code>, <code>question_id</code>, <code>response_value</code></td>
+<td>Fires for each answered question</td>
+</tr>
+<tr>
+<td><code>survey_completed</code></td>
+<td><code>location</code>, <code>question_set_id</code>, <code>completion_status</code></td>
+<td>Fires when survey is submitted or abandoned</td>
+</tr>
+<tr>
+<td><code>donation_complete</code> (existing GA4 purchase)</td>
+<td><code>amount</code>, <code>tier</code>, <code>frequency</code></td>
+<td>Links survey to transaction data</td>
+</tr>
+<tr>
+<td><code>filter_applied</code></td>
+<td><code>filter_name</code>, <code>result_count</code></td>
+<td>Links survey answers to discovery behaviors</td>
+</tr>
+<tr>
+<td><code>no_results_shown</code></td>
+<td><code>query</code>, <code>suggested_count</code></td>
+<td>Connects frustration states to survey responses</td>
+</tr>
+</tbody>
+</table>
+<h3 id="c-user-properties">C. User Properties</h3>
+<ul>
+<li><code>donor_segment</code>: Current Gen vs Next Gen</li>
+<li><code>donor_history</code>: new vs repeat donor</li>
+<li><code>test_variant</code>: A/B assignment (allocation indicator, confirmation copy, etc.)</li>
+</ul>
+<hr/>
+<h2 id="3-data-handling">3. Data Handling</h2>
+<ul>
+<li>Each <code>survey_completed</code> event generates a <code>survey_id</code> stored in GA4 and mirrored in the app’s DB.</li>
+<li>Daily ETL job exports GA4 events + survey DB to warehouse.</li>
+<li>Research joins survey responses to behavioral metrics (time on task, tier choice, referral clicks).</li>
+</ul>
+<hr/>
+<h2 id="4-research-alignment-with-cvg-4d-scorecard">4. Research Alignment with CVG 4D Scorecard</h2>
+<ul>
+<li><strong>Doability:</strong> Donation completion, time on task, error rates.</li>
+<li><strong>Dependability:</strong> Confidence ratings, CSAT, NPS (from survey).</li>
+<li><strong>Delight:</strong> Emotion word scales, open text (survey_response).</li>
+<li><strong>Desire:</strong> Repeat donations, referral shares, save favorite.</li>
+</ul>
+<hr/>
+<h2 id="5-engineering-next-steps">5. Engineering Next Steps</h2>
+<p><strong>Week 1</strong></p>
+<ul>
+<li>Define GA event schema for <code>survey_shown</code>, <code>survey_response</code>, <code>survey_completed</code>.</li>
+<li>Add survey question/answer IDs to the app’s data layer.</li>
+</ul>
+<p><strong>Week 2</strong></p>
+<ul>
+<li>Implement GA4 custom events in app code.</li>
+<li>Set up DebugView QA to ensure event firing and parameter integrity.</li>
+</ul>
+<p><strong>Week 3</strong></p>
+<ul>
+<li>Deploy intercepts to staging. Validate:
+<ul>
+<li>Confirmation survey only after successful donation.</li>
+<li>Cause detail dwell ≥60s.</li>
+<li>No results intercept triggers correctly.</li>
+</ul></li>
+</ul>
+<p><strong>Week 4</strong></p>
+<ul>
+<li>Connect GA4 event exports with survey DB.</li>
+<li>Test join queries linking survey responses to donation outcomes.</li>
+</ul>
+<p><strong>Week 5</strong></p>
+<ul>
+<li>Provide research with joined dataset for first analysis.</li>
+<li>Engineering documents schema and ownership for long-term maintenance.</li>
+</ul>
+<hr/>
+<h2 id="6-deliverables">6. Deliverables</h2>
+<ul>
+<li>GA4 custom event schema and data layer mapping.</li>
+<li>Staging validation log with DebugView screenshots.</li>
+<li>Automated warehouse export + join with survey DB.</li>
+<li>Final engineering handoff document for research.</li>
+</ul>
+<hr/>
+<p>End of Doc</p>
+<hr/>
+</article><section class="listing related"><h2>In this chapter</h2><ul class="rows"><li class="row"><a href="018.html"><span class="kind">Article</span><span class="row-title"><b>Event Schema for In App Intercept Surveys</b></span><span aria-hidden="true" class="tile-arrow">→</span></a></li><li class="row"><a href="019.html"><span class="kind">Article</span><span class="row-title"><b>GA for Causes Usability Benchmark</b></span><span aria-hidden="true" class="tile-arrow">→</span></a></li></ul></section><footer class="footer">CVG Research Hub · Local edition <a href="../search.html">All pages</a></footer></main></div></body></html>

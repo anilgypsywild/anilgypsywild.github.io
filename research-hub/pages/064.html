@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="noindex,nofollow" name="robots"/><title>Research Brief: Lifecycle Trust and Giving Impact Study · CVG Research Hub</title><link href="../wiki.css" rel="stylesheet"/></head><body><a class="skip" href="#main">Skip to content</a><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span aria-hidden="true" class="brand-icon">CVG</span>Research Hub</a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../search.html">Search the wiki</a></nav></div></header><div class="shell"><aside class="side"><p class="kicker">Research library</p><nav aria-label="Wiki sections"><a aria-current="true" href="080.html">Causes research</a><a href="095.html">Research summaries</a><a href="132.html">Methods and toolkit</a><a href="205.html">Research portfolio</a><a href="207.html">Templates</a><a href="187.html">Community research</a></nav></aside><main id="main"><nav aria-label="Breadcrumb" class="crumb"><a href="../index.html">Home</a> <span aria-hidden="true">/</span> <a href="080.html">Causes research</a> <span aria-hidden="true">/</span> <a href="065.html">Lifecycle Trust and Giving Impact Study</a></nav><article class="doc"><p class="kicker">Research article</p><h1 id="research-brief-lifecycle-trust-and-giving-impact-study"><strong>Research Brief: Lifecycle Trust and Giving Impact Study</strong></h1>
+<p><a>Compassion Causes</a></p>
+<p><strong>Progress is tracked here: ciorg/venturesgroup/uxrepo-v1#205</strong></p>
+<h2 id="overview">Overview</h2>
+<ul>
+<li>This study examines <strong>how supporters expect Compassion to respond</strong> when <strong>a Cause can no longer proceed as originally planned</strong> due to real world conditions.</li>
+<li>These situations represent <strong>high trust moments</strong> that can influence donor confidence, future giving behavior, and irreversible product decisions.</li>
+<li>Rather than evaluating features or copy, this research focuses on <strong>supporter expectations</strong>, <strong>preference tradeoffs</strong>, and <strong>trust preservation</strong> when a Cause ends.</li>
+</ul>
+<p>Importantly, this study <em>assumes</em> that <strong>Compassion will apply one consistent fund handling approach regardless of why the Cause ended</strong>. The goal is to understand supporter expectations to <strong>inform</strong> that <strong>single default approach</strong> and its surrounding communication.</p>
+<h2 id="why-this-research-now">Why This Research Now</h2>
+<p>As Compassion Causes expands its roadmap with lifecycle features such as Cause deletion, Cause expiration, and compliance driven shutdowns on the FCP side, it is critical to understand:</p>
+<ol type="1">
+<li>What supporters expect Compassion to do by <strong>default</strong> when a <strong>Cause</strong> <strong>ends</strong></li>
+<li>Which responses <strong>preserve trust</strong> versus create avoidable risk</li>
+<li>Where supporter t<strong>olerance breaks down</strong></li>
+<li>Which actions require <strong>explicit consent</strong> versus safe automation</li>
+<li>How <strong>communication expectations</strong> shape acceptance of system decisions</li>
+</ol>
+<p>This research informs <strong>Q3 sequencing</strong>, <strong>engineering defaults</strong>, and <strong>messaging guardrails</strong> before irreversible lifecycle behaviors are encoded into the platform.</p>
+<h2 id="core-research-questions">Core Research Questions</h2>
+<h3 id="primary-question">Primary Question</h3>
+<blockquote>
+<p><code>What do supporters expect Compassion to do with their donation when a Cause can no longer proceed?</code></p>
+</blockquote>
+<h3 id="supporting-questions">Supporting Questions</h3>
+<ol type="1">
+<li><code>Which fund handling actions most preserve trust</code></li>
+<li><code>Which actions create reputational or trust risk</code></li>
+<li><code>How expectations differ across Cause ending circumstances, even if outcomes do not change</code></li>
+<li><code>How preferences relate to future giving intent</code></li>
+<li><code>Which actions should always be opt in rather than automatic</code></li>
+</ol>
+<h2 id="what-this-research-is-and-is-not">What This Research Is and Is Not</h2>
+<h3 id="heavy_check_mark-this-research-is"><span class="emoji">✔️</span> This Research Is</h3>
+<p>• A scenario framed preference study<br/>
+• Focused on supporter expectations and decision tradeoffs<br/>
+• Designed to produce ranked, interpretable outputs for Product and Engineering</p>
+<h3 id="x-this-research-is-not"><span class="emoji">❌</span> This Research Is Not</h3>
+<p>• Feature validation<br/>
+• Copy testing<br/>
+• Pricing optimization<br/>
+• Policy determination</p>
+<h2 id="surveystudy-design-summary">Survey/Study Design Summary</h2>
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Method</td>
+<td><strong><code>Scenario</code></strong><code>framed survey with</code><strong><code>MaxDiff</code></strong><code> (best worst choice)</code></td>
+</tr>
+<tr>
+<td>Platform</td>
+<td>Lyssna</td>
+</tr>
+<tr>
+<td>Estimated Time</td>
+<td>8–10 minutes</td>
+</tr>
+<tr>
+<td>Sample Size</td>
+<td>~30 participants</td>
+</tr>
+<tr>
+<td>Scenarios</td>
+<td>Single framing with multiple circumstances described</td>
+</tr>
+<tr>
+<td>Primary Output</td>
+<td><code>R</code><strong><code>anked preference utilities for fund handling actions</code></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="scenario-framing">Scenario Framing</h2>
+<p>Participants are <strong>not assigned to different outcomes</strong>.<br/>
+All participants receive the same framing, emphasizing that <strong>Compassion will respond consistently regardless of circumstance</strong>.</p>
+<h3 id="cause-ending-circumstances-shown-to-participants">Cause Ending Circumstances Shown to Participants</h3>
+<h4 id="1-church-removes-the-cause-fcp-delete"><strong>1) Church Removes the Cause (FCP Delete)</strong></h4>
+<p><code>The local church removes a Cause because it can no longer be implemented. Examples include timing constraints, environmental issues, staffing changes, or replacing the Cause with a new one.</code></p>
+<h4 id="2-compliance-or-security-issue-aml"><strong>2) Compliance or Security Issue (AML)</strong></h4>
+<p><code>Compassion identifies a compliance or security risk and ends partnership with a church, so funds can no longer be distributed to that Cause.</code></p>
+<h4 id="3-cause-expiration"><strong>3) Cause Expiration</strong></h4>
+<p><code>After an extended period, such as 6 to 8 months, the Cause is still not fully funded, so Compassion automatically expires and removes the Cause.</code></p>
+<p>Participants are informed that <strong>the same fund handling approach will apply in all cases</strong> and are asked to evaluate their preferences with that understanding.</p>
+<h2 id="preference-measurement-maxdiff">Preference Measurement (MaxDiff)</h2>
+<p>Participants complete a best worst choice task evaluating <strong>how Compassion should handle funds</strong> when a Cause ends.</p>
+<h3 id="basket-revised-lifecycle-action-set"><span class="emoji">🧺</span> Revised Lifecycle Action Set</h3>
+<ol type="1">
+<li><code>Automatically redirect my donation to a similar Cause in the same category</code></li>
+<li><code>Automatically redirect my donation to a similar Cause in the same region or country</code></li>
+<li><code>If available, automatically redirect my donation to another Cause at the same church</code></li>
+<li><code>Allow me to select a new Cause of my choice</code></li>
+<li><code> Move my donation to the Finishline Fund to help other Causes reach completion</code></li>
+</ol>
+<p>Refund is intentionally <strong>not offered</strong>. Preference signals for refund desire are inferred indirectly through open ended feedback.</p>
+<h3 id="thinking-why-maxdiff"><span class="emoji">🤔</span> Why MaxDiff</h3>
+<p>MaxDiff forces <strong>tradeoffs</strong> and produces stable, rank ordered preferences without scale bias. This enables clear differentiation between <strong>safe defaults</strong>, <strong>acceptable automation</strong>, and <strong>actions that require explicit supporter control</strong>.</p>
+<h2 id="communication-expectations">Communication Expectations</h2>
+<p>After the MaxDiff tasks, <strong>participants indicate how they expect Compassion to communicate when a Cause ends.</strong></p>
+<p>Options include:</p>
+<ol type="1">
+<li><code>No notification needed</code></li>
+<li><code>Email explanation</code></li>
+<li><code>Account notification at next login</code></li>
+<li><code>Personal outreach explaining what happened</code></li>
+<li><code>Other (open ended)</code></li>
+</ol>
+<p>This separates <strong>fund handling preferences</strong> from <strong>communication expectations</strong>, informing service and messaging design.</p>
+<h2 id="donation-amount-sensitivity">Donation Amount Sensitivity</h2>
+<p>Rather than pricing optimization, this study uses a <strong>directional sensitivity check</strong>.</p>
+<blockquote>
+<p><code>Participants are asked whether their preferences would change if their donation were $1,000 or more.</code></p>
+</blockquote>
+<p>Response options capture expectations for:</p>
+<p>• Greater control<br/>
+• More proactive communication<br/>
+• Personal outreach<br/>
+• No change in expectations</p>
+<p>This avoids anchoring bias while still informing tiered experience design.</p>
+<h2 id="participants">Participants</h2>
+<p>Target segments include:</p>
+<p>• Current donors<br/>
+• Advocate or peer to peer fundraisers<br/>
+• Potential supporters</p>
+<p><strong>Lightweight</strong> demographics are collected for segmentation only.</p>
+<h2 id="test_tube-analysis-plan"><span class="emoji">🧪</span> Analysis Plan</h2>
+<p>Primary analyses include:</p>
+<ol type="1">
+<li>MaxDiff utility scores for each fund handling action</li>
+<li>Identification of preferred defaults versus risky actions</li>
+<li>Trust and future giving intent by preferred action</li>
+<li>Communication expectations by preference cluster</li>
+<li>High donation sensitivity patterns</li>
+</ol>
+<p><strong>Open ended responses will contextualize quantitative findings.</strong></p>
+<h1 id="icecream-expected-outcomes"><span class="emoji">🍦</span> Expected Outcomes</h1>
+<p>This research will directly inform:</p>
+<ol type="1">
+<li>Cause lifecycle defaults</li>
+<li>Donor communication requirements</li>
+<li>Trust preservation guardrails</li>
+</ol>
+<h2 id="next-steps">Next Steps</h2>
+<p><strong>Research:</strong> Instrument design, analysis, synthesis, and readout</p>
+<h3 id="survey">Survey</h3>
+<p>• Build survey in Lyssna<br/>
+• Launch survey<br/>
+• Analyze results using MaxDiff utilities<br/>
+• Share decision ready readout with Product, Design, and Engineering</p>
+<hr/>
+<p>End of Doc</p>
+<hr/>
+</article><footer class="footer">CVG Research Hub · Local edition <a href="../search.html">All pages</a></footer></main></div></body></html>

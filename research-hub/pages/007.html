@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="noindex,nofollow" name="robots"/><title>Quantifying Donor Motivations: MaxDiff Insights and Prospect Roadmap · CVG Research Hub</title><link href="../wiki.css" rel="stylesheet"/></head><body><a class="skip" href="#main">Skip to content</a><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span aria-hidden="true" class="brand-icon">CVG</span>Research Hub</a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../search.html">Search the wiki</a></nav></div></header><div class="shell"><aside class="side"><p class="kicker">Research library</p><nav aria-label="Wiki sections"><a aria-current="true" href="080.html">Causes research</a><a href="095.html">Research summaries</a><a href="132.html">Methods and toolkit</a><a href="205.html">Research portfolio</a><a href="207.html">Templates</a><a href="187.html">Community research</a></nav></aside><main id="main"><nav aria-label="Breadcrumb" class="crumb"><a href="../index.html">Home</a> <span aria-hidden="true">/</span> <a href="080.html">Causes research</a> <span aria-hidden="true">/</span> <a href="013.html">Brief Causes Donors MaxDiff</a> <span aria-hidden="true">/</span> <a href="008.html">Max Diff Qs</a></nav><article class="doc"><p class="kicker">Research article</p><h1 id="quantifying-donor-motivations-maxdiff-insights-and-prospect-roadmap"><strong>Quantifying Donor Motivations: MaxDiff Insights and Prospect Roadmap</strong></h1>
+<p><strong>Prepared For:</strong></p>
+<ul>
+<li>@EKim5 <strong>(Marketing PM)</strong> : to align donor motivators with campaign messaging and outreach strategy.</li>
+<li>@SMcMillen1 <strong>(Product Owner, Causes)</strong> : to prioritize product features that emphasize clarity, urgency, and transparency in the donation flow.</li>
+<li>@AThompson8 <strong>(UX Director)</strong> : to validate usability priorities and ensure motivator-driven design decisions ladder up to the 4D UX Scorecard.</li>
+<li>@dsharer <strong>(Engineering Lead)</strong> : to scope and implement features (e.g., progress visuals, personalization) that directly support top donor motivators.</li>
+<li>@SLamb2 <strong>(Designer)</strong> : to translate motivator insights into clear, compelling visual and interaction design choices.</li>
+</ul>
+<hr/>
+<h1 id="1-objective">1. Objective</h1>
+<p>To identify and quantify the key motivational drivers for first-time and repeat giving on the Compassion Causes platform, using MaxDiff (Best-Worst Scaling) to establish a clear hierarchy of donor motivations and segment differences.</p>
+<hr/>
+<h1 id="2-methodology-recap">2. Methodology Recap</h1>
+<ul>
+<li><a>MaxDiff design: Respondents shown sets of 4–5 motivators; selected most and least motivating.</a></li>
+<li>Output: Utilities scaled into 0–100 importance scores.</li>
+<li>Sample: Balanced across CurrentGen (35+), NextGen (18–34), First-time donors, and Repeat donors.</li>
+<li>Analysis: Overall importance hierarchy, segment comparisons, rank heatmaps, dumbbell charts, and bootstrap confidence intervals.</li>
+</ul>
+<hr/>
+<h1 id="3-key-findings">3. Key Findings</h1>
+<table>
+<tr>
+<th>Drivers of Donor Choice</th>
+<th>Max-Diff Ranked Insight</th>
+<th>Insights from the Graph</th>
+</tr>
+<tr>
+<td>
+<p><strong>Overall Relative Importance</strong></p>
+<p>Ranking of donor motivators based on MaxDiff scores and confidence intervals.</p>
+</td>
+<td>
+</td>
+<td>
+<h3 id="top-motivators-across-all-donors-95-ci">Top motivators across all donors (95% CI):</h3>
+<ol type="1">
+<li>Transparency: “I clearly understand where my money is going”</li>
+<li>Impact: “I can make a tangible impact through my donation”</li>
+<li>Faith alignment: “Supporting this cause aligns with my Christian faith and values”</li>
+<li>Personalization: “I can see a specific project or child I am supporting”</li>
+<li>Urgency: “The cause feels urgent and needs support right away”</li>
+</ol>
+<h3 id="lowest-motivators">Lowest motivators:</h3>
+<ol type="1">
+<li>Progress bar/percentage funded</li>
+<li>Peer support (“I see other people in my network are supporting this cause”)</li>
+<li>Organizational thanks</li>
+</ol>
+<p>Top motivators across donors are clarity, tangible impact, and faith alignment. Personalization and urgency also matter but rank lower. Progress bars, peer cues, and generic thanks have minimal influence.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>Share of Preference</strong></p>
+<p>Distribution of preference weight across motivators using Softmax scaling.</p>
+</td>
+<td>
+</td>
+<td>Share of Preference (Softmax): Transparency alone accounts for nearly 60% of donor preference weight.</td>
+</tr>
+<tr>
+<td>
+<p><strong>Cumulative Capture of Importance</strong></p>
+<p>Percentage of motivational weight explained by top-ranked drivers.</p>
+</td>
+<td>
+</td>
+<td>
+<p>Cumulative Capture: Top 5 items capture ~55% of total motivational weight; top 10 items capture &gt;90%.</p>
+<p>Just five motivators explain over half of total donor motivation; the top ten account for more than 90 percent, indicating a steep drop-off in relevance beyond the core set.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>Segments: Next-Generation vs. Current-Generation (age &gt;=34)</strong></p>
+<p>Comparison of motivator weightings and gaps across donor age groups.</p>
+</td>
+<td>
+</td>
+<td>
+<ul>
+<li>NextGen (18–34):
+<ul>
+<li>Significantly higher weight on urgency, impact, and progress visualization.</li>
+<li>Emotional drivers (stories, authenticity) resonate more than for CurrentGen.</li>
+</ul></li>
+<li>CurrentGen (35+):
+<ul>
+<li>More emphasis on trust in Compassion, simplicity of donation process, and faith alignment.</li>
+<li>Less motivated by urgency cues.</li>
+</ul></li>
+</ul>
+<p>Dumbbell Plot: NextGen vs CurrentGen gaps visible in urgency and progress visualization; CurrentGen stronger in trust and faith alignment.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>Segments: Next-Generation vs. Current-Generation (age &gt;=34)</strong></p>
+<p>Comparison of motivator weightings and gaps across donor age groups.</p>
+</td>
+<td>
+</td>
+<td>
+<ul>
+<li>NextGen (18–34):
+<ul>
+<li>Significantly higher weight on urgency, impact, and progress visualization.</li>
+<li>Emotional drivers (stories, authenticity) resonate more than for CurrentGen.</li>
+</ul></li>
+<li>CurrentGen (35+):
+<ul>
+<li>More emphasis on trust in Compassion, simplicity of donation process, and faith alignment.</li>
+<li>Less motivated by urgency cues.</li>
+</ul></li>
+</ul>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>Rank Heat Map Across Segments</strong></p>
+<p>Visualized ranking of motivators across first-time vs repeat donors, highlighting consistent drivers and weak cues.</p>
+</td>
+<td>
+</td>
+<td>
+<ul>
+<li>First-time donors:
+<ul>
+<li>Motivated by clarity (where money goes, simplicity).</li>
+<li>Lower weight on urgency; need reassurance and transparency.</li>
+</ul></li>
+<li>Repeat donors:
+<ul>
+<li>Motivated by impact and faith alignment.</li>
+<li>Higher sensitivity to urgency tags than first-time donors.</li>
+</ul></li>
+</ul>
+<p>Rank Heat Map: Urgency, clarity, and impact consistently in top tiers across all segments; peer effects consistently bottom-ranked.</p>
+<p>First-time donors prioritize clarity and reassurance. Repeat donors lean on impact, faith alignment, and urgency. Across all groups, urgency, clarity, and impact are consistently top-tier, while peer effects remain the weakest.</p>
+</td>
+</tr>
+</table>
+<hr/>
+<h1 id="4-overall-motivational-hierarchy">4. Overall Motivational Hierarchy</h1>
+<h2 id="top-motivators-across-all-donors-95-ci-1"><strong>Top motivators across all donors (95% CI):</strong></h2>
+<ol type="1">
+<li>Transparency - “I clearly understand where my money is going”</li>
+<li>Impact - “I can make a tangible impact through my donation”</li>
+<li>Faith alignment - “Supporting this cause aligns with my Christian faith and values”</li>
+<li>Personalization - “I can see a specific project or child I am supporting”</li>
+<li>Urgency - “The cause feels urgent and needs support right away”</li>
+</ol>
+<h2 id="lowest-motivators-1">Lowest motivators:</h2>
+<ul>
+<li>Progress bar/percentage funded</li>
+<li>Peer support (“I see other people in my network are supporting this cause”)</li>
+<li>Organizational thanks</li>
+</ul>
+<h2 id="segment-differences-next-gen-curr-gen-first-timers-repeaters">Segment Differences: Next-Gen, Curr-Gen, First-Timers, Repeaters</h2>
+<ul>
+<li>NextGen (18–34):
+<ul>
+<li>Significantly higher weight on urgency, impact, and progress visualization.</li>
+<li>Emotional drivers (stories, authenticity) resonate more than for CurrentGen.</li>
+</ul></li>
+<li>CurrentGen (35+):
+<ul>
+<li>More emphasis on trust in Compassion, simplicity of donation process, and faith alignment.</li>
+<li>Less motivated by urgency cues.</li>
+</ul></li>
+<li>First-time donors:
+<ul>
+<li>Motivated by clarity (where money goes, simplicity).</li>
+<li>Lower weight on urgency; need reassurance and transparency.</li>
+</ul></li>
+<li>Repeat donors:
+<ul>
+<li>Motivated by impact and faith alignment.</li>
+<li>Higher sensitivity to urgency tags than first-time donors.</li>
+</ul></li>
+</ul>
+<h2 id="supporting-statistical-analyses">Supporting Statistical Analyses</h2>
+<ul>
+<li>Cumulative Capture: Top 5 items capture ~55% of total motivational weight; top 10 items capture &gt;90%.</li>
+<li>Share of Preference (Softmax): Transparency alone accounts for nearly 60% of donor preference weight.</li>
+<li>Rank Heat Map: Urgency, clarity, and impact consistently in top tiers across all segments; peer effects consistently bottom-ranked.</li>
+<li>Dumbbell Plots: NextGen vs CurrentGen gaps visible in urgency and progress visualization; CurrentGen stronger in trust and faith alignment.</li>
+</ul>
+<hr/>
+<h1 id="5-insights-by-function">5. Insights by Function</h1>
+<h2 id="market-research">Market Research</h2>
+<ul>
+<li>Confirms MaxDiff as a prioritization tool that reveals transparency and impact as dominant motivators.</li>
+<li>Segment splits show opportunities for message tailoring in campaigns: urgency + emotional resonance for younger donors, trust + faith alignment for older donors.</li>
+</ul>
+<h2 id="product-ownership">Product Ownership</h2>
+<ul>
+<li>Core product flows must foreground impact transparency and clarity of use of funds.</li>
+<li>Urgency tags can be selectively used to boost NextGen and Repeat donations.</li>
+<li>Simplify or de-emphasize progress bars, as they underperform in importance.</li>
+</ul>
+<h2 id="ux-leadership">UX Leadership</h2>
+<ul>
+<li>Findings strengthen the case for streamlined flows with embedded clarity.</li>
+<li>UX should emphasize faith and impact messaging without clutter.</li>
+<li>Segment-specific UX interventions (e.g., urgency cues for younger donors) can be piloted.</li>
+</ul>
+<h2 id="engineering">Engineering</h2>
+<ul>
+<li>Limited ROI for progress bar engineering investment.</li>
+<li>Prioritize transparency features (transaction clarity, allocation breakdowns).</li>
+<li>Build lightweight urgency flags that are flexible for A/B testing.</li>
+</ul>
+<h2 id="design">Design</h2>
+<ul>
+<li>Visual design should foreground transparency and impact (clear use of funds, stories tied to outcomes).</li>
+<li>Faith-aligned visual cues resonate strongly for CurrentGen; urgent/emotional imagery for NextGen.</li>
+<li>De-prioritize social proof elements (peer donations, network sharing).</li>
+</ul>
+<h2 id="research-next-steps">Research Next Steps</h2>
+<ul>
+<li>Recommend a follow-up conjoint or message test to validate combinations of motivators (transparency + urgency vs transparency + faith).</li>
+<li>Explore field A/B tests with urgency cues targeted at younger cohorts.</li>
+<li>Run usability studies on transparency-focused flows (allocation breakdowns, impact stories).</li>
+</ul>
+<hr/>
+<h1 id="6-recommendations">6. Recommendations</h1>
+<ol type="1">
+<li>Prioritize clarity and transparency in all messaging and UI.</li>
+<li>Tailor urgency cues for younger and repeat donors.</li>
+<li>Highlight tangible impact consistently; tie stories directly to donation results.</li>
+<li>De-prioritize progress bars and peer visibility, as these do not motivate giving.</li>
+<li>Embed faith-aligned framing in older-donor-targeted flows and campaigns.</li>
+</ol>
+<hr/>
+<h1 id="appendix">Appendix</h1>
+<h2 id="a1-mapping-maxdiff-insights-to-4d-ux-scorecard">A1. Mapping MaxDiff Insights to 4D UX Scorecard</h2>
+<table>
+<thead>
+<tr>
+<th>MaxDiff Result (Quant)</th>
+<th>4D Pillar</th>
+<th>Strawman Stage</th>
+<th>Why It Matters</th>
+<th>Downstream Owner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Transparency (~60% share of preference)</strong></td>
+<td>Desire</td>
+<td>Build → Post-Launch</td>
+<td>Strongest predictor of reuse, repeat giving, and NPS</td>
+<td>David (Eng), [name omitted] (PO), [name omitted] (Marketing)</td>
+</tr>
+<tr>
+<td><strong>Clarity &amp; Simplicity (&gt;20% share of preference)</strong></td>
+<td>Doability</td>
+<td>Design → Build</td>
+<td>Drives task success and reduces errors</td>
+<td>[name omitted] (UX), David (Eng)</td>
+</tr>
+<tr>
+<td><strong>Urgency (+25% for NextGen)</strong></td>
+<td>Delight</td>
+<td>Design</td>
+<td>Boosts emotional engagement and donation intent</td>
+<td>[name omitted] (Marketing), [name omitted] (Design)</td>
+</tr>
+<tr>
+<td><strong>Emotional Storytelling (+18% for NextGen)</strong></td>
+<td>Delight</td>
+<td>Design → Post-Launch</td>
+<td>Fuels “Delight” and spontaneous positive reactions</td>
+<td>[name omitted] (Design), [name omitted] (Marketing)</td>
+</tr>
+<tr>
+<td><strong>Trust in Compassion / Faith Alignment (significantly higher for CurrentGen, 95% CI)</strong></td>
+<td>Dependability</td>
+<td>Define → Post-Launch</td>
+<td>Predicts higher NPS and confidence ratings</td>
+<td>[name omitted] (UX), [name omitted] (Marketing)</td>
+</tr>
+<tr>
+<td><strong>Top 5 motivators = ~55% cumulative weight; Top 10 = &gt;90%</strong></td>
+<td>All 4D pillars</td>
+<td>Discovery / Define</td>
+<td>Sharpens personas and prioritizes high-value features</td>
+<td>Anil (Research), [name omitted] (PO)</td>
+</tr>
+<tr>
+<td><strong>Peer Endorsement (&lt;5% weight)</strong></td>
+<td>None (low signal)</td>
+<td>Deprioritize</td>
+<td>Minimal impact; avoid investing build resources</td>
+<td>David (Eng), [name omitted] (PO)</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2 id="a2-mapping-maxdiff-insights-to-strawman-proposal">A2. Mapping MaxDiff Insights to <a href="111.html">Strawman</a> Proposal</h2>
+<h3 id="discovery--define-stages-12"><strong>Discovery / Define (Stages 1–2)</strong></h3>
+<ul>
+<li>Quant insights confirm problem statement: donors drop when transparency and clarity are weak.</li>
+<li><strong>Baseline numbers:</strong> Top 5 motivators capture <strong>~55% cumulative weight</strong>, top 10 exceed <strong>90%</strong>.</li>
+<li>Downstream: Personas sharpened with data-driven segments (NextGen vs CurrentGen).</li>
+</ul>
+<h3 id="design-stage-3"><strong>Design (Stage 3)</strong></h3>
+<ul>
+<li>Success criteria for prototypes include <em>clear impact communication, urgency cues, and faith alignment</em>.</li>
+<li>Designs tested with MaxDiff priorities as benchmark (e.g., if transparency is not obvious, fail criteria).</li>
+</ul>
+<h3 id="build-stage-4"><strong>Build (Stage 4)</strong></h3>
+<ul>
+<li>Engineering implements <strong>high-weight motivator features first</strong> (progress indicators, impact visuals).</li>
+<li>Avoids building features with &lt;5% weight (e.g., peer endorsement).</li>
+</ul>
+<h3 id="post-launch-stage-5"><strong>Post-Launch (Stage 5)</strong></h3>
+<ul>
+<li>Validate if <strong>top motivators</strong> drive better 4D metrics:
+<ul>
+<li>SUS/CSAT gains for clarity</li>
+<li>NPS uplift from trust/faith alignment</li>
+<li>DAU/retention from transparency</li>
+</ul></li>
+<li>Longitudinal tracking verifies if <em>60% transparency preference</em> translates into actual repeat engagement.</li>
+</ul>
+<hr/>
+<h2 id="a3-why-these-quant-results-matter">A3. Why These Quant Results Matter</h2>
+<ul>
+<li><strong>Strategic:</strong> Hard data from MaxDiff anchors stakeholder decisions in <strong>what donors value most</strong>, not opinions.</li>
+<li><strong>Operational:</strong> Provides numeric thresholds (55% from top 5 motivators, 60% weight transparency) to measure ROI on features and design choices.</li>
+<li><strong>Downstream:</strong> Reduces scope creep by deprioritizing motivators with statistically insignificant weights; strengthens executive confidence with quant evidence.</li>
+</ul>
+<hr/>
+<p>End of Report</p>
+<hr/>
+</article><footer class="footer">CVG Research Hub · Local edition <a href="../search.html">All pages</a></footer></main></div></body></html>

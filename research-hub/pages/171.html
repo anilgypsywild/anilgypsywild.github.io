@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="noindex,nofollow" name="robots"/><title>How Research Answers [name omitted]’s Beta Launch Questions · CVG Research Hub</title><link href="../wiki.css" rel="stylesheet"/></head><body><a class="skip" href="#main">Skip to content</a><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span aria-hidden="true" class="brand-icon">CVG</span>Research Hub</a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../search.html">Search the wiki</a></nav></div></header><div class="shell"><aside class="side"><p class="kicker">Research library</p><nav aria-label="Wiki sections"><a href="080.html">Causes research</a><a href="095.html">Research summaries</a><a href="132.html">Methods and toolkit</a><a href="205.html">Research portfolio</a><a href="207.html">Templates</a><a aria-current="true" href="187.html">Community research</a></nav></aside><main id="main"><nav aria-label="Breadcrumb" class="crumb"><a href="../index.html">Home</a> <span aria-hidden="true">/</span> <a href="187.html">Community research</a> <span aria-hidden="true">/</span> <a href="182.html">Community Research Strategy Apr 2025</a> <span aria-hidden="true">/</span> <a href="165.html">Supporter:Beta Research Strategy HIDs Experience Feb '25</a> <span aria-hidden="true">/</span> <a href="179.html">🚧 Supporter: Multi Method, Multi Stage Research Strategy for Supporter Platform Beta (March – June 2025)🚧</a> <span aria-hidden="true">/</span> <a href="176.html">Four Week Plan</a></nav><article class="doc"><p class="kicker">Research article</p><h1 id="how-research-answers-mikes-beta-launch-questions">How Research Answers <a><strong>[name omitted]’s Beta Launch Questions</strong></a></h1>
+<h2 id="key-mikes-question-will-the-supporters-use-the-product-regularly-adoption"><strong><span class="emoji">🔑</span> [name omitted]’s Question: Will the Supporters Use the Product Regularly (Adoption)?</strong></h2>
+<p><span class="emoji">✅</span> <strong>How We Answer This:</strong></p>
+<ul>
+<li><strong>Tracking Recurring Logins &amp; Session Frequency</strong> using <strong>Mixpanel Events</strong>:
+<ul>
+<li><code>Session_Start</code>, <code>Dashboard_Viewed</code>, <code>Content_Interacted</code>, <code>Return_Visit</code></li>
+</ul></li>
+<li><strong>Comparing active users vs. one-time users</strong> to <strong>identify retention trends</strong>.</li>
+<li><strong>Time-on-platform analysis</strong> → How long do users spend per session?</li>
+<li><strong>Engagement thresholds</strong> → % of users returning after first session.</li>
+</ul>
+<p><span class="emoji">📊</span> <strong>Deliverable</strong>: <strong>Monthly adoption report</strong> with % of repeat users and retention curve.</p>
+<h2 id="key-mikes-question-establish-baseline-measures-of-supporter-engagement"><strong><span class="emoji">🔑</span> [name omitted]’s Question: Establish Baseline Measures of Supporter Engagement</strong></h2>
+<p><span class="emoji">✅</span> <strong>How We Answer This:</strong><br/>
+We capture <strong>ALL engagement behaviors</strong> using <strong>Mixpanel event tracking</strong>:</p>
+<table>
+<thead>
+<tr>
+<th><strong>Engagement Metric</strong></th>
+<th><strong>Tracked By</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Views per post</strong></td>
+<td><code>Post_Viewed</code> count</td>
+</tr>
+<tr>
+<td><strong>Reactions (likes, emoji responses)</strong></td>
+<td><code>Reaction_Clicked</code></td>
+</tr>
+<tr>
+<td><strong>Comments &amp; Replies</strong></td>
+<td><code>Comment_Posted</code>, <code>Reply_Posted</code></td>
+</tr>
+<tr>
+<td><strong>Downloads</strong></td>
+<td><code>Download_Clicked</code></td>
+</tr>
+<tr>
+<td><strong>Shares</strong></td>
+<td><code>Share_Clicked</code>, <code>Share_Completed</code></td>
+</tr>
+<tr>
+<td><strong>% Notifications Clicked</strong></td>
+<td><code>Notification_Received</code>, <code>Notification_Clicked</code></td>
+</tr>
+</tbody>
+</table>
+<p><span class="emoji">📊</span> <strong>Deliverable</strong>: <strong>Engagement dashboard</strong> with <strong>real-time data visualization</strong>.</p>
+<h2 id="key-mikes-question-establish-baseline-for-time-to-value-engagement-speed"><strong><span class="emoji">🔑</span> [name omitted]’s Question: Establish Baseline for “Time to Value” (Engagement Speed)</strong></h2>
+<p><span class="emoji">✅</span> <strong>How We Answer This:</strong></p>
+<ul>
+<li><strong>Tracking “First Engagement” after Login</strong>
+<ul>
+<li><code>Time from First Login → First Reaction, Comment, or Share</code></li>
+</ul></li>
+<li><strong>Segmenting by Content Type</strong>
+<ul>
+<li>Which content leads to <strong>fastest engagement?</strong></li>
+</ul></li>
+<li><strong>Comparing New vs. Returning Users</strong>
+<ul>
+<li>Are first-time users engaging faster/slower than expected?</li>
+</ul></li>
+</ul>
+<p><span class="emoji">📊</span> <strong>Deliverable</strong>: <strong>Time-to-Value heatmap</strong> showing engagement speed across content types.</p>
+<h2 id="key-mikes-question-which-types-of-content-drive-engagement--satisfaction"><strong><span class="emoji">🔑</span> [name omitted]’s Question: Which Types of Content Drive Engagement &amp; Satisfaction?</strong></h2>
+<p><span class="emoji">✅</span> <strong>How We Answer This:</strong></p>
+<ul>
+<li><strong>Content Performance Tracking</strong>:
+<ul>
+<li><code>Engagement Rate = (Reactions + Comments + Shares) / Views</code></li>
+<li><strong>Sorting by Content Type</strong>: Stories, Impact Reports, Data-Driven Metrics, Videos, Testimonials.</li>
+</ul></li>
+<li><strong>Post-Engagement Feedback</strong>:
+<ul>
+<li><strong>“What type of content do you find most compelling?”</strong> (Multiple Choice)</li>
+<li><strong>“Why did you engage with this content?”</strong> (Short Answer)</li>
+</ul></li>
+</ul>
+<p><span class="emoji">📊</span> <strong>Deliverable</strong>: <strong>Engagement leaderboard</strong> → <strong>Top-performing content &amp; insights</strong>.</p>
+<h2 id="key-mikes-question-determine-csat-customer-satisfaction"><strong><span class="emoji">🔑</span> [name omitted]’s Question: Determine CSAT (Customer Satisfaction)</strong></h2>
+<p><span class="emoji">✅</span> <strong>How We Answer This:</strong></p>
+<ul>
+<li><strong>CSAT Survey (Likert Scale, 1-7)</strong>
+<ul>
+<li><strong>Overall Satisfaction</strong></li>
+<li><strong>Product Usability (SUS Score)</strong></li>
+<li><strong>Content Satisfaction</strong> → Stories, Evidence of Impact.</li>
+<li><strong>Quality of Communications</strong> → Translations, Readability.</li>
+</ul></li>
+<li><strong>Behavioral Validation</strong>
+<ul>
+<li>Do high-CSAT users engage more?</li>
+</ul></li>
+</ul>
+<p><span class="emoji">📊</span> <strong>Deliverable</strong>: <strong>CSAT Report</strong> with <strong>correlations between satisfaction &amp; behavior</strong>.</p>
+<h2 id="key-mikes-question-attitudinal-insights-trust-impact-connection"><strong><span class="emoji">🔑</span> [name omitted]’s Question: Attitudinal Insights (Trust, Impact, Connection)</strong></h2>
+<p><span class="emoji">✅</span> <strong>How We Answer This:</strong><br/>
+We collect <strong>structured attitudinal data</strong> via short <strong>Likert surveys &amp; open text feedback</strong>:</p>
+<table>
+<thead>
+<tr>
+<th><strong>Attitude Metric</strong></th>
+<th><strong>Survey Question &amp; Data Collection</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Feeling of Connection</strong></td>
+<td>"Do you feel connected to the community?" (1-7 scale)</td>
+</tr>
+<tr>
+<td><strong>Content Timeliness</strong></td>
+<td>"Does content arrive at the right time?" (1-7 scale)</td>
+</tr>
+<tr>
+<td><strong>Perceived Impact</strong></td>
+<td>"Do you feel your donations make an impact?" (1-7 scale)</td>
+</tr>
+<tr>
+<td><strong>Satisfaction in Contributions</strong></td>
+<td>"Do you feel fulfilled in supporting this cause?" (1-7 scale)</td>
+</tr>
+<tr>
+<td><strong>Trust in Donations</strong></td>
+<td>"Do you trust your donations are used wisely?" (1-7 scale)</td>
+</tr>
+</tbody>
+</table>
+<p><span class="emoji">📊</span> <strong>Deliverable</strong>: <strong>Trust &amp; Connection Index</strong>, <strong>Cross-referenced with Engagement Metrics</strong>.</p>
+<h2 id="key-mikes-question-correlation-between-csat--engagement"><strong><span class="emoji">🔑</span> [name omitted]’s Question: Correlation Between CSAT &amp; Engagement</strong></h2>
+<p><span class="emoji">✅</span> <strong>How We Answer This:</strong></p>
+<ul>
+<li><strong>Statistical Analysis:</strong>
+<ul>
+<li><strong>Spearman Correlation</strong> between <strong>CSAT scores &amp; Engagement Levels</strong> (Views, Reactions, Comments).</li>
+<li><strong>Regression Model</strong> to <strong>predict likelihood of high engagement based on CSAT</strong>.</li>
+</ul></li>
+<li><strong>Engagement Clustering</strong>:
+<ul>
+<li><strong>High CSAT, Low Engagement?</strong> → Platform friction.</li>
+<li><strong>Low CSAT, High Engagement?</strong> → Content is engaging but product UX needs improvement.</li>
+</ul></li>
+</ul>
+<p><span class="emoji">📊</span> <strong>Deliverable</strong>: <strong>Predictive Model</strong> → <strong>CSAT-Engagement Trends Over Time</strong>.</p>
+<hr/>
+</article><footer class="footer">CVG Research Hub · Local edition <a href="../search.html">All pages</a></footer></main></div></body></html>

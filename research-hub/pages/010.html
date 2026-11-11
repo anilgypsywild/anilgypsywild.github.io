@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="noindex,nofollow" name="robots"/><title>MaxDiff Best–Worst Scaling for Sponsor vs Donor Motivations: Methods &amp; Implementation · CVG Research Hub</title><link href="../wiki.css" rel="stylesheet"/></head><body><a class="skip" href="#main">Skip to content</a><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span aria-hidden="true" class="brand-icon">CVG</span>Research Hub</a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../search.html">Search the wiki</a></nav></div></header><div class="shell"><aside class="side"><p class="kicker">Research library</p><nav aria-label="Wiki sections"><a aria-current="true" href="080.html">Causes research</a><a href="095.html">Research summaries</a><a href="132.html">Methods and toolkit</a><a href="205.html">Research portfolio</a><a href="207.html">Templates</a><a href="187.html">Community research</a></nav></aside><main id="main"><nav aria-label="Breadcrumb" class="crumb"><a href="../index.html">Home</a> <span aria-hidden="true">/</span> <a href="080.html">Causes research</a> <span aria-hidden="true">/</span> <a href="013.html">Brief Causes Donors MaxDiff</a> <span aria-hidden="true">/</span> <a href="011.html">Sponsor Motivations MaxDiff Survey Insights</a></nav><article class="doc"><p class="kicker">Research article</p><h1>MaxDiff Best–Worst Scaling for Sponsor vs Donor Motivations: Methods &amp; Implementation</h1><div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><span class="co"># =============================================================================</span></span>
+<span id="cb1-2"><span class="co"># MaxDiff Prospects vs Donor — Processing &amp; Modeling Pipeline</span></span>
+<span id="cb1-3"><span class="co"># -----------------------------------------------------------------------------</span></span>
+<span id="cb1-4"><span class="co"># Author:      Anil Wild (Research Analayst)</span></span>
+<span id="cb1-5"><span class="co"># Email:       [redacted]         # &lt;-- update if you want</span></span>
+<span id="cb1-6"><span class="co"># Org:         Compassion International / Ventures Group</span></span>
+<span id="cb1-7"><span class="co"># Project:     Prospects Motivations (MaxDiff) with Donor Contrasts</span></span>
+<span id="cb1-8"><span class="co"># Version:     1.0.0</span></span>
+<span id="cb1-9"><span class="co"># Date:        2025-10-22</span></span>
+<span id="cb1-10"><span class="co"># R:           &gt;= 4.2.0</span></span>
+<span id="cb1-11"><span class="co"># Lic:         Internal Research Use Only</span></span>
+<span id="cb1-12"><span class="co"># -----------------------------------------------------------------------------</span></span>
+<span id="cb1-13"><span class="co"># Refs: Louviere et al. (2015); Orme (2009); Marley &amp; Louviere (2005)</span></span>
+<span id="cb1-14"><span class="co">#       Train (2009); Rossi, Allenby &amp; McCulloch (2005)</span></span>
+<span id="cb1-15"><span class="co"># =============================================================================</span></span>
+<span id="cb1-16"></span>
+<span id="cb1-17"><span class="co"># ---- Runtime hygiene ---------------------------------------------------------</span></span>
+<span id="cb1-18"><span class="fu">options</span>(<span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>, <span class="at">scipen =</span> <span class="dv">999</span>)</span>
+<span id="cb1-19"><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb1-20"></span>
+<span id="cb1-21"><span class="co"># Ensure an output folder for plots exists</span></span>
+<span id="cb1-22"><span class="cf">if</span> (<span class="sc">!</span><span class="fu">dir.exists</span>(<span class="st">"plots"</span>)) <span class="fu">dir.create</span>(<span class="st">"plots"</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-23"></span>
+<span id="cb1-24"><span class="co"># ---- Package checks (fail-fast with helpful message) -------------------------</span></span>
+<span id="cb1-25">need <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"dplyr"</span>, <span class="st">"tidyr"</span>, <span class="st">"tibble"</span>, <span class="st">"ggplot2"</span>, <span class="st">"forcats"</span>, <span class="st">"scales"</span>, <span class="st">"stringr"</span>)</span>
+<span id="cb1-26">has  <span class="ot">&lt;-</span> need <span class="sc">%in%</span> <span class="fu">rownames</span>(<span class="fu">installed.packages</span>())</span>
+<span id="cb1-27"><span class="cf">if</span> (<span class="sc">!</span><span class="fu">all</span>(has)) {</span>
+<span id="cb1-28">  <span class="fu">stop</span>(<span class="st">"Missing packages: "</span>, <span class="fu">paste</span>(need[<span class="sc">!</span>has], <span class="at">collapse =</span> <span class="st">", "</span>),</span>
+<span id="cb1-29">       <span class="st">"</span><span class="sc">\n</span><span class="st">Install with: install.packages(c('"</span>, <span class="fu">paste</span>(need, <span class="at">collapse=</span><span class="st">"','"</span>), <span class="st">"'))"</span>)</span>
+<span id="cb1-30">}</span>
+<span id="cb1-31"></span>
+<span id="cb1-32"><span class="fu">suppressPackageStartupMessages</span>({</span>
+<span id="cb1-33">  <span class="fu">library</span>(dplyr); <span class="fu">library</span>(tidyr); <span class="fu">library</span>(tibble)</span>
+<span id="cb1-34">  <span class="fu">library</span>(ggplot2); <span class="fu">library</span>(forcats); <span class="fu">library</span>(scales); <span class="fu">library</span>(stringr)</span>
+<span id="cb1-35">})</span>
+<span id="cb1-36"></span>
+<span id="cb1-37"><span class="co"># =============================================================================</span></span>
+<span id="cb1-38"><span class="co"># 1) Load raw (preserve exact headers)</span></span>
+<span id="cb1-39"><span class="co">#    - check.names = FALSE preserves the original header text exactly so that</span></span>
+<span id="cb1-40"><span class="co">#      pattern matching against survey exports (which may contain punctuation,</span></span>
+<span id="cb1-41"><span class="co">#      quotes, or spaces) works reliably.</span></span>
+<span id="cb1-42"><span class="co"># =============================================================================</span></span>
+<span id="cb1-43">raw <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"data/survey_sept_batch01.csv"</span>,</span>
+<span id="cb1-44">                <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>, <span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-45"></span>
+<span id="cb1-46"><span class="co"># ---- Canonicalizers / cleaners ----------------------------------------------</span></span>
+<span id="cb1-47"><span class="co"># Put these helpers once near the top. They make downstream matching robust to</span></span>
+<span id="cb1-48"><span class="co"># curly quotes, NBSP, stray backticks, and spacing issues.</span></span>
+<span id="cb1-49">canon_item <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb1-50">  x <span class="ot">&lt;-</span> <span class="fu">as.character</span>(x)</span>
+<span id="cb1-51">  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"[\u2018\u2019]"</span>, <span class="st">"'"</span>, x)      <span class="co"># curly → straight apostrophe</span></span>
+<span id="cb1-52">  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"^[`′]+|[`′]+$"</span>, <span class="st">""</span>, x)       <span class="co"># strip leading/trailing backticks/prime</span></span>
+<span id="cb1-53">  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"\u00A0"</span>, <span class="st">" "</span>, x)             <span class="co"># NBSP → space</span></span>
+<span id="cb1-54">  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">s+"</span>, <span class="st">" "</span>, x)               <span class="co"># collapse spaces</span></span>
+<span id="cb1-55">  <span class="fu">trimws</span>(x)</span>
+<span id="cb1-56">}</span>
+<span id="cb1-57"></span>
+<span id="cb1-58"><span class="co"># Header normalizer so grep works despite curly quotes, newlines, odd spaces</span></span>
+<span id="cb1-59">normalize_header <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb1-60">  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"[</span><span class="sc">\r\n</span><span class="st">]+"</span>, <span class="st">" "</span>, x)                              <span class="co"># collapse line breaks</span></span>
+<span id="cb1-61">  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"\u00A0|\u200B|\u200C|\u200D"</span>, <span class="st">" "</span>, x)          <span class="co"># NBSP/zero-width</span></span>
+<span id="cb1-62">  x <span class="ot">&lt;-</span> <span class="fu">chartr</span>(<span class="st">"\u201C\u201D\u2018\u2019"</span>, <span class="st">'""</span><span class="sc">\'\'</span><span class="st">'</span>, x)      <span class="co"># curly -&gt; straight quotes</span></span>
+<span id="cb1-63">  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">s+"</span>, <span class="st">" "</span>, x)                                 <span class="co"># collapse spaces</span></span>
+<span id="cb1-64">  <span class="fu">trimws</span>(x)</span>
+<span id="cb1-65">}</span>
+<span id="cb1-66"></span>
+<span id="cb1-67">nms      <span class="ot">&lt;-</span> <span class="fu">names</span>(raw)</span>
+<span id="cb1-68">nms_norm <span class="ot">&lt;-</span> <span class="fu">normalize_header</span>(nms)</span>
+<span id="cb1-69"></span>
+<span id="cb1-70"><span class="co"># =============================================================================</span></span>
+<span id="cb1-71"><span class="co"># 2) Column finders (Listener export style), ignoring "... Duration (ms)" cols</span></span>
+<span id="cb1-72"><span class="co">#    Convention in this export:</span></span>
+<span id="cb1-73"><span class="co">#      - MOST  = "Question 1: Which of these motivates you the MOST?"</span></span>
+<span id="cb1-74"><span class="co">#      - LEAST = "Question 2: Which of these motivates you the LEAST?"</span></span>
+<span id="cb1-75"><span class="co"># =============================================================================</span></span>
+<span id="cb1-76">keep_mask      <span class="ot">&lt;-</span> <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">"Duration </span><span class="sc">\\</span><span class="st">(ms</span><span class="sc">\\</span><span class="st">)$"</span>, nms_norm, <span class="at">perl =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-77">nms_norm_keep  <span class="ot">&lt;-</span> nms_norm[keep_mask]</span>
+<span id="cb1-78">nms_keep       <span class="ot">&lt;-</span> nms[keep_mask]</span>
+<span id="cb1-79"></span>
+<span id="cb1-80"><span class="co"># Robust patterns—tolerant of extra text wrapping in headers</span></span>
+<span id="cb1-81">pat_most  <span class="ot">&lt;-</span> <span class="st">'^(</span><span class="sc">\\</span><span class="st">d+)</span><span class="sc">\\</span><span class="st">..*</span><span class="sc">\\</span><span class="st">(Question</span><span class="sc">\\</span><span class="st">s*1:.*Which of these motivates you the MOST</span><span class="sc">\\</span><span class="st">??.*</span><span class="sc">\\</span><span class="st">)</span><span class="sc">\\</span><span class="st">s*Answer$'</span></span>
+<span id="cb1-82">pat_least <span class="ot">&lt;-</span> <span class="st">'^(</span><span class="sc">\\</span><span class="st">d+)</span><span class="sc">\\</span><span class="st">..*</span><span class="sc">\\</span><span class="st">(Question</span><span class="sc">\\</span><span class="st">s*2:.*Which of these motivates you the LEAST</span><span class="sc">\\</span><span class="st">??.*</span><span class="sc">\\</span><span class="st">)</span><span class="sc">\\</span><span class="st">s*Answer$'</span></span>
+<span id="cb1-83"></span>
+<span id="cb1-84">best_i_keep  <span class="ot">&lt;-</span> <span class="fu">grep</span>(pat_most,  nms_norm_keep, <span class="at">perl =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-85">worst_i_keep <span class="ot">&lt;-</span> <span class="fu">grep</span>(pat_least, nms_norm_keep, <span class="at">perl =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-86"></span>
+<span id="cb1-87"><span class="co"># Helper: extract leading screen number (e.g., "2." -&gt; 2) for task alignment</span></span>
+<span id="cb1-88">lead_num <span class="ot">&lt;-</span> <span class="cf">function</span>(v) <span class="fu">as.integer</span>(<span class="fu">sub</span>(<span class="st">"^</span><span class="sc">\\</span><span class="st">s*([0-9]+)</span><span class="sc">\\</span><span class="st">..*$"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1"</span>, v))</span>
+<span id="cb1-89"></span>
+<span id="cb1-90"><span class="co"># Order by screen number and align to intersection of tasks present in BOTH</span></span>
+<span id="cb1-91">best_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-92">  <span class="at">col      =</span> nms_keep[best_i_keep],</span>
+<span id="cb1-93">  <span class="at">col_norm =</span> nms_norm_keep[best_i_keep],</span>
+<span id="cb1-94">  <span class="at">task     =</span> <span class="fu">lead_num</span>(nms_norm_keep[best_i_keep]),</span>
+<span id="cb1-95">  <span class="at">type     =</span> <span class="st">"best"</span>,</span>
+<span id="cb1-96">  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb1-97">)</span>
+<span id="cb1-98"></span>
+<span id="cb1-99">worst_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-100">  <span class="at">col      =</span> nms_keep[worst_i_keep],</span>
+<span id="cb1-101">  <span class="at">col_norm =</span> nms_norm_keep[worst_i_keep],</span>
+<span id="cb1-102">  <span class="at">task     =</span> <span class="fu">lead_num</span>(nms_norm_keep[worst_i_keep]),</span>
+<span id="cb1-103">  <span class="at">type     =</span> <span class="st">"worst"</span>,</span>
+<span id="cb1-104">  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb1-105">)</span>
+<span id="cb1-106"></span>
+<span id="cb1-107">best_df  <span class="ot">&lt;-</span> best_df [<span class="fu">order</span>(best_df<span class="sc">$</span>task), ]</span>
+<span id="cb1-108">worst_df <span class="ot">&lt;-</span> worst_df[<span class="fu">order</span>(worst_df<span class="sc">$</span>task), ]</span>
+<span id="cb1-109"></span>
+<span id="cb1-110"><span class="co"># Keep only tasks that appear in BOTH best and worst</span></span>
+<span id="cb1-111">common_tasks <span class="ot">&lt;-</span> <span class="fu">intersect</span>(best_df<span class="sc">$</span>task, worst_df<span class="sc">$</span>task)</span>
+<span id="cb1-112">best_df  <span class="ot">&lt;-</span> best_df [best_df<span class="sc">$</span>task  <span class="sc">%in%</span> common_tasks, ]</span>
+<span id="cb1-113">worst_df <span class="ot">&lt;-</span> worst_df[worst_df<span class="sc">$</span>task <span class="sc">%in%</span> common_tasks, ]</span>
+<span id="cb1-114"></span>
+<span id="cb1-115"><span class="co"># Final column lists (same length)</span></span>
+<span id="cb1-116"><span class="fu">stopifnot</span>(<span class="fu">nrow</span>(best_df) <span class="sc">==</span> <span class="fu">nrow</span>(worst_df))</span>
+<span id="cb1-117">best_cols  <span class="ot">&lt;-</span> best_df<span class="sc">$</span>col</span>
+<span id="cb1-118">worst_cols <span class="ot">&lt;-</span> worst_df<span class="sc">$</span>col</span>
+<span id="cb1-119"></span>
+<span id="cb1-120">Tsets <span class="ot">&lt;-</span> <span class="fu">length</span>(best_cols)</span>
+<span id="cb1-121"><span class="fu">message</span>(<span class="st">"Detected "</span>, Tsets, <span class="st">" MaxDiff screens per respondent."</span>)</span>
+<span id="cb1-122"></span>
+<span id="cb1-123"><span class="co"># =============================================================================</span></span>
+<span id="cb1-124"><span class="co"># 3) Long format: BEST / LEAST per task</span></span>
+<span id="cb1-125"><span class="co">#    - drop Duration cols (already filtered)</span></span>
+<span id="cb1-126"><span class="co">#    - keep only answer text columns for MOST/LEAST</span></span>
+<span id="cb1-127"><span class="co"># =============================================================================</span></span>
+<span id="cb1-128">col_key <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(best_df, worst_df) <span class="sc">%&gt;%</span></span>
+<span id="cb1-129">  dplyr<span class="sc">::</span><span class="fu">select</span>(col, task, type)</span>
+<span id="cb1-130"></span>
+<span id="cb1-131">long <span class="ot">&lt;-</span> raw <span class="sc">%&gt;%</span></span>
+<span id="cb1-132">  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">respondent_id =</span> dplyr<span class="sc">::</span><span class="fu">row_number</span>()) <span class="sc">%&gt;%</span>   <span class="co"># stable row id</span></span>
+<span id="cb1-133">  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(</span>
+<span id="cb1-134">    <span class="at">cols =</span> dplyr<span class="sc">::</span><span class="fu">all_of</span>(col_key<span class="sc">$</span>col),</span>
+<span id="cb1-135">    <span class="at">names_to =</span> <span class="st">"col"</span>,</span>
+<span id="cb1-136">    <span class="at">values_to =</span> <span class="st">"value"</span></span>
+<span id="cb1-137">  ) <span class="sc">%&gt;%</span></span>
+<span id="cb1-138">  dplyr<span class="sc">::</span><span class="fu">left_join</span>(col_key, <span class="at">by =</span> <span class="st">"col"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-139">  tidyr<span class="sc">::</span><span class="fu">pivot_wider</span>(<span class="at">names_from =</span> type, <span class="at">values_from =</span> value) <span class="sc">%&gt;%</span></span>
+<span id="cb1-140">  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">best =</span> best, <span class="at">worst =</span> worst) <span class="sc">%&gt;%</span></span>
+<span id="cb1-141">  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">task =</span> <span class="fu">as.integer</span>(task)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-142">  dplyr<span class="sc">::</span><span class="fu">arrange</span>(respondent_id, task)</span>
+<span id="cb1-143"></span>
+<span id="cb1-144"><span class="co"># Item text cleaner (mild): remove stray backticks and extra spaces</span></span>
+<span id="cb1-145">clean_item <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb1-146">  x <span class="ot">&lt;-</span> <span class="fu">trimws</span>(x)</span>
+<span id="cb1-147">  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"^`+|`+$"</span>, <span class="st">""</span>, x)</span>
+<span id="cb1-148">  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">s+"</span>, <span class="st">" "</span>, x)</span>
+<span id="cb1-149">  x</span>
+<span id="cb1-150">}</span>
+<span id="cb1-151">long<span class="sc">$</span>best  <span class="ot">&lt;-</span> <span class="fu">clean_item</span>(long<span class="sc">$</span>best)</span>
+<span id="cb1-152">long<span class="sc">$</span>worst <span class="ot">&lt;-</span> <span class="fu">clean_item</span>(long<span class="sc">$</span>worst)</span>
+<span id="cb1-153"></span>
+<span id="cb1-154"><span class="co"># =============================================================================</span></span>
+<span id="cb1-155"><span class="co"># 4) Build pairs: each row is a best-over-worst observation</span></span>
+<span id="cb1-156"><span class="co">#    - If the export already shipped long format best/worst per task, we use it.</span></span>
+<span id="cb1-157"><span class="co">#    - y = 1 encodes "winner beats loser" for binomial logit.</span></span>
+<span id="cb1-158"><span class="co"># =============================================================================</span></span>
+<span id="cb1-159">build_pairs_row <span class="ot">&lt;-</span> <span class="cf">function</span>(best, worst, rid, task) {</span>
+<span id="cb1-160">  <span class="fu">data.frame</span>(</span>
+<span id="cb1-161">    <span class="at">respondent_id =</span> rid,</span>
+<span id="cb1-162">    <span class="at">task          =</span> task,</span>
+<span id="cb1-163">    <span class="at">winner        =</span> best,</span>
+<span id="cb1-164">    <span class="at">loser         =</span> worst,</span>
+<span id="cb1-165">    <span class="at">y             =</span> <span class="dv">1</span>,                     <span class="co"># best beats worst</span></span>
+<span id="cb1-166">    <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb1-167">  )</span>
+<span id="cb1-168">}</span>
+<span id="cb1-169"></span>
+<span id="cb1-170">pairs_all <span class="ot">&lt;-</span> <span class="fu">do.call</span>(</span>
+<span id="cb1-171">  rbind,</span>
+<span id="cb1-172">  <span class="fu">lapply</span>(<span class="fu">seq_len</span>(<span class="fu">nrow</span>(long)), <span class="cf">function</span>(i) {</span>
+<span id="cb1-173">    r <span class="ot">&lt;-</span> long[i, ]</span>
+<span id="cb1-174">    <span class="fu">build_pairs_row</span>(r<span class="sc">$</span>best, r<span class="sc">$</span>worst, r<span class="sc">$</span>respondent_id, r<span class="sc">$</span>task)</span>
+<span id="cb1-175">  })</span>
+<span id="cb1-176">)</span>
+<span id="cb1-177"></span>
+<span id="cb1-178"><span class="fu">message</span>(<span class="st">"Pairs built: "</span>, <span class="fu">nrow</span>(pairs_all))</span>
+<span id="cb1-179">utils<span class="sc">::</span><span class="fu">head</span>(pairs_all)</span>
+<span id="cb1-180"></span>
+<span id="cb1-181"><span class="co"># =============================================================================</span></span>
+<span id="cb1-182"><span class="co"># 5) Design matrix (difference coding, last item as reference)</span></span>
+<span id="cb1-183"><span class="co">#    - Create +1/-1 indicator across items excluding reference.</span></span>
+<span id="cb1-184"><span class="co">#    - This matches the theoretical setup for best-worst (difference) logit.</span></span>
+<span id="cb1-185"><span class="co"># =============================================================================</span></span>
+<span id="cb1-186">items <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">unique</span>(<span class="fu">c</span>(long<span class="sc">$</span>best, long<span class="sc">$</span>worst)))</span>
+<span id="cb1-187">items <span class="ot">&lt;-</span> items[<span class="sc">!</span><span class="fu">is.na</span>(items) <span class="sc">&amp;</span> <span class="fu">nzchar</span>(items)]</span>
+<span id="cb1-188"></span>
+<span id="cb1-189">ref_item  <span class="ot">&lt;-</span> <span class="fu">tail</span>(items, <span class="dv">1</span>)               <span class="co"># choose last as reference</span></span>
+<span id="cb1-190">item_cols <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(items, ref_item)</span>
+<span id="cb1-191"></span>
+<span id="cb1-192"><span class="co"># Create one row of X for a (winner, loser) pair</span></span>
+<span id="cb1-193">make_X <span class="ot">&lt;-</span> <span class="cf">function</span>(winner, loser, item_cols) {</span>
+<span id="cb1-194">  x <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(item_cols)), item_cols)</span>
+<span id="cb1-195">  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.na</span>(winner) <span class="sc">&amp;&amp;</span> winner <span class="sc">%in%</span> item_cols) x[winner] <span class="ot">&lt;-</span> x[winner] <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb1-196">  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.na</span>(loser)  <span class="sc">&amp;&amp;</span> loser  <span class="sc">%in%</span> item_cols) x[loser ] <span class="ot">&lt;-</span> x[loser ] <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb1-197">  x</span>
+<span id="cb1-198">}</span>
+<span id="cb1-199"></span>
+<span id="cb1-200"><span class="co"># Build design X and response y</span></span>
+<span id="cb1-201">X <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">apply</span>(pairs_all[, <span class="fu">c</span>(<span class="st">"winner"</span>,<span class="st">"loser"</span>)], <span class="dv">1</span>, <span class="cf">function</span>(r) {</span>
+<span id="cb1-202">  <span class="fu">make_X</span>(r[[<span class="st">"winner"</span>]], r[[<span class="st">"loser"</span>]], item_cols)</span>
+<span id="cb1-203">}))</span>
+<span id="cb1-204">X <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(X, <span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-205">y <span class="ot">&lt;-</span> pairs_all<span class="sc">$</span>y</span>
+<span id="cb1-206"></span>
+<span id="cb1-207"><span class="co"># =============================================================================</span></span>
+<span id="cb1-208"><span class="co"># 6) Fit overall model (aggregate binomial logit)</span></span>
+<span id="cb1-209"><span class="co">#    - GLM with logit link and no intercept (since reference dropped).</span></span>
+<span id="cb1-210"><span class="co">#    - Coefs are utilities for non-reference items; reference is 0 by construction.</span></span>
+<span id="cb1-211"><span class="co"># =============================================================================</span></span>
+<span id="cb1-212">fit_overall <span class="ot">&lt;-</span> <span class="fu">glm</span>(y <span class="sc">~</span> . <span class="sc">-</span> <span class="dv">1</span>, <span class="at">family =</span> <span class="fu">binomial</span>(), <span class="at">data =</span> <span class="fu">cbind</span>(y, X))</span>
+<span id="cb1-213"></span>
+<span id="cb1-214">co <span class="ot">&lt;-</span> <span class="fu">coef</span>(fit_overall)</span>
+<span id="cb1-215">co <span class="ot">&lt;-</span> co[<span class="sc">!</span><span class="fu">is.na</span>(co)]</span>
+<span id="cb1-216"><span class="fu">names</span>(co) <span class="ot">&lt;-</span> <span class="fu">clean_item</span>(<span class="fu">names</span>(co))</span>
+<span id="cb1-217"></span>
+<span id="cb1-218">u_hat <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(items)), items)  <span class="co"># include reference as 0</span></span>
+<span id="cb1-219">u_hat[<span class="fu">names</span>(co)] <span class="ot">&lt;-</span> co</span>
+<span id="cb1-220">u_hat[ref_item]  <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb1-221"></span>
+<span id="cb1-222"><span class="co"># Center utilities and scale to 0–100 for interpretability</span></span>
+<span id="cb1-223">u_center <span class="ot">&lt;-</span> u_hat <span class="sc">-</span> <span class="fu">mean</span>(u_hat)</span>
+<span id="cb1-224">rng <span class="ot">&lt;-</span> <span class="fu">diff</span>(<span class="fu">range</span>(u_center))</span>
+<span id="cb1-225">rel_import <span class="ot">&lt;-</span> <span class="cf">if</span> (rng <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb1-226">  (u_center <span class="sc">-</span> <span class="fu">min</span>(u_center)) <span class="sc">/</span> rng <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb1-227">} <span class="cf">else</span> {</span>
+<span id="cb1-228">  <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(u_center))</span>
+<span id="cb1-229">}</span>
+<span id="cb1-230"></span>
+<span id="cb1-231"><span class="co"># Tidy overall table</span></span>
+<span id="cb1-232">overall_table <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb1-233">  <span class="at">item       =</span> <span class="fu">names</span>(u_center),</span>
+<span id="cb1-234">  <span class="at">utility    =</span> <span class="fu">round</span>(<span class="fu">as.numeric</span>(u_center), <span class="dv">4</span>),</span>
+<span id="cb1-235">  <span class="at">importance =</span> <span class="fu">round</span>(<span class="fu">as.numeric</span>(rel_import), <span class="dv">2</span>),</span>
+<span id="cb1-236">  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb1-237">) <span class="sc">%&gt;%</span></span>
+<span id="cb1-238">  <span class="fu">arrange</span>(<span class="fu">desc</span>(importance))</span>
+<span id="cb1-239"></span>
+<span id="cb1-240"><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">--- Overall (top 15) ---</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-241"><span class="fu">print</span>(<span class="fu">head</span>(overall_table, <span class="dv">15</span>), <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-242"></span>
+<span id="cb1-243"><span class="co"># =============================================================================</span></span>
+<span id="cb1-244"><span class="co"># 7) Segmentation indices (vectorized + robust)</span></span>
+<span id="cb1-245"><span class="co">#    - Derive likely demographic columns by pattern (Listener export).</span></span>
+<span id="cb1-246"><span class="co">#    - Build named logical indices keyed by respondent_id.</span></span>
+<span id="cb1-247"><span class="co"># =============================================================================</span></span>
+<span id="cb1-248"><span class="co"># Re-use normalize_header above</span></span>
+<span id="cb1-249">nms      <span class="ot">&lt;-</span> <span class="fu">names</span>(raw)</span>
+<span id="cb1-250">nms_norm <span class="ot">&lt;-</span> <span class="fu">normalize_header</span>(nms)</span>
+<span id="cb1-251"></span>
+<span id="cb1-252">age_idx <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">'^1</span><span class="sc">\\</span><span class="st">. </span><span class="sc">\\</span><span class="st">(Questions</span><span class="sc">\\</span><span class="st">) </span><span class="sc">\\</span><span class="st">(Question 4: "Which of the following best describes your age</span><span class="sc">\\</span><span class="st">?"</span><span class="sc">\\</span><span class="st">) Answer$'</span>,</span>
+<span id="cb1-253">                nms_norm, <span class="at">perl =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-254">donor_idx <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">'^"??1</span><span class="sc">\\</span><span class="st">. </span><span class="sc">\\</span><span class="st">(Questions</span><span class="sc">\\</span><span class="st">) </span><span class="sc">\\</span><span class="st">(Question 2: "?+Which of the following best describes you</span><span class="sc">\\</span><span class="st">??"?+</span><span class="sc">\\</span><span class="st">) Answer"??$'</span>,</span>
+<span id="cb1-255">                  nms_norm, <span class="at">perl =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-256">giving_idx <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">'^1</span><span class="sc">\\</span><span class="st">. </span><span class="sc">\\</span><span class="st">(Questions</span><span class="sc">\\</span><span class="st">) </span><span class="sc">\\</span><span class="st">(Question 1: "Have you donated to Compassion Causes before</span><span class="sc">\\</span><span class="st">?"</span><span class="sc">\\</span><span class="st">) Answer$'</span>,</span>
+<span id="cb1-257">                   nms_norm, <span class="at">perl =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-258"></span>
+<span id="cb1-259"><span class="co"># Resolve to real column names (fallbacks if helpful)</span></span>
+<span id="cb1-260">age_src    <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">length</span>(age_idx))    nms[age_idx[<span class="dv">1</span>]]    <span class="cf">else</span> <span class="cf">if</span> (<span class="st">"Age"</span> <span class="sc">%in%</span> nms) <span class="st">"Age"</span> <span class="cf">else</span> <span class="cn">NA_character_</span></span>
+<span id="cb1-261">donor_src  <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">length</span>(donor_idx))  nms[donor_idx[<span class="dv">1</span>]]  <span class="cf">else</span> <span class="cn">NA_character_</span></span>
+<span id="cb1-262">giving_src <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">length</span>(giving_idx)) nms[giving_idx[<span class="dv">1</span>]] <span class="cf">else</span> <span class="cn">NA_character_</span></span>
+<span id="cb1-263"></span>
+<span id="cb1-264"><span class="fu">message</span>(<span class="st">"Seg columns detected: age='"</span>, age_src, <span class="st">"', donor='"</span>, donor_src, <span class="st">"', giving='"</span>, giving_src, <span class="st">"'"</span>)</span>
+<span id="cb1-265"></span>
+<span id="cb1-266"><span class="co"># Vectorized mappers for coarse bins</span></span>
+<span id="cb1-267">derive_age_bin_vec <span class="ot">&lt;-</span> <span class="cf">function</span>(v) {</span>
+<span id="cb1-268">  chr <span class="ot">&lt;-</span> <span class="fu">trimws</span>(<span class="fu">as.character</span>(v))</span>
+<span id="cb1-269">  num <span class="ot">&lt;-</span> <span class="fu">suppressWarnings</span>(<span class="fu">as.numeric</span>(chr))</span>
+<span id="cb1-270">  out <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA_character_</span>, <span class="fu">length</span>(chr))</span>
+<span id="cb1-271"></span>
+<span id="cb1-272">  <span class="co"># numeric entries (if any)</span></span>
+<span id="cb1-273">  out[<span class="sc">!</span><span class="fu">is.na</span>(num) <span class="sc">&amp;</span> num <span class="sc">&lt;</span> <span class="dv">35</span>]  <span class="ot">&lt;-</span> <span class="st">"18-34"</span></span>
+<span id="cb1-274">  out[<span class="sc">!</span><span class="fu">is.na</span>(num) <span class="sc">&amp;</span> num <span class="sc">&gt;=</span> <span class="dv">35</span>] <span class="ot">&lt;-</span> <span class="st">"35+"</span></span>
+<span id="cb1-275"></span>
+<span id="cb1-276">  <span class="co"># buckets / ranges in text</span></span>
+<span id="cb1-277">  rng_1834 <span class="ot">&lt;-</span> <span class="fu">grepl</span>(<span class="st">"(?i)</span><span class="sc">\\</span><span class="st">b(18</span><span class="sc">\\</span><span class="st">s*[–-]</span><span class="sc">\\</span><span class="st">s*34|25</span><span class="sc">\\</span><span class="st">s*[–-]</span><span class="sc">\\</span><span class="st">s*34|18-34|25-34)</span><span class="sc">\\</span><span class="st">b"</span>, chr, <span class="at">perl =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-278">  rng_35p  <span class="ot">&lt;-</span> <span class="fu">grepl</span>(<span class="st">"(?i)</span><span class="sc">\\</span><span class="st">b(35</span><span class="sc">\\</span><span class="st">s*[–-]</span><span class="sc">\\</span><span class="st">s*44|45</span><span class="sc">\\</span><span class="st">s*[–-]</span><span class="sc">\\</span><span class="st">s*54|55</span><span class="sc">\\</span><span class="st">s*[–-]</span><span class="sc">\\</span><span class="st">s*64|65</span><span class="sc">\\</span><span class="st">+|35-44|45-54|55-64)</span><span class="sc">\\</span><span class="st">b"</span>, chr, <span class="at">perl =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-279">  out[<span class="fu">is.na</span>(out) <span class="sc">&amp;</span> rng_1834] <span class="ot">&lt;-</span> <span class="st">"18-34"</span></span>
+<span id="cb1-280">  out[<span class="fu">is.na</span>(out) <span class="sc">&amp;</span> rng_35p]  <span class="ot">&lt;-</span> <span class="st">"35+"</span></span>
+<span id="cb1-281"></span>
+<span id="cb1-282">  <span class="co"># single ages embedded in free text</span></span>
+<span id="cb1-283">  any_1834 <span class="ot">&lt;-</span> <span class="fu">grepl</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">b(1[89]|2[0-9]|3[0-4])</span><span class="sc">\\</span><span class="st">b"</span>, chr)</span>
+<span id="cb1-284">  any_35p  <span class="ot">&lt;-</span> <span class="fu">grepl</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">b(3[5-9]|[4-8][0-9])</span><span class="sc">\\</span><span class="st">b"</span>, chr)</span>
+<span id="cb1-285">  out[<span class="fu">is.na</span>(out) <span class="sc">&amp;</span> any_1834] <span class="ot">&lt;-</span> <span class="st">"18-34"</span></span>
+<span id="cb1-286">  out[<span class="fu">is.na</span>(out) <span class="sc">&amp;</span> any_35p]  <span class="ot">&lt;-</span> <span class="st">"35+"</span></span>
+<span id="cb1-287">  out</span>
+<span id="cb1-288">}</span>
+<span id="cb1-289"></span>
+<span id="cb1-290">to_donor_type_vec <span class="ot">&lt;-</span> <span class="cf">function</span>(v) {</span>
+<span id="cb1-291">  t <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">trimws</span>(<span class="fu">as.character</span>(v)))</span>
+<span id="cb1-292">  out <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA_character_</span>, <span class="fu">length</span>(t))</span>
+<span id="cb1-293">  hid <span class="ot">&lt;-</span> <span class="fu">grepl</span>(<span class="st">"often|regular|fundrais|active|organis|organize|lead|advocat"</span>, t)</span>
+<span id="cb1-294">  out[hid]                 <span class="ot">&lt;-</span> <span class="st">"HID"</span>     <span class="co"># High Involvement Donor (heuristic)</span></span>
+<span id="cb1-295">  out[<span class="fu">is.na</span>(out) <span class="sc">&amp;</span> t <span class="sc">!=</span> <span class="st">""</span>] <span class="ot">&lt;-</span> <span class="st">"Casual"</span></span>
+<span id="cb1-296">  out</span>
+<span id="cb1-297">}</span>
+<span id="cb1-298"></span>
+<span id="cb1-299">to_giving_status_vec <span class="ot">&lt;-</span> <span class="cf">function</span>(v) {</span>
+<span id="cb1-300">  t <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">trimws</span>(<span class="fu">as.character</span>(v)))</span>
+<span id="cb1-301">  out <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA_character_</span>, <span class="fu">length</span>(t))</span>
+<span id="cb1-302">  out[<span class="fu">grepl</span>(<span class="st">"^</span><span class="sc">\\</span><span class="st">s*(no|not yet|never|first)"</span>, t)] <span class="ot">&lt;-</span> <span class="st">"FirstTime"</span></span>
+<span id="cb1-303">  out[<span class="fu">grepl</span>(<span class="st">"^</span><span class="sc">\\</span><span class="st">s*(yes|many|repeat|once)"</span>, t)]   <span class="ot">&lt;-</span> <span class="st">"Repeat"</span></span>
+<span id="cb1-304">  out</span>
+<span id="cb1-305">}</span>
+<span id="cb1-306"></span>
+<span id="cb1-307"><span class="co"># Build segmentation frame aligned to respondent_id == row_number()</span></span>
+<span id="cb1-308">seg_df <span class="ot">&lt;-</span> raw <span class="sc">%&gt;%</span></span>
+<span id="cb1-309">  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">respondent_id =</span> dplyr<span class="sc">::</span><span class="fu">row_number</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb1-310">  dplyr<span class="sc">::</span><span class="fu">transmute</span>(</span>
+<span id="cb1-311">    <span class="at">respondent_id =</span> <span class="fu">as.character</span>(respondent_id),</span>
+<span id="cb1-312">    <span class="at">age =</span> <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.na</span>(age_src) <span class="sc">&amp;&amp;</span> age_src <span class="sc">%in%</span> <span class="fu">names</span>(.))</span>
+<span id="cb1-313">             <span class="fu">derive_age_bin_vec</span>(.data[[age_src]])</span>
+<span id="cb1-314">          <span class="cf">else</span> <span class="cf">if</span> (<span class="st">"Age"</span> <span class="sc">%in%</span> <span class="fu">names</span>(.))</span>
+<span id="cb1-315">             <span class="fu">derive_age_bin_vec</span>(.data[[<span class="st">"Age"</span>]])</span>
+<span id="cb1-316">          <span class="cf">else</span> <span class="cn">NA_character_</span>,</span>
+<span id="cb1-317">    <span class="at">donor_type =</span> <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.na</span>(donor_src) <span class="sc">&amp;&amp;</span> donor_src <span class="sc">%in%</span> <span class="fu">names</span>(.))</span>
+<span id="cb1-318">                   <span class="fu">to_donor_type_vec</span>(.data[[donor_src]])</span>
+<span id="cb1-319">                 <span class="cf">else</span> <span class="cn">NA_character_</span>,</span>
+<span id="cb1-320">    <span class="at">giving_status =</span> <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.na</span>(giving_src) <span class="sc">&amp;&amp;</span> giving_src <span class="sc">%in%</span> <span class="fu">names</span>(.))</span>
+<span id="cb1-321">                      <span class="fu">to_giving_status_vec</span>(.data[[giving_src]])</span>
+<span id="cb1-322">                    <span class="cf">else</span> <span class="cn">NA_character_</span></span>
+<span id="cb1-323">  )</span>
+<span id="cb1-324"></span>
+<span id="cb1-325"><span class="co"># Indices keyed by respondent_id</span></span>
+<span id="cb1-326">pairs_all<span class="sc">$</span>respondent_id <span class="ot">&lt;-</span> <span class="fu">as.character</span>(pairs_all<span class="sc">$</span>respondent_id)</span>
+<span id="cb1-327"></span>
+<span id="cb1-328">ids_from_idx <span class="ot">&lt;-</span> <span class="cf">function</span>(idx) <span class="fu">names</span>(idx)[<span class="fu">which</span>(<span class="sc">!</span><span class="fu">is.na</span>(idx) <span class="sc">&amp;</span> idx)]</span>
+<span id="cb1-329"></span>
+<span id="cb1-330">idx_nextgen <span class="ot">&lt;-</span> <span class="fu">with</span>(seg_df, <span class="fu">setNames</span>(age <span class="sc">==</span> <span class="st">"18-34"</span>,         respondent_id))</span>
+<span id="cb1-331">idx_current <span class="ot">&lt;-</span> <span class="fu">with</span>(seg_df, <span class="fu">setNames</span>(age <span class="sc">==</span> <span class="st">"35+"</span>,           respondent_id))</span>
+<span id="cb1-332">idx_HID     <span class="ot">&lt;-</span> <span class="fu">with</span>(seg_df, <span class="fu">setNames</span>(donor_type <span class="sc">==</span> <span class="st">"HID"</span>,    respondent_id))</span>
+<span id="cb1-333">idx_casual  <span class="ot">&lt;-</span> <span class="fu">with</span>(seg_df, <span class="fu">setNames</span>(donor_type <span class="sc">==</span> <span class="st">"Casual"</span>, respondent_id))</span>
+<span id="cb1-334">idx_first   <span class="ot">&lt;-</span> <span class="fu">with</span>(seg_df, <span class="fu">setNames</span>(giving_status <span class="sc">==</span> <span class="st">"FirstTime"</span>, respondent_id))</span>
+<span id="cb1-335">idx_repeat  <span class="ot">&lt;-</span> <span class="fu">with</span>(seg_df, <span class="fu">setNames</span>(giving_status <span class="sc">==</span> <span class="st">"Repeat"</span>,    respondent_id))</span>
+<span id="cb1-336"></span>
+<span id="cb1-337"><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">-- seg_df head --</span><span class="sc">\n</span><span class="st">"</span>); <span class="fu">print</span>(utils<span class="sc">::</span><span class="fu">head</span>(seg_df, <span class="dv">3</span>))</span>
+<span id="cb1-338"><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">-- counts --</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-339"><span class="fu">print</span>(<span class="fu">table</span>(seg_df<span class="sc">$</span>age, <span class="at">useNA =</span> <span class="st">"ifany"</span>))</span>
+<span id="cb1-340"><span class="fu">print</span>(<span class="fu">table</span>(seg_df<span class="sc">$</span>donor_type, <span class="at">useNA =</span> <span class="st">"ifany"</span>))</span>
+<span id="cb1-341"><span class="fu">print</span>(<span class="fu">table</span>(seg_df<span class="sc">$</span>giving_status, <span class="at">useNA =</span> <span class="st">"ifany"</span>))</span>
+<span id="cb1-342"></span>
+<span id="cb1-343"><span class="co"># ---- Normalize &amp; rebuild indices for extra robustness ------------------------</span></span>
+<span id="cb1-344">norm_str <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb1-345">  x <span class="ot">&lt;-</span> <span class="fu">trimws</span>(<span class="fu">as.character</span>(x))</span>
+<span id="cb1-346">  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"[\u2013\u2014\u2212]"</span>, <span class="st">"-"</span>, x)  <span class="co"># en/em/minus → hyphen</span></span>
+<span id="cb1-347">  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">s+"</span>, <span class="st">" "</span>, x)</span>
+<span id="cb1-348">  x</span>
+<span id="cb1-349">}</span>
+<span id="cb1-350">seg_df<span class="sc">$</span>age           <span class="ot">&lt;-</span> <span class="fu">norm_str</span>(seg_df<span class="sc">$</span>age)</span>
+<span id="cb1-351">seg_df<span class="sc">$</span>giving_status <span class="ot">&lt;-</span> <span class="fu">norm_str</span>(seg_df<span class="sc">$</span>giving_status)</span>
+<span id="cb1-352"></span>
+<span id="cb1-353"><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">-- uniques (post-normalize) --</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-354"><span class="fu">print</span>(<span class="fu">unique</span>(seg_df<span class="sc">$</span>age))</span>
+<span id="cb1-355"><span class="fu">print</span>(<span class="fu">unique</span>(seg_df<span class="sc">$</span>giving_status))</span>
+<span id="cb1-356"></span>
+<span id="cb1-357">is_nextgen  <span class="ot">&lt;-</span> <span class="fu">grepl</span>(<span class="st">"^18-?34$"</span>, seg_df<span class="sc">$</span>age, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-358">is_current  <span class="ot">&lt;-</span> <span class="fu">grepl</span>(<span class="st">"^35</span><span class="sc">\\</span><span class="st">+$"</span>,  seg_df<span class="sc">$</span>age, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-359">is_first    <span class="ot">&lt;-</span> <span class="fu">grepl</span>(<span class="st">"^first</span><span class="sc">\\</span><span class="st">s*time$|^firsttime$"</span>, seg_df<span class="sc">$</span>giving_status, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-360">is_repeat   <span class="ot">&lt;-</span> <span class="fu">grepl</span>(<span class="st">"^repeat$"</span>,                    seg_df<span class="sc">$</span>giving_status, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-361"></span>
+<span id="cb1-362">idx_nextgen <span class="ot">&lt;-</span> <span class="fu">setNames</span>(is_nextgen, seg_df<span class="sc">$</span>respondent_id)</span>
+<span id="cb1-363">idx_current <span class="ot">&lt;-</span> <span class="fu">setNames</span>(is_current, seg_df<span class="sc">$</span>respondent_id)</span>
+<span id="cb1-364">idx_first   <span class="ot">&lt;-</span> <span class="fu">setNames</span>(is_first,   seg_df<span class="sc">$</span>respondent_id)</span>
+<span id="cb1-365">idx_repeat  <span class="ot">&lt;-</span> <span class="fu">setNames</span>(is_repeat,  seg_df<span class="sc">$</span>respondent_id)</span>
+<span id="cb1-366"></span>
+<span id="cb1-367"><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">-- idx counts --</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-368"><span class="fu">cat</span>(<span class="st">"NextGen:"</span>,  <span class="fu">sum</span>(idx_nextgen, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-369"><span class="fu">cat</span>(<span class="st">"CurrentGen:"</span>,<span class="fu">sum</span>(idx_current, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-370"><span class="fu">cat</span>(<span class="st">"First time:"</span>,<span class="fu">sum</span>(idx_first,   <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-371"><span class="fu">cat</span>(<span class="st">"Repeat:"</span>,    <span class="fu">sum</span>(idx_repeat,  <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-372"></span>
+<span id="cb1-373"><span class="co"># =============================================================================</span></span>
+<span id="cb1-374"><span class="co"># 8) Segment fitting helper</span></span>
+<span id="cb1-375"><span class="co">#    - Fits the same difference-coded logit on a subset of respondents.</span></span>
+<span id="cb1-376"><span class="co">#    - Returns a tibble with (item, importance).</span></span>
+<span id="cb1-377"><span class="co"># =============================================================================</span></span>
+<span id="cb1-378">estimate_segment <span class="ot">&lt;-</span> <span class="cf">function</span>(idx_named, seg_name, <span class="at">min_rows =</span> <span class="dv">30</span><span class="dt">L</span>) {</span>
+<span id="cb1-379">  keep_ids <span class="ot">&lt;-</span> <span class="fu">names</span>(idx_named)[<span class="fu">which</span>(<span class="sc">!</span><span class="fu">is.na</span>(idx_named) <span class="sc">&amp;</span> idx_named)]</span>
+<span id="cb1-380">  <span class="cf">if</span> (<span class="fu">length</span>(keep_ids) <span class="sc">&lt;</span> min_rows) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb1-381"></span>
+<span id="cb1-382">  sub <span class="ot">&lt;-</span> pairs_all[pairs_all<span class="sc">$</span>respondent_id <span class="sc">%in%</span> keep_ids, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb1-383">  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">nrow</span>(sub)) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb1-384"></span>
+<span id="cb1-385">  Xs <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">apply</span>(sub[, <span class="fu">c</span>(<span class="st">"winner"</span>,<span class="st">"loser"</span>)], <span class="dv">1</span>, <span class="cf">function</span>(r) <span class="fu">make_X</span>(r[<span class="dv">1</span>], r[<span class="dv">2</span>], item_cols)))</span>
+<span id="cb1-386">  Xs <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(Xs, <span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-387">  ys <span class="ot">&lt;-</span> sub<span class="sc">$</span>y</span>
+<span id="cb1-388"></span>
+<span id="cb1-389">  fit <span class="ot">&lt;-</span> <span class="fu">try</span>(<span class="fu">glm</span>(ys <span class="sc">~</span> . <span class="sc">-</span> <span class="dv">1</span>, <span class="at">family =</span> <span class="fu">binomial</span>(), <span class="at">data =</span> <span class="fu">cbind</span>(ys, Xs),</span>
+<span id="cb1-390">                 <span class="at">control =</span> <span class="fu">list</span>(<span class="at">maxit =</span> <span class="dv">100</span>)), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-391">  <span class="cf">if</span> (<span class="fu">inherits</span>(fit, <span class="st">"try-error"</span>)) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb1-392"></span>
+<span id="cb1-393">  co <span class="ot">&lt;-</span> <span class="fu">coef</span>(fit); co[<span class="fu">is.na</span>(co)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb1-394">  uh <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(items)), items)</span>
+<span id="cb1-395">  uh[<span class="fu">names</span>(co)] <span class="ot">&lt;-</span> co</span>
+<span id="cb1-396">  uh[ref_item]  <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb1-397"></span>
+<span id="cb1-398">  ucenter <span class="ot">&lt;-</span> uh <span class="sc">-</span> <span class="fu">mean</span>(uh)</span>
+<span id="cb1-399">  rng <span class="ot">&lt;-</span> <span class="fu">max</span>(ucenter) <span class="sc">-</span> <span class="fu">min</span>(ucenter)</span>
+<span id="cb1-400">  imp <span class="ot">&lt;-</span> <span class="cf">if</span> (rng <span class="sc">&gt;</span> <span class="dv">0</span>) (ucenter <span class="sc">-</span> <span class="fu">min</span>(ucenter))<span class="sc">/</span>rng<span class="sc">*</span><span class="dv">100</span> <span class="cf">else</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(ucenter))</span>
+<span id="cb1-401"></span>
+<span id="cb1-402">  tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">item =</span> <span class="fu">names</span>(imp), <span class="at">importance =</span> <span class="fu">as.numeric</span>(imp))</span>
+<span id="cb1-403">}</span>
+<span id="cb1-404"></span>
+<span id="cb1-405"><span class="co"># Fit some common segments (min_rows = 1 to "try anyway" in small tests)</span></span>
+<span id="cb1-406">seg_next   <span class="ot">&lt;-</span> <span class="fu">estimate_segment</span>(idx_nextgen, <span class="st">"NextGen"</span>,    <span class="at">min_rows =</span> <span class="dv">1</span><span class="dt">L</span>)</span>
+<span id="cb1-407">seg_curr   <span class="ot">&lt;-</span> <span class="fu">estimate_segment</span>(idx_current, <span class="st">"CurrentGen"</span>, <span class="at">min_rows =</span> <span class="dv">1</span><span class="dt">L</span>)</span>
+<span id="cb1-408">seg_first  <span class="ot">&lt;-</span> <span class="fu">estimate_segment</span>(idx_first,   <span class="st">"First time"</span>, <span class="at">min_rows =</span> <span class="dv">1</span><span class="dt">L</span>)</span>
+<span id="cb1-409">seg_repeat <span class="ot">&lt;-</span> <span class="fu">estimate_segment</span>(idx_repeat,  <span class="st">"Repeat"</span>,     <span class="at">min_rows =</span> <span class="dv">1</span><span class="dt">L</span>)</span>
+<span id="cb1-410"></span>
+<span id="cb1-411">msg <span class="ot">&lt;-</span> <span class="cf">function</span>(name, df)</span>
+<span id="cb1-412">  <span class="cf">if</span> (<span class="fu">is.null</span>(df)) <span class="fu">message</span>(name, <span class="st">": &lt;none&gt;"</span>) <span class="cf">else</span> <span class="fu">message</span>(name, <span class="st">": OK ("</span>, <span class="fu">nrow</span>(df), <span class="st">" rows)"</span>)</span>
+<span id="cb1-413"><span class="fu">msg</span>(<span class="st">"NextGen"</span>, seg_next); <span class="fu">msg</span>(<span class="st">"CurrentGen"</span>, seg_curr)</span>
+<span id="cb1-414"><span class="fu">msg</span>(<span class="st">"First time"</span>, seg_first); <span class="fu">msg</span>(<span class="st">"Repeat"</span>, seg_repeat)</span>
+<span id="cb1-415"></span>
+<span id="cb1-416"><span class="co"># Optional donor-involvement segments if present</span></span>
+<span id="cb1-417">seg_HID    <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb1-418">seg_casual <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb1-419"><span class="cf">if</span> (<span class="sc">!</span><span class="fu">exists</span>(<span class="st">"idx_HID"</span>) <span class="sc">||</span> <span class="sc">!</span><span class="fu">exists</span>(<span class="st">"idx_casual"</span>)) {</span>
+<span id="cb1-420">  <span class="cf">if</span> (<span class="st">"donor_type"</span> <span class="sc">%in%</span> <span class="fu">names</span>(seg_df)) {</span>
+<span id="cb1-421">    idx_HID    <span class="ot">&lt;-</span> <span class="fu">setNames</span>(seg_df<span class="sc">$</span>donor_type <span class="sc">==</span> <span class="st">"HID"</span>,    seg_df<span class="sc">$</span>respondent_id)</span>
+<span id="cb1-422">    idx_casual <span class="ot">&lt;-</span> <span class="fu">setNames</span>(seg_df<span class="sc">$</span>donor_type <span class="sc">==</span> <span class="st">"Casual"</span>, seg_df<span class="sc">$</span>respondent_id)</span>
+<span id="cb1-423">  } <span class="cf">else</span> {</span>
+<span id="cb1-424">    idx_HID    <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">rep</span>(<span class="cn">FALSE</span>, <span class="fu">nrow</span>(seg_df)), seg_df<span class="sc">$</span>respondent_id)</span>
+<span id="cb1-425">    idx_casual <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">rep</span>(<span class="cn">FALSE</span>, <span class="fu">nrow</span>(seg_df)), seg_df<span class="sc">$</span>respondent_id)</span>
+<span id="cb1-426">  }</span>
+<span id="cb1-427">}</span>
+<span id="cb1-428">seg_HID    <span class="ot">&lt;-</span> <span class="fu">estimate_segment</span>(idx_HID,    <span class="st">"High impact donors"</span>, <span class="at">min_rows =</span> <span class="dv">1</span><span class="dt">L</span>)</span>
+<span id="cb1-429">seg_casual <span class="ot">&lt;-</span> <span class="fu">estimate_segment</span>(idx_casual, <span class="st">"Casual supporters"</span>,  <span class="at">min_rows =</span> <span class="dv">1</span><span class="dt">L</span>)</span>
+<span id="cb1-430"></span>
+<span id="cb1-431"><span class="co"># =============================================================================</span></span>
+<span id="cb1-432"><span class="co"># 9) Visualization helpers and outputs</span></span>
+<span id="cb1-433"><span class="co"># =============================================================================</span></span>
+<span id="cb1-434"><span class="co"># Add small labels on bars</span></span>
+<span id="cb1-435">add_value_labels <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">width =</span> <span class="fl">0.7</span>, <span class="at">size =</span> <span class="fl">3.6</span>, <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.15</span>, <span class="at">digits =</span> <span class="dv">1</span>) {</span>
+<span id="cb1-436">  ggplot2<span class="sc">::</span><span class="fu">geom_text</span>(</span>
+<span id="cb1-437">    ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(<span class="fu">after_stat</span>(y), digits)),</span>
+<span id="cb1-438">    <span class="at">stat =</span> <span class="st">"identity"</span>,</span>
+<span id="cb1-439">    <span class="at">position =</span> ggplot2<span class="sc">::</span><span class="fu">position_dodge</span>(<span class="at">width =</span> width),</span>
+<span id="cb1-440">    <span class="at">hjust =</span> hjust, <span class="at">size =</span> size, <span class="at">color =</span> <span class="st">"#222"</span></span>
+<span id="cb1-441">  )</span>
+<span id="cb1-442">}</span>
+<span id="cb1-443"></span>
+<span id="cb1-444"><span class="co"># A light, presentation-friendly theme</span></span>
+<span id="cb1-445">theme_clean_light <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">base_size =</span> <span class="dv">13</span>) {</span>
+<span id="cb1-446">  ggplot2<span class="sc">::</span><span class="fu">theme_minimal</span>(<span class="at">base_size =</span> base_size) <span class="sc">%+replace%</span></span>
+<span id="cb1-447">    ggplot2<span class="sc">::</span><span class="fu">theme</span>(</span>
+<span id="cb1-448">      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">colour =</span> <span class="cn">NA</span>),</span>
+<span id="cb1-449">      <span class="at">plot.background  =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">colour =</span> <span class="cn">NA</span>),</span>
+<span id="cb1-450">      <span class="at">panel.grid.major.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb1-451">      <span class="at">panel.grid.minor   =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb1-452">      <span class="at">axis.title.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> base_size <span class="sc">-</span> <span class="dv">1</span>),</span>
+<span id="cb1-453">      <span class="at">axis.text   =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"#222"</span>),</span>
+<span id="cb1-454">      <span class="at">plot.title  =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb1-455">      <span class="at">legend.position =</span> <span class="st">"top"</span>,</span>
+<span id="cb1-456">      <span class="at">legend.title =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb1-457">      <span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="dv">10</span>, <span class="dv">16</span>, <span class="dv">10</span>, <span class="dv">10</span>)</span>
+<span id="cb1-458">    )</span>
+<span id="cb1-459">}</span>
+<span id="cb1-460"></span>
+<span id="cb1-461"><span class="co"># Palette for segments</span></span>
+<span id="cb1-462"><span class="cf">if</span> (<span class="sc">!</span><span class="fu">exists</span>(<span class="st">"pal_light"</span>)) {</span>
+<span id="cb1-463">  pal_light <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb1-464">    <span class="st">"NextGen"</span>            <span class="ot">=</span> <span class="st">"#5BA3D0"</span>,</span>
+<span id="cb1-465">    <span class="st">"CurrentGen"</span>         <span class="ot">=</span> <span class="st">"#9AC27E"</span>,</span>
+<span id="cb1-466">    <span class="st">"High impact donors"</span> <span class="ot">=</span> <span class="st">"#7F8AC6"</span>,</span>
+<span id="cb1-467">    <span class="st">"Casual supporters"</span>  <span class="ot">=</span> <span class="st">"#F2A640"</span>,</span>
+<span id="cb1-468">    <span class="st">"First time"</span>         <span class="ot">=</span> <span class="st">"#71C6B1"</span>,</span>
+<span id="cb1-469">    <span class="st">"Repeat"</span>             <span class="ot">=</span> <span class="st">"#D77C8C"</span></span>
+<span id="cb1-470">  )</span>
+<span id="cb1-471">}</span>
+<span id="cb1-472"></span>
+<span id="cb1-473"><span class="co"># Canonicalize items before plotting (de-dup visually similar labels)</span></span>
+<span id="cb1-474">overall_table <span class="ot">&lt;-</span> overall_table <span class="sc">%&gt;%</span></span>
+<span id="cb1-475">  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">item =</span> <span class="fu">canon_item</span>(item)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-476">  dplyr<span class="sc">::</span><span class="fu">group_by</span>(item) <span class="sc">%&gt;%</span></span>
+<span id="cb1-477">  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
+<span id="cb1-478">    <span class="at">utility    =</span> <span class="fu">mean</span>(utility, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-479">    <span class="at">importance =</span> <span class="fu">mean</span>(importance, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-480">    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb1-481">  )</span>
+<span id="cb1-482"></span>
+<span id="cb1-483"><span class="co"># Overall bar chart</span></span>
+<span id="cb1-484">p_overall <span class="ot">&lt;-</span> overall_table <span class="sc">%&gt;%</span></span>
+<span id="cb1-485">  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">item =</span> forcats<span class="sc">::</span><span class="fu">fct_reorder</span>(item, importance)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-486">  ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> item, <span class="at">y =</span> importance)) <span class="sc">+</span></span>
+<span id="cb1-487">  ggplot2<span class="sc">::</span><span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"#5BA3D0"</span>, <span class="at">width =</span> <span class="fl">0.65</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb1-488">  ggplot2<span class="sc">::</span><span class="fu">coord_flip</span>(<span class="at">clip =</span> <span class="st">"off"</span>) <span class="sc">+</span></span>
+<span id="cb1-489">  <span class="fu">add_value_labels</span>(<span class="at">width =</span> <span class="fl">0.65</span>, <span class="at">digits =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb1-490">  ggplot2<span class="sc">::</span><span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> ggplot2<span class="sc">::</span><span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, .<span class="dv">08</span>))) <span class="sc">+</span></span>
+<span id="cb1-491">  ggplot2<span class="sc">::</span><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Overall Relative Importance"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Importance (0–100)"</span>) <span class="sc">+</span></span>
+<span id="cb1-492">  <span class="fu">theme_clean_light</span>(<span class="dv">14</span>)</span>
+<span id="cb1-493"></span>
+<span id="cb1-494">ggplot2<span class="sc">::</span><span class="fu">ggsave</span>(<span class="st">"plots/Plot_RelImpBarChart.png"</span>, p_overall, <span class="at">width =</span> <span class="dv">9</span>, <span class="at">height =</span> <span class="fl">6.2</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
+<span id="cb1-495"></span>
+<span id="cb1-496"><span class="co"># Prepare segment comparisons</span></span>
+<span id="cb1-497">safe_seg <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="cf">if</span> (<span class="fu">is.null</span>(x)) <span class="fu">tibble</span>(<span class="at">item =</span> <span class="fu">character</span>(), <span class="at">importance =</span> <span class="fu">numeric</span>()) <span class="cf">else</span> x</span>
+<span id="cb1-498"></span>
+<span id="cb1-499">seg_compare <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(</span>
+<span id="cb1-500">  <span class="fu">safe_seg</span>(seg_next)  <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(item, importance) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">segment =</span> <span class="st">"NextGen"</span>),</span>
+<span id="cb1-501">  <span class="fu">safe_seg</span>(seg_curr)  <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(item, importance) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">segment =</span> <span class="st">"CurrentGen"</span>)</span>
+<span id="cb1-502">) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(importance))</span>
+<span id="cb1-503"></span>
+<span id="cb1-504">seg_compare2 <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(</span>
+<span id="cb1-505">  <span class="fu">safe_seg</span>(seg_HID)    <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(item, importance) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">segment =</span> <span class="st">"High impact donors"</span>),</span>
+<span id="cb1-506">  <span class="fu">safe_seg</span>(seg_casual) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(item, importance) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">segment =</span> <span class="st">"Casual supporters"</span>)</span>
+<span id="cb1-507">) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(importance))</span>
+<span id="cb1-508"></span>
+<span id="cb1-509">seg_compare3 <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(</span>
+<span id="cb1-510">  <span class="fu">safe_seg</span>(seg_first)  <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(item, importance) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">segment =</span> <span class="st">"First time"</span>),</span>
+<span id="cb1-511">  <span class="fu">safe_seg</span>(seg_repeat) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(item, importance) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">segment =</span> <span class="st">"Repeat"</span>)</span>
+<span id="cb1-512">) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(importance))</span>
+<span id="cb1-513"></span>
+<span id="cb1-514"><span class="co"># NextGen vs CurrentGen — Top 10</span></span>
+<span id="cb1-515"><span class="cf">if</span> (<span class="fu">nrow</span>(seg_compare)) {</span>
+<span id="cb1-516">  seg_compare <span class="ot">&lt;-</span> seg_compare <span class="sc">%&gt;%</span></span>
+<span id="cb1-517">    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">item =</span> <span class="fu">canon_item</span>(item)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-518">    dplyr<span class="sc">::</span><span class="fu">group_by</span>(segment, item) <span class="sc">%&gt;%</span></span>
+<span id="cb1-519">    dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">importance =</span> <span class="fu">mean</span>(importance, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb1-520"></span>
+<span id="cb1-521">  top_items <span class="ot">&lt;-</span> seg_compare <span class="sc">%&gt;%</span></span>
+<span id="cb1-522">    dplyr<span class="sc">::</span><span class="fu">group_by</span>(item) <span class="sc">%&gt;%</span></span>
+<span id="cb1-523">    dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">mean_imp =</span> <span class="fu">mean</span>(importance, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-524">    dplyr<span class="sc">::</span><span class="fu">slice_max</span>(mean_imp, <span class="at">n =</span> <span class="dv">10</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-525">    dplyr<span class="sc">::</span><span class="fu">pull</span>(item)</span>
+<span id="cb1-526"></span>
+<span id="cb1-527">  p_seg_compare <span class="ot">&lt;-</span> seg_compare <span class="sc">%&gt;%</span></span>
+<span id="cb1-528">    dplyr<span class="sc">::</span><span class="fu">filter</span>(item <span class="sc">%in%</span> top_items) <span class="sc">%&gt;%</span></span>
+<span id="cb1-529">    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">item =</span> forcats<span class="sc">::</span><span class="fu">fct_reorder</span>(item, importance, <span class="at">.fun =</span> mean, <span class="at">.desc =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-530">    ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> item, <span class="at">y =</span> importance, <span class="at">fill =</span> segment)) <span class="sc">+</span></span>
+<span id="cb1-531">    ggplot2<span class="sc">::</span><span class="fu">geom_col</span>(<span class="at">position =</span> ggplot2<span class="sc">::</span><span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.7</span>), <span class="at">width =</span> <span class="fl">0.6</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb1-532">    ggplot2<span class="sc">::</span><span class="fu">coord_flip</span>(<span class="at">clip =</span> <span class="st">"off"</span>) <span class="sc">+</span></span>
+<span id="cb1-533">    ggplot2<span class="sc">::</span><span class="fu">scale_fill_manual</span>(<span class="at">values =</span> pal_light[<span class="fu">c</span>(<span class="st">"NextGen"</span>,<span class="st">"CurrentGen"</span>)]) <span class="sc">+</span></span>
+<span id="cb1-534">    <span class="fu">add_value_labels</span>(<span class="at">width =</span> <span class="fl">0.7</span>, <span class="at">digits =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb1-535">    ggplot2<span class="sc">::</span><span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> ggplot2<span class="sc">::</span><span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, .<span class="dv">10</span>))) <span class="sc">+</span></span>
+<span id="cb1-536">    ggplot2<span class="sc">::</span><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"NextGen vs CurrentGen — Top 10 Motivators"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Importance (0–100)"</span>) <span class="sc">+</span></span>
+<span id="cb1-537">    <span class="fu">theme_clean_light</span>(<span class="dv">13</span>)</span>
+<span id="cb1-538"></span>
+<span id="cb1-539">  ggplot2<span class="sc">::</span><span class="fu">ggsave</span>(<span class="st">"plots/Plot_SegmentCompareNGCG.png"</span>, p_seg_compare, <span class="at">width =</span> <span class="dv">9</span>, <span class="at">height =</span> <span class="fl">6.5</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
+<span id="cb1-540">}</span>
+<span id="cb1-541"></span>
+<span id="cb1-542"><span class="co"># First-time vs Repeat — Top 10</span></span>
+<span id="cb1-543"><span class="cf">if</span> (<span class="fu">nrow</span>(seg_compare3)) {</span>
+<span id="cb1-544">  seg_compare3 <span class="ot">&lt;-</span> seg_compare3 <span class="sc">%&gt;%</span></span>
+<span id="cb1-545">    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">item =</span> <span class="fu">canon_item</span>(item)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-546">    dplyr<span class="sc">::</span><span class="fu">group_by</span>(segment, item) <span class="sc">%&gt;%</span></span>
+<span id="cb1-547">    dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">importance =</span> <span class="fu">mean</span>(importance, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb1-548"></span>
+<span id="cb1-549">  <span class="co"># recompute top items with canonicalization</span></span>
+<span id="cb1-550">  top_items <span class="ot">&lt;-</span> seg_compare <span class="sc">%&gt;%</span></span>
+<span id="cb1-551">    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">item =</span> <span class="fu">canon_item</span>(item)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-552">    dplyr<span class="sc">::</span><span class="fu">group_by</span>(item) <span class="sc">%&gt;%</span></span>
+<span id="cb1-553">    dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">mean_imp =</span> <span class="fu">mean</span>(importance, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-554">    dplyr<span class="sc">::</span><span class="fu">slice_max</span>(mean_imp, <span class="at">n =</span> <span class="dv">10</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-555">    dplyr<span class="sc">::</span><span class="fu">pull</span>(item)</span>
+<span id="cb1-556"></span>
+<span id="cb1-557">  p_seg_compare3 <span class="ot">&lt;-</span> seg_compare3 <span class="sc">%&gt;%</span></span>
+<span id="cb1-558">    dplyr<span class="sc">::</span><span class="fu">filter</span>(item <span class="sc">%in%</span> top_items) <span class="sc">%&gt;%</span></span>
+<span id="cb1-559">    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">item =</span> forcats<span class="sc">::</span><span class="fu">fct_reorder</span>(item, importance, <span class="at">.fun =</span> mean, <span class="at">.desc =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-560">    ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> item, <span class="at">y =</span> importance, <span class="at">fill =</span> segment)) <span class="sc">+</span></span>
+<span id="cb1-561">    ggplot2<span class="sc">::</span><span class="fu">geom_col</span>(<span class="at">position =</span> ggplot2<span class="sc">::</span><span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.7</span>), <span class="at">width =</span> <span class="fl">0.6</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb1-562">    ggplot2<span class="sc">::</span><span class="fu">coord_flip</span>(<span class="at">clip =</span> <span class="st">"off"</span>) <span class="sc">+</span></span>
+<span id="cb1-563">    ggplot2<span class="sc">::</span><span class="fu">scale_fill_manual</span>(<span class="at">values =</span> pal_light[<span class="fu">c</span>(<span class="st">"First time"</span>,<span class="st">"Repeat"</span>)]) <span class="sc">+</span></span>
+<span id="cb1-564">    <span class="fu">add_value_labels</span>(<span class="at">width =</span> <span class="fl">0.7</span>, <span class="at">digits =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb1-565">    ggplot2<span class="sc">::</span><span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> ggplot2<span class="sc">::</span><span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, .<span class="dv">10</span>))) <span class="sc">+</span></span>
+<span id="cb1-566">    ggplot2<span class="sc">::</span><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"First-time vs Repeat — Top 10 Motivators"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Importance (0–100)"</span>) <span class="sc">+</span></span>
+<span id="cb1-567">    <span class="fu">theme_clean_light</span>(<span class="dv">13</span>)</span>
+<span id="cb1-568"></span>
+<span id="cb1-569">  ggplot2<span class="sc">::</span><span class="fu">ggsave</span>(<span class="st">"plots/Plot_SegmentFirstTimeVsRepeat.png"</span>, p_seg_compare3, <span class="at">width =</span> <span class="dv">9</span>, <span class="at">height =</span> <span class="fl">6.5</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
+<span id="cb1-570">}</span>
+<span id="cb1-571"></span>
+<span id="cb1-572"><span class="co"># ---- Share of Preference (Overall) -------------------------------------------</span></span>
+<span id="cb1-573">plot_share_of_preference <span class="ot">&lt;-</span> <span class="cf">function</span>(overall_table, outfile, <span class="at">temperature =</span> <span class="dv">1</span>) {</span>
+<span id="cb1-574">  <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">c</span>(<span class="st">"item"</span>,<span class="st">"utility"</span>) <span class="sc">%in%</span> <span class="fu">names</span>(overall_table)))</span>
+<span id="cb1-575">  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">dir.exists</span>(<span class="fu">dirname</span>(outfile))) <span class="fu">dir.create</span>(<span class="fu">dirname</span>(outfile), <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-576"></span>
+<span id="cb1-577">  <span class="co"># Stable softmax on mean-centered utilities</span></span>
+<span id="cb1-578">  u <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(overall_table<span class="sc">$</span>utility)</span>
+<span id="cb1-579">  u[<span class="fu">is.na</span>(u)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb1-580">  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.finite</span>(temperature) <span class="sc">||</span> temperature <span class="sc">&lt;=</span> <span class="dv">0</span>) temperature <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb1-581"></span>
+<span id="cb1-582">  s   <span class="ot">&lt;-</span> (u <span class="sc">-</span> <span class="fu">max</span>(u, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> temperature</span>
+<span id="cb1-583">  p   <span class="ot">&lt;-</span> <span class="fu">exp</span>(s)</span>
+<span id="cb1-584">  sop <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> p <span class="sc">/</span> <span class="fu">sum</span>(p)</span>
+<span id="cb1-585"></span>
+<span id="cb1-586">  df <span class="ot">&lt;-</span> overall_table <span class="sc">%&gt;%</span></span>
+<span id="cb1-587">    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">share =</span> sop) <span class="sc">%&gt;%</span></span>
+<span id="cb1-588">    dplyr<span class="sc">::</span><span class="fu">arrange</span>(dplyr<span class="sc">::</span><span class="fu">desc</span>(share))</span>
+<span id="cb1-589"></span>
+<span id="cb1-590">  g <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb1-591">    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">item =</span> forcats<span class="sc">::</span><span class="fu">fct_reorder</span>(item, share)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-592">    ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> item, <span class="at">y =</span> share)) <span class="sc">+</span></span>
+<span id="cb1-593">    ggplot2<span class="sc">::</span><span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"#5BA3D0"</span>, <span class="at">width =</span> <span class="fl">0.65</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb1-594">    ggplot2<span class="sc">::</span><span class="fu">coord_flip</span>(<span class="at">clip =</span> <span class="st">"off"</span>) <span class="sc">+</span></span>
+<span id="cb1-595">    ggplot2<span class="sc">::</span><span class="fu">geom_text</span>(ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"%.1f%%"</span>, share)),</span>
+<span id="cb1-596">                       <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.15</span>, <span class="at">size =</span> <span class="fl">3.6</span>, <span class="at">color =</span> <span class="st">"#222"</span>) <span class="sc">+</span></span>
+<span id="cb1-597">    ggplot2<span class="sc">::</span><span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> ggplot2<span class="sc">::</span><span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, .<span class="dv">08</span>))) <span class="sc">+</span></span>
+<span id="cb1-598">    ggplot2<span class="sc">::</span><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Share of Preference (Softmax on Utilities)"</span>,</span>
+<span id="cb1-599">                  <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Percent"</span>) <span class="sc">+</span></span>
+<span id="cb1-600">    <span class="fu">theme_clean_light</span>(<span class="dv">14</span>)</span>
+<span id="cb1-601"></span>
+<span id="cb1-602">  ggplot2<span class="sc">::</span><span class="fu">ggsave</span>(outfile, g, <span class="at">width =</span> <span class="dv">9</span>, <span class="at">height =</span> <span class="fl">6.2</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
+<span id="cb1-603">  <span class="fu">invisible</span>(g)</span>
+<span id="cb1-604">}</span>
+<span id="cb1-605"><span class="fu">plot_share_of_preference</span>(overall_table, <span class="st">"plots/Plot_ShareOfPreference.png"</span>)</span>
+<span id="cb1-606"></span>
+<span id="cb1-607"><span class="co"># ---- Cumulative Capture Curve ------------------------------------------------</span></span>
+<span id="cb1-608">plot_cumulative_capture <span class="ot">&lt;-</span> <span class="cf">function</span>(overall_table, outfile) {</span>
+<span id="cb1-609">  <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">c</span>(<span class="st">"item"</span>,<span class="st">"importance"</span>) <span class="sc">%in%</span> <span class="fu">names</span>(overall_table)))</span>
+<span id="cb1-610">  df <span class="ot">&lt;-</span> overall_table <span class="sc">%&gt;%</span></span>
+<span id="cb1-611">    dplyr<span class="sc">::</span><span class="fu">arrange</span>(dplyr<span class="sc">::</span><span class="fu">desc</span>(importance)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-612">    dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb1-613">      <span class="at">rank =</span> dplyr<span class="sc">::</span><span class="fu">row_number</span>(),</span>
+<span id="cb1-614">      <span class="at">cum_capture =</span> <span class="dv">100</span> <span class="sc">*</span> <span class="fu">cumsum</span>(importance) <span class="sc">/</span> <span class="fu">sum</span>(importance)</span>
+<span id="cb1-615">    )</span>
+<span id="cb1-616"></span>
+<span id="cb1-617">  g <span class="ot">&lt;-</span> ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(df, ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> rank, <span class="at">y =</span> cum_capture)) <span class="sc">+</span></span>
+<span id="cb1-618">    ggplot2<span class="sc">::</span><span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">"#5BA3D0"</span>) <span class="sc">+</span></span>
+<span id="cb1-619">    ggplot2<span class="sc">::</span><span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.8</span>, <span class="at">color =</span> <span class="st">"#5BA3D0"</span>) <span class="sc">+</span></span>
+<span id="cb1-620">    ggplot2<span class="sc">::</span><span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span></span>
+<span id="cb1-621">    ggplot2<span class="sc">::</span><span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> <span class="cf">function</span>(x) <span class="fu">sprintf</span>(<span class="st">"%.0f%%"</span>, x)) <span class="sc">+</span></span>
+<span id="cb1-622">    ggplot2<span class="sc">::</span><span class="fu">labs</span>(</span>
+<span id="cb1-623">      <span class="at">title =</span> <span class="st">"Cumulative Capture of Importance"</span>,</span>
+<span id="cb1-624">      <span class="at">x =</span> <span class="st">"Top-N items (by importance)"</span>,</span>
+<span id="cb1-625">      <span class="at">y =</span> <span class="st">"Captured share of total importance"</span></span>
+<span id="cb1-626">    ) <span class="sc">+</span></span>
+<span id="cb1-627">    <span class="fu">theme_clean_light</span>(<span class="dv">13</span>)</span>
+<span id="cb1-628"></span>
+<span id="cb1-629">  ggplot2<span class="sc">::</span><span class="fu">ggsave</span>(outfile, g, <span class="at">width =</span> <span class="fl">8.5</span>, <span class="at">height =</span> <span class="fl">5.2</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
+<span id="cb1-630">  <span class="fu">invisible</span>(g)</span>
+<span id="cb1-631">}</span>
+<span id="cb1-632"><span class="fu">plot_cumulative_capture</span>(overall_table, <span class="st">"plots/Plot_CumulativeCapture.png"</span>)</span>
+<span id="cb1-633"></span>
+<span id="cb1-634"><span class="co"># Quick sanity: item label overlap before/after canonicalization</span></span>
+<span id="cb1-635">table_before <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">intersect</span>(<span class="fu">unique</span>(pairs_all<span class="sc">$</span>winner), overall_table<span class="sc">$</span>item))</span>
+<span id="cb1-636">table_after  <span class="ot">&lt;-</span> {</span>
+<span id="cb1-637">  canon <span class="ot">&lt;-</span> <span class="cf">function</span>(x){x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"\u00A0"</span>,<span class="st">" "</span>,x); x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">s+"</span>,<span class="st">" "</span>,x); <span class="fu">trimws</span>(x)}</span>
+<span id="cb1-638">  <span class="fu">length</span>(<span class="fu">intersect</span>(<span class="fu">unique</span>(<span class="fu">canon</span>(pairs_all<span class="sc">$</span>winner)), <span class="fu">canon</span>(overall_table<span class="sc">$</span>item)))</span>
+<span id="cb1-639">}</span>
+<span id="cb1-640"><span class="fu">cat</span>(<span class="st">"Unique overlaps — raw:"</span>, table_before, <span class="st">" | canon:"</span>, table_after, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb1-641"></span>
+<span id="cb1-642"><span class="co"># ---- Dumbbell delta between two segments -------------------------------------</span></span>
+<span id="cb1-643">plot_dumbbell_two_segments <span class="ot">&lt;-</span> <span class="cf">function</span>(segA, segB, nameA, nameB, outfile,</span>
+<span id="cb1-644">                                       <span class="at">top_n =</span> <span class="dv">15</span>, <span class="at">label_endpoints =</span> <span class="cn">TRUE</span>, <span class="at">wrap =</span> <span class="dv">44</span>) {</span>
+<span id="cb1-645">  <span class="fu">stopifnot</span>(<span class="sc">!</span><span class="fu">is.null</span>(segA), <span class="sc">!</span><span class="fu">is.null</span>(segB))</span>
+<span id="cb1-646">  <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">c</span>(<span class="st">"item"</span>,<span class="st">"importance"</span>) <span class="sc">%in%</span> <span class="fu">names</span>(segA)),</span>
+<span id="cb1-647">            <span class="fu">all</span>(<span class="fu">c</span>(<span class="st">"item"</span>,<span class="st">"importance"</span>) <span class="sc">%in%</span> <span class="fu">names</span>(segB)))</span>
+<span id="cb1-648"></span>
+<span id="cb1-649">  a <span class="ot">&lt;-</span> segA <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(item, <span class="at">impA =</span> importance) <span class="sc">%&gt;%</span></span>
+<span id="cb1-650">    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">item =</span> <span class="fu">canon_item</span>(item)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-651">    dplyr<span class="sc">::</span><span class="fu">group_by</span>(item) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">impA =</span> <span class="fu">mean</span>(impA, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb1-652"></span>
+<span id="cb1-653">  b <span class="ot">&lt;-</span> segB <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(item, <span class="at">impB =</span> importance) <span class="sc">%&gt;%</span></span>
+<span id="cb1-654">    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">item =</span> <span class="fu">canon_item</span>(item)) <span class="sc">%&gt;%</span></span>
+<span id="cb1-655">    dplyr<span class="sc">::</span><span class="fu">group_by</span>(item) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">impB =</span> <span class="fu">mean</span>(impB, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb1-656"></span>
+<span id="cb1-657">  df <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">inner_join</span>(a, b, <span class="at">by =</span> <span class="st">"item"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-658">    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">delta =</span> impA <span class="sc">-</span> impB) <span class="sc">%&gt;%</span></span>
+<span id="cb1-659">    dplyr<span class="sc">::</span><span class="fu">arrange</span>(dplyr<span class="sc">::</span><span class="fu">desc</span>(<span class="fu">abs</span>(delta))) <span class="sc">%&gt;%</span></span>
+<span id="cb1-660">    dplyr<span class="sc">::</span><span class="fu">slice_head</span>(<span class="at">n =</span> top_n)</span>
+<span id="cb1-661"></span>
+<span id="cb1-662">  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">nrow</span>(df)) {</span>
+<span id="cb1-663">    <span class="fu">warning</span>(<span class="st">"No overlapping items between segments; nothing to plot."</span>)</span>
+<span id="cb1-664">    <span class="fu">return</span>(<span class="fu">invisible</span>(<span class="cn">NULL</span>))</span>
+<span id="cb1-665">  }</span>
+<span id="cb1-666"></span>
+<span id="cb1-667">  df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">order_key =</span> <span class="fu">pmax</span>(impA, impB))</span>
+<span id="cb1-668">  df<span class="sc">$</span>item <span class="ot">&lt;-</span> forcats<span class="sc">::</span><span class="fu">fct_reorder</span>(df<span class="sc">$</span>item, df<span class="sc">$</span>order_key, <span class="at">.desc =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-669"></span>
+<span id="cb1-670">  <span class="co"># palette fallback</span></span>
+<span id="cb1-671">  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">exists</span>(<span class="st">"pal_light"</span>)) {</span>
+<span id="cb1-672">    pal_light <span class="ot">&lt;&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb1-673">      <span class="st">"NextGen"</span>            <span class="ot">=</span> <span class="st">"#5BA3D0"</span>,</span>
+<span id="cb1-674">      <span class="st">"CurrentGen"</span>         <span class="ot">=</span> <span class="st">"#9AC27E"</span>,</span>
+<span id="cb1-675">      <span class="st">"High impact donors"</span> <span class="ot">=</span> <span class="st">"#7F8AC6"</span>,</span>
+<span id="cb1-676">      <span class="st">"Casual supporters"</span>  <span class="ot">=</span> <span class="st">"#F2A640"</span>,</span>
+<span id="cb1-677">      <span class="st">"First time"</span>         <span class="ot">=</span> <span class="st">"#71C6B1"</span>,</span>
+<span id="cb1-678">      <span class="st">"Repeat"</span>             <span class="ot">=</span> <span class="st">"#D77C8C"</span></span>
+<span id="cb1-679">    )</span>
+<span id="cb1-680">  }</span>
+<span id="cb1-681"></span>
+<span id="cb1-682">  g <span class="ot">&lt;-</span> ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(df, ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">y =</span> stringr<span class="sc">::</span><span class="fu">str_wrap</span>(item, <span class="at">width =</span> wrap))) <span class="sc">+</span></span>
+<span id="cb1-683">    ggplot2<span class="sc">::</span><span class="fu">geom_segment</span>(</span>
+<span id="cb1-684">      ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">yend =</span> stringr<span class="sc">::</span><span class="fu">str_wrap</span>(item, <span class="at">width =</span> wrap), <span class="at">x =</span> impB, <span class="at">xend =</span> impA),</span>
+<span id="cb1-685">      <span class="at">linewidth =</span> <span class="fl">1.2</span>, <span class="at">color =</span> <span class="st">"#e0e0e0"</span></span>
+<span id="cb1-686">    ) <span class="sc">+</span></span>
+<span id="cb1-687">    ggplot2<span class="sc">::</span><span class="fu">geom_point</span>(ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> impB, <span class="at">color =</span> nameB), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb1-688">    ggplot2<span class="sc">::</span><span class="fu">geom_point</span>(ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> impA, <span class="at">color =</span> nameA), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb1-689">    ggplot2<span class="sc">::</span><span class="fu">scale_color_manual</span>(</span>
+<span id="cb1-690">      <span class="at">values =</span> pal_light[<span class="fu">c</span>(nameA, nameB)],</span>
+<span id="cb1-691">      <span class="at">breaks =</span> <span class="fu">c</span>(nameA, nameB), <span class="at">limits =</span> <span class="fu">c</span>(nameA, nameB), <span class="at">name =</span> <span class="cn">NULL</span></span>
+<span id="cb1-692">    ) <span class="sc">+</span></span>
+<span id="cb1-693">    ggplot2<span class="sc">::</span><span class="fu">labs</span>(</span>
+<span id="cb1-694">      <span class="at">title =</span> <span class="fu">paste0</span>(nameA, <span class="st">" vs "</span>, nameB, <span class="st">" — \u0394 Importance"</span>),</span>
+<span id="cb1-695">      <span class="at">x =</span> <span class="st">"Importance (0–100)"</span>, <span class="at">y =</span> <span class="cn">NULL</span></span>
+<span id="cb1-696">    ) <span class="sc">+</span></span>
+<span id="cb1-697">    ggplot2<span class="sc">::</span><span class="fu">scale_x_continuous</span>(<span class="at">expand =</span> ggplot2<span class="sc">::</span><span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="fl">0.02</span>, <span class="fl">0.06</span>))) <span class="sc">+</span></span>
+<span id="cb1-698">    <span class="fu">theme_clean_light</span>(<span class="dv">13</span>)</span>
+<span id="cb1-699"></span>
+<span id="cb1-700">  <span class="cf">if</span> (<span class="fu">isTRUE</span>(label_endpoints)) {</span>
+<span id="cb1-701">    g <span class="ot">&lt;-</span> g <span class="sc">+</span></span>
+<span id="cb1-702">      ggplot2<span class="sc">::</span><span class="fu">geom_text</span>(ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> impB, <span class="at">label =</span> <span class="fu">round</span>(impB, <span class="dv">1</span>)),</span>
+<span id="cb1-703">                         <span class="at">nudge_y =</span> <span class="fl">0.15</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">color =</span> <span class="st">"#333"</span>) <span class="sc">+</span></span>
+<span id="cb1-704">      ggplot2<span class="sc">::</span><span class="fu">geom_text</span>(ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> impA, <span class="at">label =</span> <span class="fu">round</span>(impA, <span class="dv">1</span>)),</span>
+<span id="cb1-705">                         <span class="at">nudge_y =</span> <span class="sc">-</span><span class="fl">0.15</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">color =</span> <span class="st">"#333"</span>)</span>
+<span id="cb1-706">  }</span>
+<span id="cb1-707"></span>
+<span id="cb1-708">  ggplot2<span class="sc">::</span><span class="fu">ggsave</span>(outfile, g, <span class="at">width =</span> <span class="fl">9.5</span>, <span class="at">height =</span> <span class="fl">6.8</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
+<span id="cb1-709">  <span class="fu">invisible</span>(g)</span>
+<span id="cb1-710">}</span>
+<span id="cb1-711"></span>
+<span id="cb1-712"><span class="co"># Example dumbbell: NextGen vs CurrentGen</span></span>
+<span id="cb1-713"><span class="fu">plot_dumbbell_two_segments</span>(</span>
+<span id="cb1-714">  seg_next, seg_curr, <span class="st">"NextGen"</span>, <span class="st">"CurrentGen"</span>,</span>
+<span id="cb1-715">  <span class="st">"plots/Plot_Dumbbell_NG_vs_CG.png"</span></span>
+<span id="cb1-716">)</span>
+<span id="cb1-717"></span>
+<span id="cb1-718"><span class="co"># =============================================================================</span></span>
+<span id="cb1-719"><span class="co"># 10) Bootstrap CIs for Overall Importance</span></span>
+<span id="cb1-720"><span class="co">#     - Nonparametric respondent-level bootstrap -&gt; 95% percentile CI.</span></span>
+<span id="cb1-721"><span class="co">#     - Defensive coding: handle singular fits by substituting zeros on failure.</span></span>
+<span id="cb1-722"><span class="co"># =============================================================================</span></span>
+<span id="cb1-723">bootstrap_overall <span class="ot">&lt;-</span> <span class="cf">function</span>(pairs_all, items, ref_item, <span class="at">B =</span> <span class="dv">200</span>, <span class="at">seed =</span> <span class="dv">123</span>) {</span>
+<span id="cb1-724">  <span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">c</span>(<span class="st">"respondent_id"</span>,<span class="st">"winner"</span>,<span class="st">"loser"</span>,<span class="st">"y"</span>) <span class="sc">%in%</span> <span class="fu">names</span>(pairs_all)))</span>
+<span id="cb1-725">  <span class="fu">set.seed</span>(seed)</span>
+<span id="cb1-726"></span>
+<span id="cb1-727">  items     <span class="ot">&lt;-</span> <span class="fu">clean_item</span>(items)</span>
+<span id="cb1-728">  ref_item  <span class="ot">&lt;-</span> <span class="fu">clean_item</span>(ref_item)</span>
+<span id="cb1-729">  item_cols <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(items, ref_item)</span>
+<span id="cb1-730"></span>
+<span id="cb1-731">  make_X <span class="ot">&lt;-</span> <span class="cf">function</span>(winner, loser, item_cols) {</span>
+<span id="cb1-732">    x <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(item_cols)); <span class="fu">names</span>(x) <span class="ot">&lt;-</span> item_cols</span>
+<span id="cb1-733">    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.na</span>(winner) <span class="sc">&amp;&amp;</span> winner <span class="sc">%in%</span> item_cols) x[winner] <span class="ot">&lt;-</span> x[winner] <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb1-734">    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.na</span>(loser)  <span class="sc">&amp;&amp;</span> loser  <span class="sc">%in%</span> item_cols) x[loser ] <span class="ot">&lt;-</span> x[loser ] <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb1-735">    x</span>
+<span id="cb1-736">  }</span>
+<span id="cb1-737"></span>
+<span id="cb1-738">  fit_one <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
+<span id="cb1-739">    Xs <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">apply</span>(df[, <span class="fu">c</span>(<span class="st">"winner"</span>,<span class="st">"loser"</span>)], <span class="dv">1</span>, <span class="cf">function</span>(r) <span class="fu">make_X</span>(r[<span class="dv">1</span>], r[<span class="dv">2</span>], item_cols)))</span>
+<span id="cb1-740">    Xs <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(Xs, <span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-741">    ys <span class="ot">&lt;-</span> df<span class="sc">$</span>y</span>
+<span id="cb1-742">    co <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>(</span>
+<span id="cb1-743">      <span class="fu">coef</span>(<span class="fu">glm</span>(ys <span class="sc">~</span> . <span class="sc">-</span> <span class="dv">1</span>, <span class="at">family =</span> <span class="fu">binomial</span>(), <span class="at">data =</span> <span class="fu">cbind</span>(ys, Xs),</span>
+<span id="cb1-744">               <span class="at">control =</span> <span class="fu">list</span>(<span class="at">maxit =</span> <span class="dv">100</span>))),</span>
+<span id="cb1-745">      <span class="at">error =</span> <span class="cf">function</span>(e) <span class="fu">rep</span>(<span class="cn">NA_real_</span>, <span class="fu">length</span>(item_cols))</span>
+<span id="cb1-746">    )</span>
+<span id="cb1-747">    co[<span class="fu">is.na</span>(co)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb1-748">    <span class="fu">names</span>(co) <span class="ot">&lt;-</span> <span class="fu">clean_item</span>(<span class="fu">names</span>(co))</span>
+<span id="cb1-749"></span>
+<span id="cb1-750">    uh <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(items)), items)</span>
+<span id="cb1-751">    uh[<span class="fu">names</span>(co)] <span class="ot">&lt;-</span> co</span>
+<span id="cb1-752">    uh[ref_item]  <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb1-753"></span>
+<span id="cb1-754">    ucenter <span class="ot">&lt;-</span> uh <span class="sc">-</span> <span class="fu">mean</span>(uh)</span>
+<span id="cb1-755">    rng <span class="ot">&lt;-</span> <span class="fu">max</span>(ucenter) <span class="sc">-</span> <span class="fu">min</span>(ucenter)</span>
+<span id="cb1-756">    <span class="cf">if</span> (rng <span class="sc">&gt;</span> <span class="dv">0</span>) (ucenter <span class="sc">-</span> <span class="fu">min</span>(ucenter))<span class="sc">/</span>rng<span class="sc">*</span><span class="dv">100</span> <span class="cf">else</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(ucenter))</span>
+<span id="cb1-757">  }</span>
+<span id="cb1-758"></span>
+<span id="cb1-759">  ids <span class="ot">&lt;-</span> <span class="fu">unique</span>(pairs_all<span class="sc">$</span>respondent_id)</span>
+<span id="cb1-760">  M   <span class="ot">&lt;-</span> <span class="fu">length</span>(ids)</span>
+<span id="cb1-761">  mat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA_real_</span>, <span class="at">nrow =</span> B, <span class="at">ncol =</span> <span class="fu">length</span>(items))</span>
+<span id="cb1-762">  <span class="fu">colnames</span>(mat) <span class="ot">&lt;-</span> items</span>
+<span id="cb1-763"></span>
+<span id="cb1-764">  <span class="cf">for</span> (b <span class="cf">in</span> <span class="fu">seq_len</span>(B)) {</span>
+<span id="cb1-765">    samp_ids <span class="ot">&lt;-</span> <span class="fu">sample</span>(ids, <span class="at">size =</span> M, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-766">    sub <span class="ot">&lt;-</span> pairs_all[pairs_all<span class="sc">$</span>respondent_id <span class="sc">%in%</span> samp_ids, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb1-767">    mat[b, ] <span class="ot">&lt;-</span> <span class="fu">fit_one</span>(sub)</span>
+<span id="cb1-768">  }</span>
+<span id="cb1-769"></span>
+<span id="cb1-770">  tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb1-771">    <span class="at">item =</span> items,</span>
+<span id="cb1-772">    <span class="at">lo   =</span> <span class="fu">apply</span>(mat, <span class="dv">2</span>, <span class="cf">function</span>(x) stats<span class="sc">::</span><span class="fu">quantile</span>(x, <span class="fl">0.025</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb1-773">    <span class="at">hi   =</span> <span class="fu">apply</span>(mat, <span class="dv">2</span>, <span class="cf">function</span>(x) stats<span class="sc">::</span><span class="fu">quantile</span>(x, <span class="fl">0.975</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb1-774">  )</span>
+<span id="cb1-775">}</span>
+<span id="cb1-776"></span>
+<span id="cb1-777">plot_overall_ci <span class="ot">&lt;-</span> <span class="cf">function</span>(overall_table, ci_df, outfile) {</span>
+<span id="cb1-778">  df <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">left_join</span>(</span>
+<span id="cb1-779">          overall_table <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">item =</span> <span class="fu">clean_item</span>(item)),</span>
+<span id="cb1-780">          ci_df <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">item =</span> <span class="fu">clean_item</span>(item)),</span>
+<span id="cb1-781">          <span class="at">by =</span> <span class="st">"item"</span></span>
+<span id="cb1-782">        ) <span class="sc">%&gt;%</span></span>
+<span id="cb1-783">        dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">item =</span> forcats<span class="sc">::</span><span class="fu">fct_reorder</span>(item, importance))</span>
+<span id="cb1-784"></span>
+<span id="cb1-785">  g <span class="ot">&lt;-</span> ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(df, ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> item, <span class="at">y =</span> importance)) <span class="sc">+</span></span>
+<span id="cb1-786">    ggplot2<span class="sc">::</span><span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"#5BA3D0"</span>, <span class="at">width =</span> <span class="fl">0.65</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb1-787">    ggplot2<span class="sc">::</span><span class="fu">geom_errorbar</span>(ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">ymin =</span> lo, <span class="at">ymax =</span> hi), <span class="at">linewidth =</span> <span class="fl">0.6</span>, <span class="at">width =</span> <span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb1-788">    ggplot2<span class="sc">::</span><span class="fu">coord_flip</span>(<span class="at">clip =</span> <span class="st">"off"</span>) <span class="sc">+</span></span>
+<span id="cb1-789">    ggplot2<span class="sc">::</span><span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> ggplot2<span class="sc">::</span><span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, .<span class="dv">08</span>))) <span class="sc">+</span></span>
+<span id="cb1-790">    ggplot2<span class="sc">::</span><span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Overall Relative Importance (Bootstrap 95% CI)"</span>,</span>
+<span id="cb1-791">                  <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Importance (0–100)"</span>) <span class="sc">+</span></span>
+<span id="cb1-792">    <span class="fu">theme_clean_light</span>(<span class="dv">14</span>)</span>
+<span id="cb1-793"></span>
+<span id="cb1-794">  ggplot2<span class="sc">::</span><span class="fu">ggsave</span>(outfile, g, <span class="at">width =</span> <span class="fl">9.5</span>, <span class="at">height =</span> <span class="fl">6.5</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span>
+<span id="cb1-795">  <span class="fu">invisible</span>(g)</span>
+<span id="cb1-796">}</span>
+<span id="cb1-797"></span>
+<span id="cb1-798"><span class="co"># items &amp; ref_item are already defined by this point</span></span>
+<span id="cb1-799">items    <span class="ot">&lt;-</span> overall_table<span class="sc">$</span>item</span>
+<span id="cb1-800">ref_item <span class="ot">&lt;-</span> <span class="fu">tail</span>(items, <span class="dv">1</span>)</span>
+<span id="cb1-801"></span>
+<span id="cb1-802">ci <span class="ot">&lt;-</span> <span class="fu">bootstrap_overall</span>(</span>
+<span id="cb1-803">  <span class="at">pairs_all =</span> pairs_all,</span>
+<span id="cb1-804">  <span class="at">items     =</span> items,</span>
+<span id="cb1-805">  <span class="at">ref_item  =</span> ref_item,</span>
+<span id="cb1-806">  <span class="at">B =</span> <span class="dv">200</span>,</span>
+<span id="cb1-807">  <span class="at">seed =</span> <span class="dv">42</span></span>
+<span id="cb1-808">)</span>
+<span id="cb1-809"></span>
+<span id="cb1-810"><span class="fu">plot_overall_ci</span>(overall_table, ci, <span class="st">"plots/Plot_Overall_CI.png"</span>)</span>
+<span id="cb1-811"></span>
+<span id="cb1-812"><span class="co"># =============================================================================</span></span>
+<span id="cb1-813"><span class="co"># Meta footer (optional): write session info to file for provenance</span></span>
+<span id="cb1-814"><span class="co"># =============================================================================</span></span>
+<span id="cb1-815"><span class="fu">sink</span>(<span class="st">"plots/_SESSION_INFO.txt"</span>); <span class="fu">print</span>(<span class="fu">sessionInfo</span>()); <span class="fu">sink</span>()</span>
+<span id="cb1-816"><span class="fu">message</span>(<span class="st">"Done. Outputs written to 'plots/'"</span>)</span></code></pre></div>
+</article><footer class="footer">CVG Research Hub · Local edition <a href="../search.html">All pages</a></footer></main></div></body></html>

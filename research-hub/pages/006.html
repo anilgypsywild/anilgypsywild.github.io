@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="noindex,nofollow" name="robots"/><title>MaxDiff: End-to-End Script (README) · CVG Research Hub</title><link href="../wiki.css" rel="stylesheet"/></head><body><a class="skip" href="#main">Skip to content</a><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span aria-hidden="true" class="brand-icon">CVG</span>Research Hub</a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../search.html">Search the wiki</a></nav></div></header><div class="shell"><aside class="side"><p class="kicker">Research library</p><nav aria-label="Wiki sections"><a aria-current="true" href="080.html">Causes research</a><a href="095.html">Research summaries</a><a href="132.html">Methods and toolkit</a><a href="205.html">Research portfolio</a><a href="207.html">Templates</a><a href="187.html">Community research</a></nav></aside><main id="main"><nav aria-label="Breadcrumb" class="crumb"><a href="../index.html">Home</a> <span aria-hidden="true">/</span> <a href="080.html">Causes research</a> <span aria-hidden="true">/</span> <a href="013.html">Brief Causes Donors MaxDiff</a> <span aria-hidden="true">/</span> <a href="008.html">Max Diff Qs</a> <span aria-hidden="true">/</span> Max Diff Survey</nav><article class="doc"><p class="kicker">Research article</p><h1 id="maxdiff-end-to-end-script-readme">MaxDiff: End-to-End Script (README)</h1>
+<p>This note explains what the script does, how it works, how to run it, and how to customize it. It’s written for PM/stakeholders as well as anyone who may maintain the code later.</p>
+<hr/>
+<h2 id="what-this-script-does">What this script does</h2>
+<ul>
+<li>Builds a <strong>near-balanced MaxDiff design</strong> (items per screen × screens per respondent × versions).</li>
+<li><strong>Simulates survey responses</strong> for a synthetic sample with 3 segmentation axes (age, donor type, giving status).</li>
+<li>Converts each screen’s Best/Worst choice into <strong>pairwise comparisons</strong>.</li>
+<li>Estimates <strong>item utilities</strong> with a <strong>[name omitted]–[name omitted] / logistic model</strong> (no intercept, difference coding).</li>
+<li>Converts utilities to <strong>0–100 relative importance</strong>.</li>
+<li>Repeats estimation by <strong>segment</strong> to compare audiences.</li>
+<li>Generates a small set of <strong>publication-ready plots</strong>.</li>
+</ul>
+<p>All randomization uses <code>set.seed(42)</code> for reproducibility.</p>
+<hr/>
+<h2 id="quick-start">Quick start</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<ul>
+<li>R (any recent version).</li>
+<li>The script only uses base R + common tidyverse plotting packages already loaded in the file (<code>ggplot2</code>, <code>dplyr</code>, <code>forcats</code>, <code>stringr</code>, <code>tibble</code>).</li>
+</ul>
+<h3 id="run-it">Run it</h3>
+<ol type="1">
+<li>Put the script in a project folder.</li>
+<li>Create a <code>plots/</code> subfolder (the script writes PNGs there).</li>
+<li><code>source("maxdiff_end_to_end.R")</code> in R/RStudio, or run the file line-by-line.</li>
+</ol>
+<h3 id="outputs-files">Outputs (files)</h3>
+<p>The script saves the following images in <code>plots/</code>:</p>
+<ul>
+<li><code>01_plot_RelImpBarChart.png</code> – Overall relative importance bar chart</li>
+<li><code>02_plot_ClusterLevelImportance.png</code> – Cluster-level (theme) importance</li>
+<li><code>03_plot_SegmentCompareNGCG.png</code> – NextGen vs CurrentGen (top 10)</li>
+<li><code>04_plot_SegmentHighImpactVsCasual.png</code> – High-impact vs Casual (top 10)</li>
+<li><code>05_plot_SegmentFirstTimeVsRepeat.png</code> – First-time vs Repeat (top 10)</li>
+<li><code>06_plot_RankHeatMap.png</code> – Rank heat map across segments</li>
+</ul>
+<hr/>
+<h2 id="parameters-you-may-change">Parameters you may change</h2>
+<ul>
+<li><strong>Item bank</strong>: edit the <code>items &lt;- c(...)</code> vector.</li>
+<li><strong>Design size</strong>:
+<ul>
+<li><code>K</code> – items per screen (default <code>5</code>)</li>
+<li><code>Tsets</code> – screens per respondent (default <code>12</code>)</li>
+<li><code>V</code> – number of design versions (default <code>5</code>)</li>
+</ul></li>
+<li><strong>Sample size &amp; composition</strong>: see <code>N</code> and the distributions for <code>age</code>, <code>donor_type</code>, and <code>giving_status</code>.</li>
+<li><strong>Segment effects</strong>: edit the <code>seg_effect()</code> function to reflect expected preferences.</li>
+</ul>
+<hr/>
+<h2 id="how-it-works-step-by-step">How it works (step by step)</h2>
+<h3 id="1-design-construction">1) Design construction</h3>
+<ul>
+<li>Function: <code>make_design(items, K, Tsets, V)</code></li>
+<li>Greedy balancing: items with lower placement counts are more likely to be sampled next, keeping exposure roughly even across items, screens, and versions.</li>
+<li>Output: <code>design</code> is a <code>list</code> of versions, each a <code>list</code> of screens (<code>character</code> vectors of K items).</li>
+</ul>
+<blockquote>
+<p>Tip for survey programming: <code>print_design_for_forms()</code> prints each screen per version in a copy-paste friendly format.</p>
+</blockquote>
+<h3 id="2-simulating-respondents">2) Simulating respondents</h3>
+<ul>
+<li>We create <code>N = 100</code> synthetic respondents with attributes:
+<ul>
+<li><code>age ∈ {18–34, 35+}</code></li>
+<li><code>donor_type ∈ {HID, Casual}</code></li>
+<li><code>giving_status ∈ {FirstTime, Repeat}</code></li>
+</ul></li>
+<li><strong>Utilities</strong> for each item are built as:<br/>
+<code>u = u_base + seg_effect(age, donor_type, giving_status)</code><br/>
+then centered per-respondent.</li>
+</ul>
+<h3 id="3-turning-bestworst-into-pairwise-rows">3) Turning Best/Worst into pairwise rows</h3>
+<p>For each screen:</p>
+<ul>
+<li>Choose <strong>best</strong> = argmax utility, <strong>worst</strong> = argmin utility (with noise).</li>
+<li>Create pairwise wins for:
+<ul>
+<li>best vs each “other”</li>
+<li>each “other” vs worst</li>
+<li>best vs worst<br/>
+This yields the usual <strong>MaxDiff pair set</strong> consistent with a [name omitted]–[name omitted] formulation.</li>
+</ul></li>
+</ul>
+<h3 id="4-design-matrix-difference-coding">4) Design matrix (difference coding)</h3>
+<ul>
+<li>We fit a logistic regression with <strong>no intercept</strong> (<code>-1</code>), using <strong>difference coding</strong>:
+<ul>
+<li>Columns are all items <strong>except the reference</strong> (the last item in <code>items</code>).</li>
+<li>For each pair <code>(winner, loser)</code> we set <code>+1</code> for the winner’s column and <code>–1</code> for the loser’s column <strong>when the item is not the reference</strong>.</li>
+</ul></li>
+<li>The reference item’s coefficient is implicitly zero.</li>
+<li>We then <strong>reconstruct the full 15-item vector</strong> by inserting the reference at 0 and mapping coefficients back to original item names (backtick/syntactic name safe).</li>
+</ul>
+<h3 id="5-estimation-overall">5) Estimation (overall)</h3>
+<ul>
+<li>Fit: <code>glm(y ~ . - 1, family = binomial(), data = cbind(y, X))</code></li>
+<li>Center utilities and rescale to <strong>0–100 relative importance</strong>.</li>
+<li>Output: <code>overall_table</code> (item, centered utility, importance).</li>
+</ul>
+<h3 id="6-estimation-segments">6) Estimation (segments)</h3>
+<ul>
+<li>Segment membership is stored as <strong>named logical vectors</strong> keyed by <code>respondent_id</code>, e.g.<br/>
+<code>idx_nextgen &lt;- setNames(resp$age == "18-34", resp$respondent_id)</code></li>
+<li>Function: <code>estimate_segment(filter_idx, label)</code>
+<ul>
+<li>Subsets pairwise rows by <code>respondent_id %in% seg_ids</code>.</li>
+<li>Rebuilds the <strong>exact same</strong> difference-coded design matrix.</li>
+<li>Fits the same logistic model, inserts the reference at 0.</li>
+<li>Centers and rescales to 0–100.</li>
+<li>Returns a tidy table (<code>segment, item, utility, importance</code>), safely de-duplicated and consistently labeled.</li>
+</ul></li>
+</ul>
+<blockquote>
+<p>This function was hardened to avoid common pitfalls: NA/renamed columns, perfect separation in small segments, and label duplication caused by backticks/syntactic names.</p>
+</blockquote>
+<h3 id="7-plotting">7) Plotting</h3>
+<p>All charts are built from the already-cleaned tables. They:</p>
+<ul>
+<li>Order factors for readability.</li>
+<li>Use value labels and slim bar widths where appropriate.</li>
+<li>Include a cleaned, two-line legend on top for side-by-side segment charts.</li>
+<li>Wrap long y-axis labels and rotate x-axis labels to avoid collisions.</li>
+</ul>
+<hr/>
+<h2 id="adapting-to-real-survey-data">Adapting to <strong>real survey data</strong></h2>
+<p>If you export Best/Worst choices from Google Forms or Qualtrics, replace only the <strong>simulation</strong> step:</p>
+<ol type="1">
+<li><p>Load your responses into a <code>choices</code> data frame with columns:</p>
+<ul>
+<li><code>respondent_id</code>, <code>version</code> (optional), <code>screen_id</code>, <code>best</code>, <code>worst</code></li>
+</ul></li>
+<li><p>(Optional but recommended) run the built-in QC:</p>
+<p><code>check_same_choice(choices)  # flags screens where best == worst</code></p></li>
+<li><p>Keep the rest of the pipeline unchanged:</p>
+<ul>
+<li><code>build_pairs()</code> → <code>pairs_all</code></li>
+<li>Build <code>X</code> with <code>make_X()</code></li>
+<li>Fit overall and segments the same way.</li>
+</ul></li>
+</ol>
+<p>As long as item text matches <code>items</code> exactly (or you map your labels to that vector), the downstream estimation and plots will work unchanged.</p>
+<hr/>
+<h2 id="directory-structure-suggested">Directory structure (suggested)</h2>
+<p><code>maxdiff-project/ ├─ maxdiff_end_to_end.R ├─ data/           # (optional) put raw survey exports here ├─ plots/          # all PNG outputs are written here └─ README.md       # this file</code></p>
+<hr/>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<ul>
+<li><strong>All importance values are identical or zero</strong>
+<ul>
+<li>Check that <code>X</code> was created with <code>check.names = FALSE</code> so columns aren’t silently renamed.</li>
+<li>Ensure at least some variation in choices; identical choices/noise → flat results.</li>
+</ul></li>
+<li><strong>Segment table comes back <code>NULL</code></strong>
+<ul>
+<li>The segment may be too small (<code>nrow(sub_pairs) &lt; 50</code>) or exhibits perfect separation. Increase sample or relax the cutoff.</li>
+</ul></li>
+<li><strong>Duplicated/garbled item labels</strong>
+<ul>
+<li>Always pass labels through <code>clean_item()</code> before distinct/filter/joins.</li>
+<li>The script already unifies backticked/syntactic names back to the original strings.</li>
+</ul></li>
+<li><strong>“object 'sub_pairs' not found”</strong>
+<ul>
+<li><code>sub_pairs</code> is intentionally scoped inside <code>estimate_segment()</code>. Don’t reference it outside; use the function’s return value instead.</li>
+</ul></li>
+</ul>
+<hr/>
+<h2 id="glossary-plain-english">Glossary (plain-English)</h2>
+<ul>
+<li><strong>MaxDiff (Best–Worst)</strong>: A survey technique where respondents see a small set of items per screen and pick the <strong>most</strong> and <strong>least</strong> important. It’s efficient for ranking many items with fewer questions.</li>
+<li><strong>[name omitted]–[name omitted] model</strong>: A pairwise comparison model. In our setup, Best–Worst choices are converted into win/loss pairs and fitted via logistic regression.</li>
+<li><strong>Difference coding</strong>: Represents each pair as +1 for the winner, –1 for the loser (w.r.t. a reference item), enabling a no-intercept logistic regression.</li>
+<li><strong>Relative importance (0–100)</strong>: Utilities are centered and linearly rescaled to an easy-to-read 0–100 scale.</li>
+</ul>
+<hr/>
+<h2 id="change-log-what-we-fixed-while-hardening-the-script">Change log (what we fixed while hardening the script)</h2>
+<ul>
+<li>Robust mapping of <code>glm</code> coefficient names back to <strong>original item labels</strong> (handles backticks/syntactic names).</li>
+<li><code>X</code>/<code>Xs</code> are created with <code>check.names = FALSE</code> so column names remain <strong>exactly</strong> the original item strings.</li>
+<li><code>estimate_segment()</code> now:
+<ul>
+<li>Indexes segment rows <strong>deterministically</strong> via <code>%in%</code> on <code>respondent_id</code>.</li>
+<li>Guards against NA coefficients and separation.</li>
+<li>De-duplicates labels after cleaning.</li>
+</ul></li>
+<li>Centralized <code>clean_item()</code> to ensure plots and tables never duplicate items due to stray backticks/spaces.</li>
+<li>Plot aesthetics standardized (readable axes, wrapped labels, compact legends).</li>
+</ul>
+<hr/>
+<h2 id="license--reuse">License / reuse</h2>
+<p>Feel free to copy, extend, or productionize. If you move to <strong>real data</strong>, swap the simulation with your import step and keep the rest intact.</p>
+<hr/>
+<h2 id="contact">Contact</h2>
+<p>Questions or issues? Ping the author in the repo or open an issue on GitLab with a screenshot and the console output.</p>
+<hr/>
+<h1 id="code">Code</h1>
+<pre><code># MaxDiff end-to-end script
+# You will run this locally. No packages beyond base are required.
+
+set.seed(42)
+
+
+# 1. Item bank
+items &lt;- c(
+  "I clearly understand where my money is going",
+  "I trust Compassion to use my donation wisely",
+  "I know I will receive updates about the impact of my donation",
+  "The cause feels urgent and needs support right away",
+  "I can see a specific project or child I am supporting",
+  "A progress bar or percentage funded helps me see impact clearly",
+  "I can make a tangible impact through my donation",
+  "Supporting this cause aligns with my Christian faith and values",
+  "The cause feels authentically connected to the local community",
+  "I see that other people in my network are supporting this cause",
+  "The story or images move me emotionally",
+  "Compassion thanks me in a meaningful way after I give",
+  "The donation process is simple and quick",
+  "I have the option to give once",
+  "I can choose how much I want to donate"
+)
+
+
+K &lt;- 5     # items per screen set
+Tsets &lt;- 12 # screens per respondent
+V &lt;- 5     # versions A through E
+
+
+# 2. Build a near-balanced design across versions
+# Greedy balance: keep counts per item near equal across all screens in all versions
+make_design &lt;- function(items, K, Tsets, V) {
+  counts &lt;- setNames(rep(0L, length(items)), items)
+  design &lt;- list()
+  for (v in 1:V) {
+    screens &lt;- vector("list", Tsets)
+    for (t in 1:Tsets) {
+      # sample with bias toward lower counts to keep balance
+      w &lt;- max(counts) + 1 - counts
+      pick &lt;- character(0)
+      pool &lt;- items
+      cc &lt;- counts
+      for (i in 1:K) {
+        w &lt;- max(cc) + 1 - cc
+        probs &lt;- w / sum(w)
+        choice &lt;- sample(pool, 1, prob = probs)
+        pick &lt;- c(pick, choice)
+        idx &lt;- match(choice, names(cc))
+        cc[idx] &lt;- cc[idx] + 1L
+        pool &lt;- setdiff(pool, choice)
+        cc &lt;- cc[names(cc) %in% pool]
+      }
+      screens[[t]] &lt;- pick
+      counts[names(counts) %in% pick] &lt;- counts[names(counts) %in% pick] + 1L
+    }
+    design[[v]] &lt;- screens
+  }
+  design
+}
+
+
+design &lt;- make_design(items, K, Tsets, V)
+
+# 3. Helper to print design for Forms (you will paste these five lines into each screen)
+print_design_for_forms &lt;- function(design, version_names = LETTERS[1:length(design)]) {
+  for (v in seq_along(design)) {
+    cat("\nVersion", version_names[v], "\n")
+    for (t in seq_along(design[[v]])) {
+      cat("Screen", t, ":\n")
+      cat(paste0("  ", design[[v]][[t]], collapse = "\n"), "\n")
+    }
+  }
+}
+# Uncomment to view in console
+print_design_for_forms(design, version_names = c("A","B","C","D","E"))
+
+
+# 4. Simulate respondents with segments and latent utilities
+N &lt;- 100
+resp &lt;- data.frame(
+  respondent_id = 1:N,
+  version = sample(1:V, N, replace = TRUE),
+  age = sample(c("18-34","35+"), N, replace = TRUE, prob = c(0.6, 0.4)),
+  donor_type = sample(c("HID","Casual"), N, replace = TRUE, prob = c(0.2, 0.8)),
+  giving_status = sample(c("FirstTime","Repeat"), N, replace = TRUE, prob = c(0.4, 0.6))
+)
+
+# Base utilities by item (choose plausible pattern; center later)
+u_base &lt;- c(
+  1.2, 1.1, 0.9, 0.6, 0.7,
+  0.5, 0.8, 0.4, 0.3, 0.2,
+  0.6, 0.3, 0.7, 0.2, 0.5
+)
+names(u_base) &lt;- items
+
+# Segment effects
+seg_effect &lt;- function(age, donor_type, giving_status) {
+  eff &lt;- rep(0, length(items)); names(eff) &lt;- items
+  if (age == "18-34") {  # NextGen
+    eff["A progress bar or percentage funded helps me see impact clearly"] &lt;- eff["A progress bar or percentage funded helps me see impact clearly"] + 0.15
+    eff["I can make a tangible impact through my donation"] &lt;- eff["I can make a tangible impact through my donation"] + 0.10
+    eff["The story or images move me emotionally"] &lt;- eff["The story or images move me emotionally"] + 0.10
+  } else {               # CurrentGen
+    eff["Supporting this cause aligns with my Christian faith and values"] &lt;- eff["Supporting this cause aligns with my Christian faith and values"] + 0.15
+    eff["I clearly understand where my money is going"] &lt;- eff["I clearly understand where my money is going"] + 0.10
+  }
+  if (donor_type == "HID") {
+    eff["I trust Compassion to use my donation wisely"] &lt;- eff["I trust Compassion to use my donation wisely"] + 0.20
+    eff["I can see a specific project or child I am supporting"] &lt;- eff["I can see a specific project or child I am supporting"] + 0.10
+  }
+  if (giving_status == "FirstTime") {
+    eff["The cause feels urgent and needs support right away"] &lt;- eff["The cause feels urgent and needs support right away"] + 0.10
+    eff["I know I will receive updates about the impact of my donation"] &lt;- eff["I know I will receive updates about the impact of my donation"] + 0.10
+  } else { # Repeat
+    eff["The donation process is simple and quick"] &lt;- eff["The donation process is simple and quick"] + 0.10
+    eff["Compassion thanks me in a meaningful way after I give"] &lt;- eff["Compassion thanks me in a meaningful way after I give"] + 0.05
+  }
+  eff
+}
+
+
+# 5. Create choice data from design for each respondent
+library(stats)
+make_choices &lt;- function(design, resp_row, items, u_base, noise_sd = 0.15) {
+  v &lt;- resp_row$version
+  screens &lt;- design[[v]]
+  eff &lt;- seg_effect(resp_row$age, resp_row$donor_type, resp_row$giving_status)
+  u &lt;- u_base + eff
+  # center
+  u &lt;- u - mean(u)
+  rows &lt;- list()
+  rid &lt;- resp_row$respondent_id
+  for (t in seq_along(screens)) {
+    set_items &lt;- screens[[t]]
+    util &lt;- u[set_items] + rnorm(length(set_items), 0, noise_sd)
+    best &lt;- set_items[which.max(util)]
+    worst &lt;- set_items[which.min(util)]
+    rows[[length(rows) + 1]] &lt;- data.frame(
+      respondent_id = rid,
+      version = v,
+      screen_id = t,
+      best = best,
+      worst = worst,
+      stringsAsFactors = FALSE
+    )
+  }
+  do.call(rbind, rows)
+}
+choices &lt;- do.call(rbind, lapply(1:nrow(resp), function(i) make_choices(design, resp[i,], items, u_base)))
+
+
+build_pairs &lt;- function(choices_row, design) {
+  v &lt;- choices_row$version
+  t &lt;- choices_row$screen_id
+  set_items &lt;- design[[v]][[t]]
+  best &lt;- as.character(choices_row$best)
+  worst &lt;- as.character(choices_row$worst)
+  others &lt;- setdiff(set_items, c(best, worst))
+  pairs &lt;- list()
+  for (o in others) pairs[[length(pairs)+1]] &lt;- c(best, o, 1)
+  for (o in others) pairs[[length(pairs)+1]] &lt;- c(o, worst, 1)
+  pairs[[length(pairs)+1]] &lt;- c(best, worst, 1)
+  mat &lt;- do.call(rbind, pairs)
+  df &lt;- data.frame(winner = mat[,1], loser = mat[,2], y = as.numeric(mat[,3]), stringsAsFactors = FALSE)
+  df$respondent_id &lt;- choices_row$respondent_id
+  df$version &lt;- v
+  df$screen_id &lt;- t
+  df
+}
+
+
+pairs_all &lt;- do.call(
+  rbind,
+  lapply(seq_len(nrow(choices)), function(i) build_pairs(choices[i, ], design = design))
+)
+
+
+# 7. Build design matrix X with difference coding
+# Columns are item utilities with last item as reference
+ref_item &lt;- items[length(items)]
+item_cols &lt;- setdiff(items, ref_item)
+
+
+make_X &lt;- function(winner, loser, item_cols) {
+  x &lt;- rep(0, length(item_cols)); names(x) &lt;- item_cols
+  if (winner %in% item_cols) x[winner] &lt;- x[winner] + 1
+  if (loser %in% item_cols) x[loser] &lt;- x[loser] - 1
+  x
+}
+
+
+X &lt;- t(apply(pairs_all[, c("winner","loser")], 1,
+             function(r) make_X(r[1], r[2], item_cols)))
+X &lt;- as.data.frame(X, check.names = FALSE)   # &lt;-- keep exact column names
+
+
+
+y &lt;- pairs_all$y
+
+
+# 8. Fit overall model
+fit_overall &lt;- glm(y ~ . - 1, family = binomial(), data = cbind(y, X))  # no intercept
+
+
+# After: fit_overall &lt;- glm(...)
+coef_overall &lt;- coef(fit_overall)
+coef_overall &lt;- coef_overall[!is.na(coef_overall)]
+
+# Map any glm coefficient name (raw, backticked, or syntactic) back to the original item string
+map_to_original &lt;- function(nms, items) {
+  # 1) strip backticks from glm names
+  n1 &lt;- gsub("^`|`$", "", nms)
+  # 2) try direct match to originals
+  out &lt;- items[match(n1, items)]
+  # 3) for any still NA, try matching syntactic (dotified) versions
+  idx &lt;- is.na(out)
+  if (any(idx)) {
+    syn &lt;- make.names(items)
+    out[idx] &lt;- items[match(n1[idx], syn)]
+  }
+  out
+}
+
+orig_names &lt;- map_to_original(names(coef_overall), items)
+
+# safety check (helpful while you’re wiring this)
+if (any(is.na(orig_names))) {
+  cat("Unmapped coef names:\n")
+  print(names(coef_overall)[is.na(orig_names)])
+  stop("Some coefficients could not be mapped back to original items.")
+}
+
+names(coef_overall) &lt;- orig_names
+
+# Build u_hat strictly on your 15 items (no rogue names)
+u_hat &lt;- setNames(rep(0, length(items)), items)
+u_hat[names(coef_overall)] &lt;- coef_overall
+ref_item &lt;- items[length(items)]
+u_hat[ref_item] &lt;- 0
+
+# Center &amp; scale
+u_center &lt;- u_hat - mean(u_hat)
+rng &lt;- max(u_center) - min(u_center)
+rel_import &lt;- if (rng &gt; 0) (u_center - min(u_center)) / rng * 100 else rep(0, length(u_center))
+
+overall_table &lt;- data.frame(
+  item       = items,
+  utility    = round(u_center, 4),
+  importance = round(rel_import, 2),
+  stringsAsFactors = FALSE
+)
+
+clean_item &lt;- function(x) {
+  x &lt;- trimws(x)
+  x &lt;- gsub("^`+|`+$", "", x)     # strip leading/trailing backticks
+  x &lt;- gsub("\\s+", " ", x)       # collapse repeated spaces
+  x
+}
+
+overall_table &lt;- overall_table[order(-overall_table$importance), ]
+# overall_table (after you build it)
+overall_table &lt;- overall_table %&gt;%
+  dplyr::mutate(item = clean_item(item)) %&gt;%
+  dplyr::distinct(item, .keep_all = TRUE)
+
+
+# quick sanity
+stopifnot(nrow(overall_table) == 15, !any(duplicated(overall_table$item)))
+
+
+
+
+# Clean item text once so backticks / extra spaces don't create duplicates
+clean_item &lt;- function(x) {
+  x &lt;- trimws(x)
+  x &lt;- gsub("^`+|`+$", "", x)
+  x &lt;- gsub("\\s+", " ", x)
+  x
+}
+
+estimate_segment &lt;- function(filter_idx, label) {
+  # 1) get respondent ids for this segment
+  seg_ids &lt;- ids_from_idx(filter_idx)
+  if (length(seg_ids) == 0L) return(NULL)
+
+  # 2) subset pairs deterministically (no NA-logical indexing)
+  sub_pairs &lt;- pairs_all[pairs_all$respondent_id %in% seg_ids, , drop = FALSE]
+  if (!nrow(sub_pairs)) return(NULL)
+
+  # 3) build segment X with exact item column names, kept verbatim
+  Xs &lt;- t(apply(
+    sub_pairs[, c("winner","loser")], 1,
+    function(r) make_X(r[1], r[2], item_cols)
+  ))
+  Xs &lt;- as.data.frame(Xs, check.names = FALSE)  # DO NOT let R rename columns
+  ys &lt;- sub_pairs$y
+
+  # 4) fit (a little more robust control)
+  fit &lt;- glm(ys ~ . - 1, family = binomial(), data = cbind(ys, Xs),
+             control = list(maxit = 50))
+  co &lt;- coef(fit)
+  if (is.null(co)) {
+    # fallback: cannot estimate segment (too sparse / perfect separation)
+    return(NULL)
+  }
+  co[is.na(co)] &lt;- 0  # guard against rare NA coefficients
+
+  # 5) map coefs back to full item vector using the same naming as overall
+  uh &lt;- setNames(rep(0, length(items)), items)
+  uh[names(co)] &lt;- co
+  uh[ref_item] &lt;- 0
+
+  # 6) center, scale to 0–100
+  uh &lt;- uh - mean(uh)
+  rng &lt;- max(uh) - min(uh)
+  imp &lt;- if (rng &gt; 0) (uh - min(uh)) / rng * 100 else rep(0, length(uh))
+
+  # 7) output with de-duplicated, cleaned item labels
+  out &lt;- data.frame(
+    segment   = label,
+    item      = clean_item(names(uh)),
+    utility   = round(as.numeric(uh), 4),
+    importance= round(as.numeric(imp), 2),
+    stringsAsFactors = FALSE,
+    row.names = NULL
+  )
+  # in case any accidental duped labels slipped through, keep the highest-importance copy
+  out &lt;- out[order(out$item, -out$importance), ]
+  out &lt;- out[!duplicated(out$item), ]
+
+  # sort by importance high→low for readability
+  out[order(-out$importance), ]
+}
+
+
+# NextGen subset
+keep_ids  &lt;- names(idx_nextgen)[idx_nextgen]
+sub_pairs &lt;- pairs_all[pairs_all$respondent_id %in% keep_ids, ]
+
+nrow(sub_pairs)                                        # should be &gt; 50
+table(factor(sub_pairs$winner, levels = names(u_base)))  # each item &gt; 0 ideally
+table(factor(sub_pairs$loser,  levels = names(u_base)))  # each item &gt; 0 ideally
+
+# how many rows have a zero design vector? (should be 0)
+Xs_dbg &lt;- t(apply(sub_pairs[, c("winner","loser")], 1,
+                  function(r) make_X(r[1], r[2], setdiff(names(u_base), tail(names(u_base),1)))))
+
+
+sum(rowSums(abs(Xs_dbg)) == 0)
+
+seg_next   &lt;- estimate_segment(idx_nextgen, "NextGen")
+seg_curr   &lt;- estimate_segment(idx_current, "CurrentGen")
+seg_HID    &lt;- estimate_segment(idx_HID, "HighImpactDonors")
+seg_casual &lt;- estimate_segment(idx_casual, "CasualSupporters")
+seg_first  &lt;- estimate_segment(idx_first, "FirstTime")
+seg_repeat &lt;- estimate_segment(idx_repeat, "Repeat")
+
+#stopifnot(nrow(seg_next) == 15, var(seg_next$importance) &gt; 0)
+head(seg_next[, c("item","importance")], 15)
+
+
+# Make respondent_id character everywhere for consistent joins
+pairs_all$respondent_id &lt;- as.character(pairs_all$respondent_id)
+resp$respondent_id      &lt;- as.character(resp$respondent_id)
+
+idx_nextgen &lt;- with(resp, setNames(age == "18-34",         respondent_id))
+idx_current &lt;- with(resp, setNames(age == "35+",           respondent_id))
+idx_HID     &lt;- with(resp, setNames(donor_type == "HID",    respondent_id))
+idx_casual  &lt;- with(resp, setNames(donor_type == "Casual", respondent_id))
+idx_first   &lt;- with(resp, setNames(giving_status == "FirstTime", respondent_id))
+idx_repeat  &lt;- with(resp, setNames(giving_status == "Repeat",    respondent_id))
+
+idx_nextgen &lt;- with(resp, setNames(age == "18-34", as.character(respondent_id)))
+idx_current &lt;- with(resp, setNames(age == "35+", as.character(respondent_id)))
+idx_HID     &lt;- with(resp, setNames(donor_type == "HID", as.character(respondent_id)))
+idx_casual  &lt;- with(resp, setNames(donor_type == "Casual", as.character(respondent_id)))
+idx_first   &lt;- with(resp, setNames(giving_status == "FirstTime", as.character(respondent_id)))
+idx_repeat  &lt;- with(resp, setNames(giving_status == "Repeat", as.character(respondent_id)))
+
+
+seg_next   &lt;- estimate_segment(idx_nextgen, "NextGen")
+seg_curr   &lt;- estimate_segment(idx_current, "CurrentGen")
+seg_HID    &lt;- estimate_segment(idx_HID, "HighImpactDonors")
+seg_casual &lt;- estimate_segment(idx_casual, "CasualSupporters")
+seg_first  &lt;- estimate_segment(idx_first, "FirstTime")
+seg_repeat &lt;- estimate_segment(idx_repeat, "Repeat")
+
+
+head(seg_next)
+
+# Verify sub_pairs exists only inside the function:
+#exists("sub_pairs")  # should be FALSE
+
+# Check coverage for a segment:
+#keep_ids &lt;- names(idx_nextgen)[idx_nextgen]
+#sub_pairs &lt;- pairs_all[pairs_all$respondent_id %in% keep_ids, ]
+#table(sub_pairs$winner)[items]
+#table(sub_pairs$loser)[items]
+
+
+# 10. Top motivators for first time versus repeat
+top_first  &lt;- head(seg_first[order(-seg_first$importance), c("item","importance")], 5)
+top_repeat &lt;- head(seg_repeat[order(-seg_repeat$importance), c("item","importance")], 5)
+
+
+# 11. Print deliverables
+cat("\nRelative importance scores overall\n")
+print(overall_table, row.names = FALSE)
+
+
+cat("\nRanked hierarchy of donor motivations overall\n")
+print(overall_table[, c("item","importance")], row.names = FALSE)
+
+
+cat("\nSegment results NextGen\n")
+print(head(seg_next[, c("item","importance")], 15), row.names = FALSE)
+
+cat("\nSegment results CurrentGen\n")
+print(head(seg_curr[, c("item","importance")], 15), row.names = FALSE)
+
+
+cat("\nSegment results High Impact Donors\n")
+print(head(seg_HID[, c("item","importance")], 15), row.names = FALSE)
+
+
+cat("\nSegment results Casual supporters\n")
+print(head(seg_casual[, c("item","importance")], 15), row.names = FALSE)
+
+
+cat("\nTop motivators First time vs Repeat\n")
+print(top_first, row.names = FALSE)
+print(top_repeat, row.names = FALSE)
+
+
+# 12. Helper to detect bad screens where a respondent chose the same item as best and worst
+# If you import real data from Forms, run this check and drop offenders per screen
+check_same_choice &lt;- function(choices_df) {
+  bad &lt;- subset(choices_df, best == worst)
+  bad[, c("respondent_id","version","screen_id","best","worst")]
+}
+
+
+library(ggplot2)
+library(dplyr)
+library(forcats)
+
+
+# 1. Overall relative importance bar chart
+library(ggplot2)
+library(dplyr)
+library(forcats)
+
+p_overall &lt;- overall_table %&gt;%
+  mutate(item = fct_reorder(item, importance)) %&gt;%
+  ggplot(aes(x = item, y = importance)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(
+    title = "Overall Relative Importance",
+    x = NULL,
+    y = "Importance (0–100)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    axis.text.y = element_text(size = 12),
+    axis.text.x = element_text(size = 12),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+
+ggsave("plots/01_plot_RelImpBarChart.png", plot = p_overall, width = 8, height = 6, dpi = 300)
+
+
+# 2 cluster level importance using your five themes
+cluster_map &lt;- tibble::tibble(
+  item = c(
+    "I clearly understand where my money is going",
+    "I trust Compassion to use my donation wisely",
+    "I know I will receive updates about the impact of my donation",
+    "The cause feels urgent and needs support right away",
+    "I can see a specific project or child I am supporting",
+    "A progress bar or percentage funded helps me see impact clearly",
+    "I can make a tangible impact through my donation",
+    "Supporting this cause aligns with my Christian faith and values",
+    "The cause feels authentically connected to the local community",
+    "I see that other people in my network are supporting this cause",
+    "The story or images move me emotionally",
+    "Compassion thanks me in a meaningful way after I give",
+    "The donation process is simple and quick",
+    "I have the option to give once",
+    "I can choose how much I want to donate"
+  ),
+  cluster = c(
+    "Trust and transparency","Trust and transparency","Trust and transparency",
+    "Impact and urgency","Impact and urgency","Impact and urgency","Impact and urgency",
+    "Faith and community","Faith and community","Faith and community",
+    "Emotion and gratitude","Emotion and gratitude",
+    "Ease and choice","Ease and choice","Ease and choice"
+  )
+)
+
+
+item_dict &lt;- tibble::tibble(item_id = seq_along(items), item = items)
+
+overall_keyed &lt;- overall_table %&gt;%
+  left_join(item_dict, by = "item")    # attach item_id
+
+cluster_map_keyed &lt;- tibble::tibble(
+  item_id = 1:15,
+  cluster = c(
+    "Trust and transparency","Trust and transparency","Trust and transparency",
+    "Impact and urgency","Impact and urgency","Impact and urgency","Impact and urgency",
+    "Faith and community","Faith and community","Faith and community",
+    "Emotion and gratitude","Emotion and gratitude",
+    "Ease and choice","Ease and choice","Ease and choice"
+  )
+)
+
+overall_cluster &lt;- overall_keyed %&gt;%
+  left_join(cluster_map_keyed, by = "item_id") %&gt;%
+  group_by(cluster) %&gt;%
+  summarise(mean_importance = mean(importance), .groups = "drop") %&gt;%
+  mutate(cluster = forcats::fct_reorder(cluster, mean_importance))
+
+p_overall_cluster &lt;- ggplot(overall_cluster, aes(x = cluster, y = mean_importance)) +
+  geom_col(fill = "#2C7BB6", width = 0.6) +   # nicer blue + slimmer bars
+  coord_flip() +
+  labs(
+    title = "Cluster-level Importance (Overall)",
+    x = NULL,
+    y = "Mean Importance (0–100)"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5),
+    axis.text.y = element_text(size = 11),
+    axis.text.x = element_text(size = 10),
+    panel.grid.major.y = element_blank(),  # remove horizontal gridlines
+    panel.grid.minor = element_blank()
+  ) +
+  geom_text(aes(label = round(mean_importance, 1)),
+            hjust = -0.2, size = 3.5, color = "black")  # add value labels
+
+ggsave("plots/02_plot_ClusterLevelImportance.png", plot = p_overall_cluster,
+       width = 8, height = 6, dpi = 300)
+
+
+# --- fix &amp; plot: NextGen vs CurrentGen ---
+
+# 1) Normalize item text once
+clean_item &lt;- function(x) {
+  x &lt;- trimws(x)
+  x &lt;- gsub("^`+|`+$", "", x)   # remove leading/trailing backticks
+  x &lt;- gsub("\\s+", " ", x)     # collapse repeated spaces
+  x
+}
+
+# 2) Clean, dedupe, compute top-10, and plot
+seg_compare_clean &lt;- seg_compare %&gt;%
+  dplyr::mutate(item = clean_item(item)) %&gt;%
+  dplyr::distinct(segment, item, .keep_all = TRUE)
+
+top_items &lt;- seg_compare_clean %&gt;%
+  dplyr::group_by(item) %&gt;%
+  dplyr::summarise(mean_imp = mean(importance), .groups = "drop") %&gt;%
+  dplyr::slice_max(mean_imp, n = 10, with_ties = FALSE) %&gt;%
+  dplyr::pull(item)
+
+p_seg_compare &lt;- seg_compare_clean %&gt;%
+  dplyr::filter(item %in% top_items) %&gt;%
+  dplyr::mutate(
+    item = forcats::fct_reorder(item, importance, .fun = mean, .desc = TRUE)
+  ) %&gt;%
+  ggplot2::ggplot(ggplot2::aes(x = item, y = importance, fill = segment)) +
+  ggplot2::geom_col(position = ggplot2::position_dodge(width = 0.7),
+                    width = 0.6, color = "white") +
+  ggplot2::coord_flip() +
+  ggplot2::labs(
+    title = "Next vs Curr: Top-10 Motivators",
+    x = NULL, y = "Relative Importance (0–100)"
+  ) +
+  ggplot2::theme_minimal(base_size = 13) +
+  ggplot2::theme(
+    plot.title = ggplot2::element_text(face = "bold", hjust = 0.5),
+    axis.text.y = ggplot2::element_text(size = 10),
+    axis.text.x = ggplot2::element_text(size = 10),
+    panel.grid.major.y = ggplot2::element_blank(),
+    legend.position = "top",
+    legend.title = ggplot2::element_blank(),
+    plot.margin = ggplot2::margin(10, 14, 10, 10)
+  ) +
+  ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0, .08))) +
+  ggplot2::guides(fill = ggplot2::guide_legend(nrow = 1)) +
+  ggplot2::geom_text(
+    ggplot2::aes(label = round(importance, 1)),
+    position = ggplot2::position_dodge(width = 0.7),
+    hjust = -0.15, size = 3.4
+  )
+
+ggplot2::ggsave("plots/03_plot_SegmentCompareNGCG.png",
+                plot = p_seg_compare, width = 9, height = 6.5, dpi = 300)
+
+
+
+
+# Precompute top 10 items by average importance (already done above)
+# seg_compare2 and top_items2 exist
+
+# 1) Normalize item text once
+clean_item &lt;- function(x) {
+  x &lt;- trimws(x)
+  x &lt;- gsub("^`+|`+$", "", x)   # remove leading/trailing backticks
+  x &lt;- gsub("\\s+", " ", x)     # collapse repeated spaces
+  x
+}
+
+# 2) Clean, dedupe, compute top-10, and plot
+seg_compare_clean &lt;- seg_compare %&gt;%
+  dplyr::mutate(item = clean_item(item)) %&gt;%
+  dplyr::distinct(segment, item, .keep_all = TRUE)
+
+top_items &lt;- seg_compare_clean %&gt;%
+  dplyr::group_by(item) %&gt;%
+  dplyr::summarise(mean_imp = mean(importance), .groups = "drop") %&gt;%
+  dplyr::slice_max(mean_imp, n = 10, with_ties = FALSE) %&gt;%
+  dplyr::pull(item)
+
+p_seg_compare2 &lt;- seg_compare2 %&gt;%
+  filter(item %in% top_items2) %&gt;%
+  mutate(
+    item = forcats::fct_reorder(item, importance, .fun = mean, .desc = TRUE)
+  ) %&gt;%
+  ggplot(aes(x = item, y = importance, fill = segment)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6, color = "white") +
+  coord_flip() +
+  labs(
+    title = "HID's vs. Casual-Supp: Top-10 Motivators",
+    x = NULL,
+    y = "Relative Importance (0–100)"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    axis.text.y = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    panel.grid.major.y = element_blank(),
+    legend.position = "top",
+    legend.title = element_blank(),
+    plot.margin = margin(10, 14, 10, 10)
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0, .08))) +
+  guides(fill = guide_legend(nrow = 1)) +
+  geom_text(
+    aes(label = round(importance, 1)),
+    position = position_dodge(width = 0.7),
+    hjust = -0.15, size = 3.4
+  )
+
+ggsave("plots/04_plot_SegmentHighImpactVsCasual.png",
+       plot = p_seg_compare2, width = 9, height = 6.5, dpi = 300)
+
+
+# 1) Normalize item text once
+clean_item &lt;- function(x) {
+  x &lt;- trimws(x)
+  x &lt;- gsub("^`+|`+$", "", x)   # remove leading/trailing backticks
+  x &lt;- gsub("\\s+", " ", x)     # collapse repeated spaces
+  x
+}
+
+# 2) Clean, dedupe, compute top-10, and plot
+seg_compare_clean &lt;- seg_compare %&gt;%
+  dplyr::mutate(item = clean_item(item)) %&gt;%
+  dplyr::distinct(segment, item, .keep_all = TRUE)
+
+top_items &lt;- seg_compare_clean %&gt;%
+  dplyr::group_by(item) %&gt;%
+  dplyr::summarise(mean_imp = mean(importance), .groups = "drop") %&gt;%
+  dplyr::slice_max(mean_imp, n = 10, with_ties = FALSE) %&gt;%
+  dplyr::pull(item)
+p_seg_compare3 &lt;- seg_compare3 %&gt;%
+  filter(item %in% top_items3) %&gt;%
+  mutate(
+    item = forcats::fct_reorder(item, importance, .fun = mean, .desc = TRUE)
+  ) %&gt;%
+  ggplot(aes(x = item, y = importance, fill = segment)) +
+  geom_col(position = position_dodge(width = 0.7), width = 0.6, color = "white") +
+  coord_flip() +
+  labs(
+    title = "First-Time vs. Repeat Donors: Top-10 Motivatrs",
+    x = NULL,
+    y = "Relative Importance (0–100)"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    axis.text.y = element_text(size = 10),
+    axis.text.x = element_text(size = 10),
+    panel.grid.major.y = element_blank(),
+    legend.position = "top",
+    legend.title = element_blank(),
+    plot.margin = margin(10, 14, 10, 10)
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0, .08))) +
+  guides(fill = guide_legend(nrow = 1)) +
+  geom_text(
+    aes(label = round(importance, 1)),
+    position = position_dodge(width = 0.7),
+    hjust = -0.15, size = 3.4
+  )
+
+ggsave("plots/05_plot_SegmentFirstTimeVsRepeat.png",
+       plot = p_seg_compare3, width = 9, height = 6.5, dpi = 300)
+
+
+library(dplyr)
+library(stringr)
+library(forcats)
+library(ggplot2)
+
+# 1) order the x-axis (segments)
+heat$segment &lt;- factor(
+  heat$segment,
+  levels = c("NextGen", "CurrentGen", "High impact donors",
+             "Casual supporters", "First time", "Repeat")
+)
+
+# 2) optional: shorter/stacked x labels to improve readability
+seg_labels &lt;- c(
+  "NextGen"            = "NextGen",
+  "CurrentGen"         = "CurrentGen",
+  "High impact donors" = "High impact\ndonors",
+  "Casual supporters"  = "Casual\nsupporters",
+  "First time"         = "First-time",
+  "Repeat"             = "Repeat"
+)
+
+# 3) plot with rotated x labels
+p_rank_heat_map &lt;- ggplot(heat, aes(x = segment, y = item, fill = rank)) +
+  geom_tile() +
+  scale_x_discrete(labels = seg_labels) +
+  scale_y_discrete(labels = function(x) stringr::str_wrap(x, width = 45)) +
+  scale_fill_continuous(name = "Rank (lower = stronger)") +
+  labs(title = "Rank Heat Map Across Segments", x = NULL, y = NULL) +
+  theme_minimal(base_size = 12) +
+  theme(
+    panel.grid.major = element_blank(),
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 10),
+    axis.text.y = element_text(lineheight = 0.9, size = 10),
+    plot.margin = margin(10, 20, 10, 10) # give right side a hair more room
+  )
+
+# wider image helps too
+ggsave("plots/06_plot_RankHeatMap.png", plot = p_rank_heat_map, width = 10, height = 7, dpi = 300)
+
+## end of code
+
+
+
+</code></pre>
+</article><section class="listing related"><h2>In this chapter</h2><ul class="rows"><li class="row"><a href="005.html"><span class="kind">Topic</span><span class="row-title"><b>Version A (Testing Guide)</b></span><span aria-hidden="true" class="tile-arrow">→</span></a></li></ul></section><footer class="footer">CVG Research Hub · Local edition <a href="../search.html">All pages</a></footer></main></div></body></html>

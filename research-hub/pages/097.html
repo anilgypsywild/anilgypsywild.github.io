@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="noindex,nofollow" name="robots"/><title>Order &amp; Counter-balancing for UX Research(Simple Guide) · CVG Research Hub</title><link href="../wiki.css" rel="stylesheet"/></head><body><a class="skip" href="#main">Skip to content</a><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span aria-hidden="true" class="brand-icon">CVG</span>Research Hub</a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../search.html">Search the wiki</a></nav></div></header><div class="shell"><aside class="side"><p class="kicker">Research library</p><nav aria-label="Wiki sections"><a href="080.html">Causes research</a><a href="095.html">Research summaries</a><a aria-current="true" href="132.html">Methods and toolkit</a><a href="205.html">Research portfolio</a><a href="207.html">Templates</a><a href="187.html">Community research</a></nav></aside><main id="main"><nav aria-label="Breadcrumb" class="crumb"><a href="../index.html">Home</a> <span aria-hidden="true">/</span> <a href="132.html">Methods and toolkit</a> <span aria-hidden="true">/</span> <a href="102.html">Info: RITE UX Metrics</a> <span aria-hidden="true">/</span> <a href="098.html">Info: Quant and Qual Research Methods</a></nav><article class="doc"><p class="kicker">Research article</p><h1 id="order--counter-balancing-for-ux-researchsimple-guide">Order &amp; Counter-balancing for UX Research(Simple Guide)</h1>
+<hr/>
+<h1 id="purpose-"><strong>Purpose:</strong> </h1>
+<p>Give UX design / research teams a <strong>quick-reference</strong> on how to handle order effects when showing multiple designs to the <em>same</em> participant (or across participants).</p>
+<hr/>
+<h2 id="1-what-is-an-order-effect"><strong>1. What is an “order effect”?</strong></h2>
+<ul>
+<li>When a participant sees multiple versions (e.g., A, B, C, D), what they respond to might depend on _which order_they saw them in (first, second, third…).</li>
+<li>E.g., fatigue, practice, familiarity, contrast between versions → these can bias results.</li>
+<li>Counter-balancing helps reduce that bias.</li>
+</ul>
+<hr/>
+<h2 id="2-basic-counter-balancing-strategies"><strong>2. Basic counter-balancing strategies</strong></h2>
+<ul>
+<li><strong>Simple two-condition case</strong>: If you have A and B and each participant sees both, assign half participants A→B and half B→A.</li>
+<li><strong>Multiple conditions (3, 4, 5…):</strong>
+<ul>
+<li><em>Full counter-balancing</em>: All possible orders (for 4 versions: 4! = 24 orders) → often impractical. (<a title="Experiment Design">BCS Rochester</a>)</li>
+<li><em>Latin square / Balanced Latin square</em>: For n versions, produce n different orders so each version appears equally in each position and each version precedes/follows each other version approximately equally. (<a title="experimental studies: randomization and counterbalancing ...">University of Winnipeg</a>)</li>
+</ul></li>
+</ul>
+<hr/>
+<h2 id="3-step-by-step-for-a-ux-study-with-4-homepage-designs-a-b-c-d"><strong>3. Step-by-step for a UX study with 4 homepage designs (A, B, C, D):</strong></h2>
+<ul>
+<li>Decide if each participant will <em>see all four</em> designs (within-subjects) or <em>just one</em> (between-subjects).</li>
+<li>If within-subjects: avoid showing always “A then B then C then D” because the “first seen” advantage might bias results.</li>
+<li>Example Balanced Latin Square for 4:
+<ol type="1">
+<li>A → B → D → C</li>
+<li>B → C → A → D</li>
+<li>C → D → B → A</li>
+<li>D → A → C → B</li>
+</ol></li>
+<li>Assign participants evenly across the 4 sequences.</li>
+<li>Randomize participants into these sequences.</li>
+<li>During analysis, check if <em>order group</em> had an effect (e.g., did participants in Sequence 1 behave differently than Sequence 3?).</li>
+</ul>
+<hr/>
+<h2 id="4-practical-tips--common-pitfalls"><strong>4. Practical tips &amp; common pitfalls</strong></h2>
+<ul>
+<li><strong>Tip:</strong> Keep track of “which order did this participant see?” in your data (a column like <code>order_sequence</code>).</li>
+<li><strong>Tip:</strong> If you have more than ~4-5 versions, full counter-balancing is impractical; use Latin square or partial.</li>
+<li><strong>Pitfall:</strong> Ignoring order means any differences might be due to “just being last” or “just being first” not the version itself.</li>
+<li><strong>Pitfall:</strong> Within-subjects design <em>reduces variance</em> but increases risk of carryover / contrast effects — so counter-balance carefully.</li>
+<li><strong>Tip:</strong> If you suspect strong carryover (e.g., version A might “prime” participant for version B), consider _wash-out_period or between-subjects design. (<a title="Running Head: Trial Order Counterbalancing">Kent Academic Repository</a>)</li>
+</ul>
+<hr/>
+<h2 id="5-quick-checklist-for-a-study"><strong>5. Quick checklist for a study</strong></h2>
+<ul>
+<li> Versions A, B, C, D defined.
+<ul class="task-list">
+<li><label><input type="checkbox"/> Decide all participants see all four (or not).</label></li>
+<li><label><input type="checkbox"/> Generate order sequences (use Latin square if within-subjects).</label></li>
+<li><label><input type="checkbox"/> Randomly assign equal participants to each sequence.</label></li>
+<li><label><input type="checkbox"/> Track sequence label per participant.</label></li>
+<li><label><input type="checkbox"/> At analysis time: test whether <code>sequence</code> variable interacts with version effect (i.e., order effect present?).</label></li>
+<li><label><input type="checkbox"/> Report number of participants per sequence, note if any drops/unbalanced.</label></li>
+</ul></li>
+</ul>
+<hr/>
+<h2 id="6-why-this-matters-for-ux-research-of-homepage-concepts"><strong>6. Why this matters for UX research of homepage concepts</strong></h2>
+<ul>
+<li>Because you’re showing multiple homepage designs (A, B, C, D) to get first impressions, if everyone sees them in the same order the later ones may suffer from fatigue, or the first one may have undue advantage.</li>
+<li>Counter-balancing ensures that <em>version order</em> is not confounded with <em>version effect</em>.</li>
+<li>Therefore your conclusions about trust, clarity, actionability will be more reliable.</li>
+</ul>
+<hr/>
+<p>End of Doc</p>
+<hr/>
+</article><footer class="footer">CVG Research Hub · Local edition <a href="../search.html">All pages</a></footer></main></div></body></html>

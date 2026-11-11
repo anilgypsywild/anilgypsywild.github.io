@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="noindex,nofollow" name="robots"/><title>Learning Cause Affinity via Supervised Multiclass Classification · CVG Research Hub</title><link href="../wiki.css" rel="stylesheet"/></head><body><a class="skip" href="#main">Skip to content</a><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span aria-hidden="true" class="brand-icon">CVG</span>Research Hub</a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../search.html">Search the wiki</a></nav></div></header><div class="shell"><aside class="side"><p class="kicker">Research library</p><nav aria-label="Wiki sections"><a aria-current="true" href="080.html">Causes research</a><a href="095.html">Research summaries</a><a href="132.html">Methods and toolkit</a><a href="205.html">Research portfolio</a><a href="207.html">Templates</a><a href="187.html">Community research</a></nav></aside><main id="main"><nav aria-label="Breadcrumb" class="crumb"><a href="../index.html">Home</a> <span aria-hidden="true">/</span> <a href="080.html">Causes research</a></nav><article class="doc"><p class="kicker">Research article</p><h1 id="learning-cause-affinity-via-supervised-multiclass-classification">Learning Cause Affinity via Supervised Multiclass Classification</h1>
+<h2 id="bounded-exploratory-poc-for-ux-product-and-design-review">Bounded Exploratory POC for UX, Product, and Design Review</h2>
+<p><strong>Signal Tags:</strong> <span class="emoji">🤖</span> <code>Machine Learning</code> · <span class="emoji">📊</span> <code>Statistical Ranking</code> · <span class="emoji">🌳</span> <code>Interpretable Rules</code> · <span class="emoji">🧭</span> <code>UX Decision Support</code></p>
+<p><strong>Author:</strong> @AShankar5<br/>
+<strong>Scope:</strong> Exploratory feasibility only<br/>
+<strong>Initial Review Format:</strong> 20-minute team huddle / design review<br/>
+<strong>Project Type:</strong> Research-grounded statistical learning proof of concept</p>
+<hr/>
+<h2 id="1-purpose-of-this-brief">1. Purpose Of This Brief</h2>
+<p>This document reframes the original cause-affinity ML feasibility work as a <strong>design-support and product-support POC</strong>.</p>
+<p>The goal is not to argue for immediate implementation.</p>
+<p>The goal is to evaluate whether a <strong>lightweight recommendation layer</strong> could improve the first-view Causes experience by helping the page surface the <strong>three most relevant cause paths first</strong>.</p>
+<h3 id="core-boundary">Core boundary</h3>
+<ul>
+<li>This is <strong>not</strong> “AI instead of design.”</li>
+<li>This is <strong>not</strong> a request for immediate engineering work.</li>
+<li>This is a <strong>bounded exploratory assessment</strong> of whether a recommendation layer is worth keeping in exploratory scope.</li>
+</ul>
+<hr/>
+<h2 id="2-product-problem-being-addressed">2. Product Problem Being Addressed</h2>
+<h3 id="core-product-question">Core product question</h3>
+<blockquote>
+<p><strong>When a visitor lands on the Causes experience, which three cause types should they see first?</strong></p>
+</blockquote>
+<h3 id="why-this-matters">Why this matters</h3>
+<p>The current Causes surface asks users to interpret:</p>
+<ul>
+<li>category labels</li>
+<li>country / project metadata</li>
+<li>fundraising state</li>
+<li>visual content</li>
+<li>descriptive copy</li>
+</ul>
+<p>before the page clearly answers:</p>
+<blockquote>
+<p>“What is this, why does it matter, and what should I look at first?”</p>
+</blockquote>
+<p>This creates a <strong>first-view UX and information-architecture problem</strong>:</p>
+<ul>
+<li>too many competing signals</li>
+<li>too little guidance</li>
+<li>too much translation work left to the user</li>
+</ul>
+<h3 id="executive-alignment-with-the-broader-portfolio-direction">Executive alignment with the broader portfolio direction</h3>
+<p>This concept directly supports the broader multi-product direction described in the recent all-hands portfolio framing:</p>
+<ul>
+<li><strong>Not every supporter is motivated by the same thing, and not every moment calls for the same response.</strong></li>
+<li><strong>A strong product portfolio offers multiple entry points.</strong></li>
+<li><strong>Products should work together, not compete for attention.</strong></li>
+<li><strong>The portfolio should create pathways from lower-commitment entry into deeper engagement.</strong></li>
+<li><strong>It is not about variety alone; it is about intentional design and clarity.</strong></li>
+<li><strong>The real risk is not multiple offerings; it is multiple offerings without clarity.</strong></li>
+</ul>
+<p>Taken together, those leadership principles imply a practical UX problem:</p>
+<blockquote>
+<p>If the portfolio offers multiple valid ways in, the first view must help users see the most relevant entry points without forcing them to decode the full system on their own.</p>
+</blockquote>
+<p>This is why the recommendation concept matters. It is not adding more complexity to the portfolio. It is one way to make the portfolio:</p>
+<ul>
+<li>easier to understand at the point of entry</li>
+<li>more personally relevant</li>
+<li>less cognitively overwhelming</li>
+<li>more aligned to the stated goal of meeting supporters where they are</li>
+</ul>
+<h3 id="proposed-intervention">Proposed intervention</h3>
+<p>A recommendation layer can help the page:</p>
+<ul>
+<li>lead with the most relevant cause path first</li>
+<li>reduce cognitive load</li>
+<li>improve clarity at the point of entry</li>
+<li>support both new and returning visitors differently</li>
+</ul>
+<hr/>
+<h2 id="3-research-objective">3. Research Objective</h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Core Question</strong></td>
+<td><code>Can observable visitor signals support a ranked first-view recommendation that is more relevant than a static default ordering?</code></td>
+</tr>
+<tr>
+<td><strong>Business Framing</strong></td>
+<td><code>Can the first-view Causes experience make the broader multi-product portfolio feel clearer, more intentional, and more personally relevant by surfacing the three most relevant cause paths first?</code></td>
+</tr>
+<tr>
+<td>Learning Task</td>
+<td>Supervised multiclass ranking / classification</td>
+</tr>
+<tr>
+<td><strong>Output</strong></td>
+<td><code>Predicted probability distribution over K cause categories, used to rank the first three shown</code></td>
+</tr>
+<tr>
+<td><strong>Primary UX Outcome</strong></td>
+<td><code>Improved first-view relevance and reduced interpretation burden</code></td>
+</tr>
+<tr>
+<td><strong>Primary Quant Metric</strong></td>
+<td>Top-3 Accuracy / Top-3 relevance</td>
+</tr>
+<tr>
+<td><strong>Decision Variable</strong></td>
+<td><code>Lift over static frequency baseline</code></td>
+</tr>
+<tr>
+<td><strong>Immediate Decision</strong></td>
+<td><code>Keep in exploratory scope, refine further, or pause</code></td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2 id="4-formal-learning-setup">4. Formal Learning Setup</h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Input Space</td>
+<td><code>X</code> = visitor/session feature vector</td>
+</tr>
+<tr>
+<td>Label Space</td>
+<td><code>Y</code> = cause category or cause path label</td>
+</tr>
+<tr>
+<td>Training Sample</td>
+<td><code>S</code> = labeled session examples</td>
+</tr>
+<tr>
+<td>Hypothesis</td>
+<td><code>f(x)</code> = estimated probability vector over cause categories</td>
+</tr>
+<tr>
+<td>Served Output</td>
+<td><code>Ranked top-3 categories from f(x)</code></td>
+</tr>
+<tr>
+<td>UX Action</td>
+<td><code>Reorder first-view cause paths and first-view cause cards</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="first-view-ranking-interpretation">First-view ranking interpretation</h3>
+<p><span class="math display"><em>X</em> ⊂ ℝ<sup><em>d</em></sup>,  <em>Y</em> ∈ {1, 2, …, <em>K</em>},  <em>S</em> = {(<em>x</em><sub><em>i</em></sub>, <em>y</em><sub><em>i</em></sub>)}<sub><em>i</em> = 1</sub><sup><em>n</em></sup></span></p>
+<p><span class="math display"><em>f</em>(<em>x</em>) = [<em>p</em><sub>1</sub>(<em>x</em>), <em>p</em><sub>2</sub>(<em>x</em>), …, <em>p</em><sub><em>K</em></sub>(<em>x</em>)]  where  <em>p</em><sub><em>k</em></sub>(<em>x</em>) = <em>P</em>(<em>Y</em> = <em>k</em> ∣ <em>X</em> = <em>x</em>)</span></p>
+<p><span class="math display">$$\sum_{k=1}^{K} p_k(x) = 1$$</span></p>
+<p>The product uses the three largest probabilities to determine which three cause paths should lead the first view:</p>
+<p><span class="math display">Top3 (<em>f</em>(<em>x</em>))</span></p>
+<h3 id="primary-evaluation-metric">Primary evaluation metric</h3>
+<p><span class="math display">$$\operatorname{Top3Acc}
+=
+\frac{1}{n}
+\sum_{i=1}^{n}
+\mathbf{1}\!\left\{
+y_i \in \operatorname{Top3}(f(x_i))
+\right\}$$</span></p>
+<p>Where:</p>
+<ul>
+<li><code>I[...]</code> is the indicator function</li>
+<li>it equals <code>1</code> if the true category appears in the model's top 3</li>
+<li>it equals <code>0</code> otherwise</li>
+</ul>
+<h3 id="lift-over-baseline">Lift over baseline</h3>
+<p><span class="math display">Lift  = Top3Acc<sub>model</sub> − Top3Acc<sub>baseline</sub></span></p>
+<hr/>
+<h2 id="5-ux-and-product-interpretation">5. UX And Product Interpretation</h2>
+<p>The statistical output is not the final user experience.</p>
+<p>The output is translated into a page-level intervention:</p>
+<p><span class="math display">$$\text{Visitor Signals}
+\rightarrow
+\text{Ranked Cause Types}
+\rightarrow
+\text{Ordered First\text{-}View Content}$$</span></p>
+<h3 id="what-changes-in-the-experience">What changes in the experience</h3>
+<ul>
+<li>which cause path leads first</li>
+<li>which cause cards fill the first visible slots</li>
+<li>which framing leads the page (urgency, clarity, development, community impact)</li>
+</ul>
+<h3 id="what-does-not-need-to-change-immediately">What does <strong>not</strong> need to change immediately</h3>
+<ul>
+<li>the full content system</li>
+<li>the full taxonomy</li>
+<li>the full page architecture</li>
+<li>the donation flow</li>
+</ul>
+<h3 id="poc-value">POC value</h3>
+<p>This is why the concept is attractive:</p>
+<ul>
+<li>it changes sequencing, not the whole system</li>
+<li>it is testable</li>
+<li>it can remain bounded</li>
+<li>it gives design a concrete way to improve clarity without redesigning everything first</li>
+</ul>
+<hr/>
+<h2 id="6-cold-start-and-warm-start">6. Cold Start And Warm Start</h2>
+<p>The same framework supports both new and known visitors.</p>
+<table>
+<thead>
+<tr>
+<th>Visitor State</th>
+<th>Available Signal</th>
+<th>POC Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Cold Start</strong></td>
+<td>Referral source, device, geography, session behavior, page interactions</td>
+<td>Helps guide new visitors who arrive with limited context</td>
+</tr>
+<tr>
+<td><strong>Warm Start</strong></td>
+<td>Session behavior + prior cause engagement + prior giving / interaction history</td>
+<td>Helps returning users see more relevant and deeper next steps</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cold-start-requirement">Cold-start requirement</h3>
+<p>The POC must be viable under minimal features:</p>
+<p><span class="math display"><em>X</em><sub>cold</sub> = {session context, device, referral source, lightweight behavior}</span></p>
+<h3 id="warm-start-enhancement">Warm-start enhancement</h3>
+<p><span class="math display"><em>X</em><sub>warm</sub> = <em>X</em><sub>cold</sub> ∪ {history, recency, prior category engagement}</span></p>
+<p>This matters because the recommendation layer is most valuable when it can improve the experience even at first exposure.</p>
+<hr/>
+<h2 id="7-data-structure">7. Data Structure</h2>
+<h3 id="71-core-data-layers">7.1 Core Data Layers</h3>
+<table>
+<thead>
+<tr>
+<th>Table / Layer</th>
+<th>Meaning</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>causes</code></td>
+<td>One cause card the product can show</td>
+<td>Defines the recommendation space</td>
+</tr>
+<tr>
+<td><code>users</code></td>
+<td>One user-profile prior</td>
+<td>Encodes segment and motivation structure</td>
+</tr>
+<tr>
+<td><code>sessions</code></td>
+<td>One visit</td>
+<td>Captures context and behavior</td>
+</tr>
+<tr>
+<td><code>labels</code></td>
+<td>One session-level target</td>
+<td>Encodes engaged cause category</td>
+</tr>
+</tbody>
+</table>
+<h3 id="72-feature-domains">7.2 Feature Domains</h3>
+<table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>Example Variables</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Behavioral</td>
+<td>Category visits, page views, cause-detail views, prior donation history</td>
+</tr>
+<tr>
+<td>Survey / Research</td>
+<td>Motivational signals, persona patterns, declared interests</td>
+</tr>
+<tr>
+<td>System</td>
+<td>Referral source, device class, geography</td>
+</tr>
+<tr>
+<td>Temporal</td>
+<td>Recency, frequency, inter-session intervals</td>
+</tr>
+<tr>
+<td>UX Signals</td>
+<td>Friction, interaction depth, content exposure</td>
+</tr>
+</tbody>
+</table>
+<h3 id="73-target-variable">7.3 Target Variable</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Cause Category Engagement</code></td>
+<td>Category associated with meaningful session interaction or donation-aligned engagement</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2 id="8-baseline-and-poc-model-classes">8. Baseline And POC Model Classes</h2>
+<h3 id="81-static-baselines">8.1 Static Baselines</h3>
+<table>
+<thead>
+<tr>
+<th>Baseline</th>
+<th>Description</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Baseline 1</td>
+<td><code>Predict globally most frequent category</code></td>
+<td>Minimum unpersonalized reference</td>
+</tr>
+<tr>
+<td>Baseline 2</td>
+<td><code>Predict globally top-3 categories</code></td>
+<td>Static “one-size-fits-most” ranking reference</td>
+</tr>
+</tbody>
+</table>
+<p>These represent what the product is effectively doing if no visitor-specific inference is used.</p>
+<h3 id="82-primary-predictive-model-robot">8.2 Primary Predictive Model <span class="emoji">🤖</span></h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Specification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Model</td>
+<td>Multinomial Logistic Regression</td>
+</tr>
+<tr>
+<td>Output</td>
+<td>Probability distribution over cause categories</td>
+</tr>
+<tr>
+<td>Regularization</td>
+<td>L2 penalty</td>
+</tr>
+<tr>
+<td>Purpose</td>
+<td>Interpretable probability ranking baseline</td>
+</tr>
+</tbody>
+</table>
+<h3 id="why-logistic-regression-first">Why logistic regression first</h3>
+<p>Design-friendly explanation:</p>
+<ul>
+<li>it gives each cause path a score</li>
+<li>converts those scores into probabilities</li>
+<li>returns a ranked list the page can use directly</li>
+</ul>
+<p><span class="math display">$$P(Y = k \mid x)
+=
+\frac{\exp(\beta_k^\top x)}
+{\sum_{j=1}^{K}\exp(\beta_j^\top x)}$$</span></p>
+<p>Where:</p>
+<ul>
+<li><code>beta_k</code> is the coefficient vector for class <code>k</code></li>
+<li><code>x</code> is the visitor/session feature vector</li>
+<li>the denominator normalizes the scores into probabilities that sum to <code>1</code></li>
+</ul>
+<p>This makes it a strong first model for a page that needs:</p>
+<ul>
+<li>first choice</li>
+<li>second choice</li>
+<li>third choice</li>
+</ul>
+<h3 id="83-interpretation-layer-deciduous_tree">8.3 Interpretation Layer <span class="emoji">🌳</span></h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Purpose</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Shallow Decision Tree</td>
+<td>Explain routing logic in readable rules</td>
+<td>High interpretability, lower complexity</td>
+</tr>
+</tbody>
+</table>
+<h3 id="why-include-a-tree">Why include a tree</h3>
+<p>The tree is not necessarily the best ranking model.</p>
+<p>It is valuable because it creates a readable explanation such as:</p>
+<ul>
+<li>if visitor is new and trust-seeking, lead with foundational needs</li>
+<li>if visitor is returning and development-oriented, lead with long-term opportunity</li>
+</ul>
+<p>That helps UX, PM, and design understand why the first view changes.</p>
+<hr/>
+<h2 id="9-evaluation-protocol">9. Evaluation Protocol</h2>
+<h3 id="91-validation-design-bar_chart">9.1 Validation Design <span class="emoji">📊</span></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Specification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Split Strategy</td>
+<td>Grouped train/test split or grouped cross-validation</td>
+</tr>
+<tr>
+<td>Grouping Unit</td>
+<td>User ID, to reduce leakage across repeated sessions</td>
+</tr>
+<tr>
+<td>Reporting</td>
+<td>Mean performance and stability across resamples</td>
+</tr>
+</tbody>
+</table>
+<h3 id="92-quantitative-metrics">9.2 Quantitative Metrics</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Top-1 Accuracy</td>
+<td>Direct classification success</td>
+</tr>
+<tr>
+<td>Top-3 Accuracy</td>
+<td>Ranking relevance for first-view experience</td>
+</tr>
+<tr>
+<td>Macro F1</td>
+<td>Balanced performance across classes</td>
+</tr>
+<tr>
+<td>Log Loss</td>
+<td>Probability calibration / ranking quality</td>
+</tr>
+<tr>
+<td>Lift</td>
+<td>Improvement over static baseline</td>
+</tr>
+</tbody>
+</table>
+<h3 id="93-ux-supportive-interpretation-metrics">9.3 UX-Supportive Interpretation Metrics</h3>
+<p>These are not yet production measurements, but they are the UX-facing interpretation layer of the POC:</p>
+<table>
+<thead>
+<tr>
+<th>UX Question</th>
+<th>POC Proxy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Is the first view more relevant?</td>
+<td>Top-3 accuracy / lift</td>
+</tr>
+<tr>
+<td>Is the first step clearer?</td>
+<td>Whether top-ranked options align better to likely visitor profile</td>
+</tr>
+<tr>
+<td>Is the experience less “flat”?</td>
+<td>Different visitors receive meaningfully different ranked first views</td>
+</tr>
+</tbody>
+</table>
+<h3 id="94-statistical-confidence">9.4 Statistical Confidence</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bootstrap Resampling</td>
+<td>Estimate variability of lift</td>
+</tr>
+<tr>
+<td>Confidence Interval</td>
+<td><code>95% CI for lift using bootstrap standard error</code></td>
+</tr>
+<tr>
+<td>Significance Criterion</td>
+<td>CI excludes zero lift</td>
+</tr>
+</tbody>
+</table>
+<p>Bootstrap confidence interval form:</p>
+<p><span class="math display">$$\widehat{\operatorname{Lift}}
+\pm
+1.96 \cdot
+SE_{\text{boot}}(\widehat{\operatorname{Lift}})$$</span></p>
+<hr/>
+<h2 id="10-success-criteria">10. Success Criteria</h2>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Threshold</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Top-3 Lift</td>
+<td><code>Meaningful positive lift over static top-3 baseline</code></td>
+</tr>
+<tr>
+<td>Stability</td>
+<td>Low resample variance / no collapse under repeated evaluation</td>
+</tr>
+<tr>
+<td>Explainability</td>
+<td>Model can be translated into understandable page-level logic</td>
+</tr>
+<tr>
+<td>Cold-Start Performance</td>
+<td>Above baseline with lightweight visitor features</td>
+</tr>
+<tr>
+<td>UX Plausibility</td>
+<td>Output supports a visibly clearer first-view hierarchy</td>
+</tr>
+</tbody>
+</table>
+<h3 id="failure-condition">Failure condition</h3>
+<p>The POC should be treated as insufficient if:</p>
+<ul>
+<li>performance stays within baseline uncertainty</li>
+<li>the first-view ranking does not meaningfully differentiate visitors</li>
+<li>the output is too unstable or too opaque to support product use</li>
+</ul>
+<hr/>
+<h2 id="11-deliverables">11. Deliverables</h2>
+<table>
+<thead>
+<tr>
+<th>Deliverable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Baseline vs Model Comparison Table</strong></td>
+<td>Quantitative lift analysis</td>
+</tr>
+<tr>
+<td><strong>Top-3 Recommendation Storyboard</strong></td>
+<td>Static “current vs personalized” first-view concept</td>
+</tr>
+<tr>
+<td><strong>Interpretable Decision Rules</strong></td>
+<td>Shallow tree explanation layer</td>
+</tr>
+<tr>
+<td><strong>Confidence / Stability Summary</strong></td>
+<td>Variability and robustness of results</td>
+</tr>
+<tr>
+<td><strong>Feasibility Recommendation</strong></td>
+<td><code>Keep exploring, refine, or pause</code></td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2 id="12-theoretical-framing">12. Theoretical Framing</h2>
+<p>Cause ranking at the first view is not only a design choice.</p>
+<p>It is also a statistical inference question:</p>
+<blockquote>
+<p><strong>Does the available feature space contain enough structure to improve first-view ranking beyond a static default?</strong></p>
+</blockquote>
+<p>If the answer is <strong>yes</strong>, then first-view ordering becomes a <strong>learnable inference function</strong>.</p>
+<p>If the answer is <strong>no</strong>, then static ordering remains the more defensible product default.</p>
+<p>This POC evaluates that boundary.</p>
+<h3 id="formal-risk-framing">Formal risk framing</h3>
+<p>The relevant question is whether we can reduce top-3 misranking risk:</p>
+<p><span class="math display"><em>R</em><sub>Top3</sub>(<em>f</em>) = 𝔼[<strong>1</strong> {<em>Y</em> ∉ Top3 (<em>f</em>(<em>X</em>))}]</span></p>
+<p>The POC asks whether:</p>
+<p><span class="math display"><em>R</em><sub>Top3</sub>(<em>f</em><sub>model</sub>) &lt; <em>R</em><sub>Top3</sub>(<em>f</em><sub>baseline</sub>)</span></p>
+<p>in a stable, interpretable, and UX-meaningful way.</p>
+<hr/>
+<h2 id="13-why-this-matters-for-design-and-product">13. Why This Matters For Design And Product</h2>
+<p>This POC is worth pursuing because it converts a vague personalization idea into a bounded design-support question:</p>
+<ul>
+<li>Can we reduce interpretation burden at the first view?</li>
+<li>Can we make the first three choices feel more intentional?</li>
+<li>Can the page meet different visitor states more appropriately?</li>
+</ul>
+<p>The immediate contribution is not “AI.”</p>
+<p>The immediate contribution is:</p>
+<ul>
+<li>clearer sequencing</li>
+<li>less flat browsing</li>
+<li>better first-view guidance</li>
+<li>a way to make the portfolio easier to navigate</li>
+</ul>
+<p>This also makes the concept strategically relevant beyond the Causes page itself.</p>
+<p>If the organization is serious about a multi-product portfolio with:</p>
+<ul>
+<li>multiple entry points</li>
+<li>different giving pathways</li>
+<li>stronger fit to different supporter motivations</li>
+</ul>
+<p>then the first-view experience cannot remain a flat, one-size-fits-all default indefinitely.</p>
+<p>As the portfolio expands, the cost of poor first-view sequencing rises:</p>
+<ul>
+<li>users face more interpretation burden</li>
+<li>products compete more visibly for attention</li>
+<li>the path into deeper engagement becomes less intentional</li>
+</ul>
+<p>In that sense, this POC is not separate from the portfolio strategy. It is one practical mechanism for making that strategy usable at the point of entry.</p>
+<p>That is why this is worth evaluating even before any implementation decision.</p>
+<hr/>
+<h2 id="14-immediate-recommendation">14. Immediate Recommendation</h2>
+<p>Proceed with this as a <strong>bounded exploratory POC</strong> only if the team agrees the immediate question is:</p>
+<blockquote>
+<p><strong>Is this worth keeping in exploratory scope long enough to validate properly?</strong></p>
+</blockquote>
+<p>That is the decision this brief supports.</p>
+<p>Not:</p>
+<ul>
+<li>shipping</li>
+<li>committing engineering work</li>
+<li>replacing design</li>
+<li>claiming production-ready personalization</li>
+</ul>
+<p>This is an evidence-building step.</p>
+<hr/>
+<h2 id="appendix-a-key-textbook-references">Appendix A: Key Textbook References</h2>
+<p>The POC is intentionally lightweight, but the underlying framing is consistent with standard statistical learning, model evaluation, and experimental design references.</p>
+<table>
+<thead>
+<tr>
+<th>Reference</th>
+<th>Why It Matters Here</th>
+<th>Most Relevant Chapters / Topics</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>James, Witten, Hastie, Tibshirani — <em>An Introduction to Statistical Learning</em></strong></td>
+<td>Strong practical grounding for supervised classification, model assessment, and tree-based methods</td>
+<td>Ch. 4 (Classification), Ch. 5 (Resampling / Cross-Validation), Ch. 8 (Tree-Based Methods)</td>
+</tr>
+<tr>
+<td><strong>Hastie, Tibshirani, Friedman — <em>The Elements of Statistical Learning</em></strong></td>
+<td>Deeper theoretical grounding for classification risk, regularization, and model complexity</td>
+<td>Ch. 2 (Supervised Learning), Ch. 4 (Linear Methods for Classification), Ch. 7 (Model Assessment), Ch. 9 (Additive Models and Trees)</td>
+</tr>
+<tr>
+<td><strong>[name omitted], [name omitted], Gedeck — <em>Practical Statistics for Data Scientists</em></strong></td>
+<td>Practical decision-support framing for lift, uncertainty, resampling, and why descriptive summaries are not enough</td>
+<td>Classification, Resampling, Statistical Experiments, A/B Testing, Regression and Prediction</td>
+</tr>
+<tr>
+<td><strong>Kuhn and Johnson — <em>Applied Predictive Modeling</em></strong></td>
+<td>Strong applied guidance for data splitting, feature preparation, model comparison, and avoiding overfitting in real workflows</td>
+<td>Data Splitting, Pre-Processing, Measuring Performance, Classification Models</td>
+</tr>
+<tr>
+<td><strong>Montgomery — <em>Design and Analysis of Experiments</em></strong></td>
+<td>Helpful for separating exploratory signal from decision-grade evidence and for understanding confounding / clean comparisons</td>
+<td>Experimental Design Basics, Blocking, Factorial Design, Sources of Variability</td>
+</tr>
+</tbody>
+</table>
+<h3 id="practical-takeaway-from-these-references">Practical takeaway from these references</h3>
+<p>Across these texts, the recurring themes are the same:</p>
+<ul>
+<li>separate exploratory signal from decision-grade evidence</li>
+<li>match model choice to the decision interface</li>
+<li>evaluate lift relative to a baseline, not in isolation</li>
+<li>justify complexity through stable generalization, not novelty</li>
+<li>avoid over-claiming from weak or confounded evidence</li>
+</ul>
+<hr/>
+<p>End of Doc</p>
+</article><footer class="footer">CVG Research Hub · Local edition <a href="../search.html">All pages</a></footer></main></div></body></html>

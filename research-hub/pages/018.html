@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="noindex,nofollow" name="robots"/><title>Google Analytics Event Schema for In App Intercept Surveys · CVG Research Hub</title><link href="../wiki.css" rel="stylesheet"/></head><body><a class="skip" href="#main">Skip to content</a><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span aria-hidden="true" class="brand-icon">CVG</span>Research Hub</a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../search.html">Search the wiki</a></nav></div></header><div class="shell"><aside class="side"><p class="kicker">Research library</p><nav aria-label="Wiki sections"><a aria-current="true" href="080.html">Causes research</a><a href="095.html">Research summaries</a><a href="132.html">Methods and toolkit</a><a href="205.html">Research portfolio</a><a href="207.html">Templates</a><a href="187.html">Community research</a></nav></aside><main id="main"><nav aria-label="Breadcrumb" class="crumb"><a href="../index.html">Home</a> <span aria-hidden="true">/</span> <a href="080.html">Causes research</a> <span aria-hidden="true">/</span> <a href="050.html">Causes: Core Flows Usability Research Nov '24</a> <span aria-hidden="true">/</span> <a href="036.html">Causes Usability Benchmark Re Test July 2025</a> <span aria-hidden="true">/</span> <a href="021.html">Causes Intercept Survey Study</a> <span aria-hidden="true">/</span> <a href="020.html">Instrumentation Plan for In App Intercept Surveys</a></nav><article class="doc"><p class="kicker">Research article</p><h1 id="google-analytics-event-schema-for-in-app-intercept-surveys">Google Analytics Event Schema for In App Intercept Surveys</h1>
+<p>Engineering centric specification for Causes Current Gen study</p>
+<h2 id="purpose">Purpose</h2>
+<p>Define a complete GA4 event schema and data layer contract for in app intercept surveys, so research can link survey responses to donor behavior and 4D outcomes.</p>
+<h2 id="scope">Scope</h2>
+<p>Applies to Causes web and app clients that present in app intercept surveys at confirmation, cause detail, and no results states. Covers GA4 events, parameters, user properties, trigger rules, validation, and warehouse joins.</p>
+<h2 id="event-taxonomy">Event taxonomy</h2>
+<table>
+<thead>
+<tr>
+<th>Event name</th>
+<th>When it fires</th>
+<th>Primary owner</th>
+<th>Secondary owner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>survey_shown</td>
+<td>Intercept is rendered and visible</td>
+<td>Engineering client</td>
+<td>Research</td>
+</tr>
+<tr>
+<td>survey_started</td>
+<td>First interaction with the survey UI</td>
+<td>Engineering client</td>
+<td>Research</td>
+</tr>
+<tr>
+<td>survey_response</td>
+<td>A single question is answered</td>
+<td>Engineering client</td>
+<td>Research</td>
+</tr>
+<tr>
+<td>survey_completed</td>
+<td>Submit or exit event for the survey</td>
+<td>Engineering client</td>
+<td>Research</td>
+</tr>
+<tr>
+<td>select_cause</td>
+<td>User selects a cause from listings or recommendations</td>
+<td>Engineering client</td>
+<td>Product</td>
+</tr>
+<tr>
+<td>view_item</td>
+<td>Cause detail page is viewed</td>
+<td>Engineering client</td>
+<td>Product</td>
+</tr>
+<tr>
+<td>begin_donation</td>
+<td>User enters the donation flow</td>
+<td>Engineering client</td>
+<td>Product</td>
+</tr>
+<tr>
+<td>add_donation_info</td>
+<td>User submits payment or donor info step</td>
+<td>Engineering client</td>
+<td>Product</td>
+</tr>
+<tr>
+<td>donation_complete</td>
+<td>Successful donation posted</td>
+<td>Engineering client</td>
+<td>Finance ops</td>
+</tr>
+<tr>
+<td>open_filter</td>
+<td>User opens advanced filters</td>
+<td>Engineering client</td>
+<td>Product</td>
+</tr>
+<tr>
+<td>apply_filter</td>
+<td>User applies a filter</td>
+<td>Engineering client</td>
+<td>Product</td>
+</tr>
+<tr>
+<td>no_results_shown</td>
+<td>Zero results state is shown</td>
+<td>Engineering client</td>
+<td>Product</td>
+</tr>
+<tr>
+<td>save_favorite</td>
+<td>User saves a cause</td>
+<td>Engineering client</td>
+<td>Product</td>
+</tr>
+<tr>
+<td>share_referral_clicked</td>
+<td>User clicks a share referral control</td>
+<td>Engineering client</td>
+<td>Marketing</td>
+</tr>
+<tr>
+<td>ab_variant_assigned</td>
+<td>User is assigned to an experiment arm</td>
+<td>Engineering client</td>
+<td>Research</td>
+</tr>
+</tbody>
+</table>
+<h2 id="event-parameters-dictionary">Event parameters dictionary</h2>
+<p>All parameter names are lower snake case. String values are trimmed and lowercased unless noted.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Applies to events</th>
+<th>Sample value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>location</td>
+<td>string</td>
+<td>survey_shown, survey_started, survey_response, survey_completed</td>
+<td>confirmation</td>
+<td>Allowed values: confirmation, cause_detail, no_results</td>
+</tr>
+<tr>
+<td>question_set_id</td>
+<td>string</td>
+<td>survey_shown, survey_started, survey_completed</td>
+<td>cg_trust_v1</td>
+<td>Versioned ID of the loaded survey set</td>
+</tr>
+<tr>
+<td>question_id</td>
+<td>string</td>
+<td>survey_response</td>
+<td>q_confidence_01</td>
+<td>Stable ID in survey content store</td>
+</tr>
+<tr>
+<td>response_value</td>
+<td>string or number</td>
+<td>survey_response</td>
+<td>6</td>
+<td>For Likert store numeric, for Best or Worst store best or worst plus item_id in item_id param</td>
+</tr>
+<tr>
+<td>item_id</td>
+<td>string</td>
+<td>survey_response</td>
+<td>stmt_trust_alloc</td>
+<td>For MaxDiff Best or Worst, the statement identifier</td>
+</tr>
+<tr>
+<td>completion_status</td>
+<td>string</td>
+<td>survey_completed</td>
+<td>submitted</td>
+<td>Allowed values: submitted, abandoned</td>
+</tr>
+<tr>
+<td>cause_id</td>
+<td>string</td>
+<td>select_cause, view_item, begin_donation, donation_complete, save_favorite</td>
+<td>c_4827</td>
+<td>Internal canonical ID</td>
+</tr>
+<tr>
+<td>cause_category</td>
+<td>string</td>
+<td>select_cause, view_item</td>
+<td>water</td>
+<td>Top level taxonomy value</td>
+</tr>
+<tr>
+<td>entry_point</td>
+<td>string</td>
+<td>select_cause</td>
+<td>homepage_hero</td>
+<td>Where selection originated</td>
+</tr>
+<tr>
+<td>donation_flow</td>
+<td>string</td>
+<td>begin_donation</td>
+<td>single</td>
+<td>Allowed values: single, recurring</td>
+</tr>
+<tr>
+<td>amount_tier</td>
+<td>string</td>
+<td>donation_complete, add_donation_info, begin_donation, survey_response if applicable</td>
+<td>50_plus</td>
+<td>Allowed values: under_10, 10_24, 25_49, 50_plus, custom</td>
+</tr>
+<tr>
+<td>custom_amount</td>
+<td>number</td>
+<td>donation_complete, add_donation_info</td>
+<td>75</td>
+<td>Present only if user typed a custom amount</td>
+</tr>
+<tr>
+<td>frequency</td>
+<td>string</td>
+<td>donation_complete</td>
+<td>monthly</td>
+<td>Allowed values: one_time, monthly, quarterly, annually</td>
+</tr>
+<tr>
+<td>payment_type</td>
+<td>string</td>
+<td>add_donation_info</td>
+<td>card</td>
+<td>Card, ach, wallet</td>
+</tr>
+<tr>
+<td>donation_amount</td>
+<td>number</td>
+<td>donation_complete</td>
+<td>50</td>
+<td>Currency handled in GA property settings</td>
+</tr>
+<tr>
+<td>placement_id</td>
+<td>string</td>
+<td>click events if added later</td>
+<td>cta_primary_detail</td>
+<td>Stable control identifier from design system</td>
+</tr>
+<tr>
+<td>filter_name</td>
+<td>string</td>
+<td>open_filter, apply_filter</td>
+<td>region</td>
+<td>Filter key used</td>
+</tr>
+<tr>
+<td>result_count</td>
+<td>number</td>
+<td>apply_filter</td>
+<td>12</td>
+<td>Count after filter application</td>
+</tr>
+<tr>
+<td>query</td>
+<td>string</td>
+<td>no_results_shown</td>
+<td>water education</td>
+<td>Raw user query lowercased</td>
+</tr>
+<tr>
+<td>suggested_count</td>
+<td>number</td>
+<td>no_results_shown</td>
+<td>3</td>
+<td>Suggestions shown to recover the search</td>
+</tr>
+<tr>
+<td>ab_experiment</td>
+<td>string</td>
+<td>ab_variant_assigned</td>
+<td>alloc_proof_v1</td>
+<td>Experiment slug</td>
+</tr>
+<tr>
+<td>ab_variant</td>
+<td>string</td>
+<td>ab_variant_assigned</td>
+<td>treatment_a</td>
+<td>Variant label assigned</td>
+</tr>
+</tbody>
+</table>
+<h2 id="user-properties">User properties</h2>
+<p>Set once per app session and update when state changes. All properties are strings unless noted.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Example</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>donor_segment</td>
+<td>current_gen</td>
+<td>CRM flag or proxy rules</td>
+</tr>
+<tr>
+<td>donor_history</td>
+<td>repeat</td>
+<td>CRM or local store</td>
+</tr>
+<tr>
+<td>auth_state</td>
+<td>logged_in</td>
+<td>Auth service</td>
+</tr>
+<tr>
+<td>ab_experiment</td>
+<td>alloc_proof_v1</td>
+<td>Experiment service</td>
+</tr>
+<tr>
+<td>ab_variant</td>
+<td>treatment_a</td>
+<td>Experiment service</td>
+</tr>
+<tr>
+<td>app_client</td>
+<td>web or ios or android</td>
+<td>Client constant</td>
+</tr>
+<tr>
+<td>site_section</td>
+<td>causes</td>
+<td>Route parser</td>
+</tr>
+</tbody>
+</table>
+<h2 id="trigger-rules-for-in-app-intercept">Trigger rules for in app intercept</h2>
+<ol type="1">
+<li>Confirmation location<br/>
+Fire survey_shown three seconds after donation_complete. Suppress if a survey_completed with location confirmation exists in the last fourteen days for this user_id or device_id.</li>
+<li>Cause detail location<br/>
+Fire survey_shown at dwell time sixty seconds or on exit intent. Suppress if confirmation survey fired in the last fourteen days.</li>
+<li>No results location<br/>
+Fire survey_shown on the first zero results event per user per seven days.</li>
+<li>Never show more than one intercept per session.</li>
+<li>survey_started only after the first interaction inside the survey container.</li>
+</ol>
+<h2 id="data-layer-contract">Data layer contract</h2>
+<p>Provide a documented data layer object that the analytics SDK reads at the time of each event.</p>
+<p>Example payload for survey_response</p>
+<p><code>{ "event": "survey_response", "location": "confirmation", "question_set_id": "cg_trust_v1", "question_id": "q_confidence_01", "response_value": 6, "item_id": null, "user_properties": { "donor_segment": "current_gen", "donor_history": "repeat", "ab_experiment": "alloc_proof_v1", "ab_variant": "treatment_a", "app_client": "web", "site_section": "causes" } } </code></p>
+<h2 id="validation-checklist">Validation checklist</h2>
+<p>Engineering should validate in GA4 DebugView and network logs</p>
+<ol type="1">
+<li>Event names match the taxonomy exactly</li>
+<li>Required parameters are present for each event type</li>
+<li>Parameter types are correct</li>
+<li>Suppression logic works and no duplicate surveys occur</li>
+<li>donation_complete revenue events remain accurate and unaffected</li>
+<li>User properties populate before the first survey event</li>
+</ol>
+<h2 id="warehouse-model-and-joins">Warehouse model and joins</h2>
+<p>Daily export GA4 events to the warehouse. Persist survey form data in the application database. Join strategy</p>
+<ol type="1">
+<li>Join on session id and event time window for survey_started to donation_complete for confirmation flows</li>
+<li>For per question analysis use survey_response grouped by question_id and joined to behavioral events within the same session</li>
+<li>Create derived tables<br/>
+a. current_gen_trust_panel aggregated by question_id and response_value<br/>
+b. donation_tier_shift_by_variant aggregated by amount_tier and ab_variant<br/>
+c. confirmation_csat_lift aggregated by location and completion_status</li>
+</ol>
+<h2 id="security-and-privacy">Security and privacy</h2>
+<p>No personal information is sent as event parameters. Respect consent choices before firing survey events. Keep question wording in the app database and reference by stable IDs.</p>
+<h2 id="ownership-and-runbook">Ownership and runbook</h2>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Owner</th>
+<th>Backup</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client analytics implementation</td>
+<td>Engineering client</td>
+<td>Analytics engineer</td>
+</tr>
+<tr>
+<td>GA4 property and events</td>
+<td>Analytics engineer</td>
+<td>Data engineer</td>
+</tr>
+<tr>
+<td>Warehouse export and models</td>
+<td>Data engineer</td>
+<td>Analytics engineer</td>
+</tr>
+<tr>
+<td>Survey content and IDs</td>
+<td>Research</td>
+<td>Product</td>
+</tr>
+<tr>
+<td>Experiment assignment</td>
+<td>Engineering platform</td>
+<td>Research</td>
+</tr>
+</tbody>
+</table>
+<h2 id="implementation-timeline">Implementation timeline</h2>
+<p>Week 1<br/>
+Define event schema and data layer fields. Create tracking tickets for each client platform.<br/>
+Week 2<br/>
+Implement events on staging. Validate in DebugView. Fix parameter types.<br/>
+Week 3<br/>
+Enable suppression rules. Validate intercept triggers for all three locations.<br/>
+Week 4<br/>
+Ship to production with feature flags. Begin daily export to warehouse.<br/>
+Week 5<br/>
+Deliver first joined dataset to research. Start experiment variant logging.</p>
+<h2 id="notes-for-research-alignment-with-4d">Notes for research alignment with 4D</h2>
+<p>Doability uses donation completion, time on task, and error rates captured by existing events.<br/>
+Dependability uses confidence ratings and CSAT collected through survey_response and survey_completed.<br/>
+Delight uses emotion words and open text from survey_response.<br/>
+Desire uses repeat donations, save favorite, and share referral clicks tied to user properties and custom events.</p>
+</article><footer class="footer">CVG Research Hub · Local edition <a href="../search.html">All pages</a></footer></main></div></body></html>

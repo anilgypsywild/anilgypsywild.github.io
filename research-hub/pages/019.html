@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="noindex,nofollow" name="robots"/><title>GA for Causes Usability Benchmark · CVG Research Hub</title><link href="../wiki.css" rel="stylesheet"/></head><body><a class="skip" href="#main">Skip to content</a><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span aria-hidden="true" class="brand-icon">CVG</span>Research Hub</a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../search.html">Search the wiki</a></nav></div></header><div class="shell"><aside class="side"><p class="kicker">Research library</p><nav aria-label="Wiki sections"><a aria-current="true" href="080.html">Causes research</a><a href="095.html">Research summaries</a><a href="132.html">Methods and toolkit</a><a href="205.html">Research portfolio</a><a href="207.html">Templates</a><a href="187.html">Community research</a></nav></aside><main id="main"><nav aria-label="Breadcrumb" class="crumb"><a href="../index.html">Home</a> <span aria-hidden="true">/</span> <a href="080.html">Causes research</a> <span aria-hidden="true">/</span> <a href="050.html">Causes: Core Flows Usability Research Nov '24</a> <span aria-hidden="true">/</span> <a href="036.html">Causes Usability Benchmark Re Test July 2025</a> <span aria-hidden="true">/</span> <a href="021.html">Causes Intercept Survey Study</a> <span aria-hidden="true">/</span> <a href="020.html">Instrumentation Plan for In App Intercept Surveys</a></nav><article class="doc"><p class="kicker">Research article</p><h1 id="ga-for-causes-usability-benchmark">GA for Causes Usability Benchmark</h1>
+<p>Google Analytics instrumentation and research ops plan<br/>
+Audience: UX and Engineering</p>
+<h2 id="purpose">Purpose</h2>
+<p>Connect the July 2025 Causes Usability Benchmark task set to concrete GA4 instrumentation and research outputs. Ensure every task has clear GA events, parameters, and 4D scorecard mapping so UX and Engineering can read, implement, and analyze consistently. The 4D frame is Delight, Doability, Desire, Dependability.</p>
+<h2 id="scope">Scope</h2>
+<p>Applies to benchmark sessions run on staging or production with research tagging enabled. Covers Tasks 1 through 7 with event schemas, parameter dictionaries, computation notes, and reporting views. Survey items are captured by the in app survey system and linked to GA via shared session context and stable IDs.</p>
+<h2 id="global-conventions">Global conventions</h2>
+<p>Event names are lower snake case. Parameters are lower snake case. All tasks adopt the same subject IDs and session IDs. User properties for segmentation are set before task start.</p>
+<p>User properties</p>
+<ul>
+<li>donor_segment current_gen or next_gen</li>
+<li>donor_history new or repeat</li>
+<li>app_client web or ios or android</li>
+<li>site_section causes</li>
+<li>test_variant experiment label if present</li>
+</ul>
+<p>Shared custom events</p>
+<ul>
+<li>research_task_started task_id</li>
+<li>research_task_completed task_id success true or false error_code optional</li>
+<li>research_question_shown question_id location</li>
+<li>research_question_answered question_id response_value response_text optional<br/>
+These are used in addition to feature events listed per task.</li>
+</ul>
+<p>4D mapping quick guide<br/>
+Doability covers time, success, errors.<br/>
+Dependability covers CSAT, trust, SUS or SUPR Q subscales.<br/>
+Delight covers emotion words and open comments.<br/>
+Desire covers repeat use actions such as save favorite and referral.</p>
+<hr/>
+<h1 id="task-1">Task 1</h1>
+<p>Discover and select a cause</p>
+<p>Objective<br/>
+Evaluate discovery including navigation, search, and filtering.</p>
+<p>User facing instruction<br/>
+Explore and select a cause that aligns with your values. Use search or filters as needed.</p>
+<p>GA events to capture</p>
+<ul>
+<li>research_task_started task_id t1_discover</li>
+<li>select_cause cause_id cause_category entry_point</li>
+<li>view_item cause_id cause_category</li>
+<li>open_filter filter_name</li>
+<li>apply_filter filter_name result_count</li>
+<li>site_search query result_count optional if native search event exists</li>
+<li>research_task_completed task_id t1_discover success true or false</li>
+</ul>
+<p>Derived metrics</p>
+<ul>
+<li>Task time start is research_task_started end is first select_cause that matches the instruction target</li>
+<li>Task success true if a cause is selected and the participant confirms selection</li>
+<li>Ease of use is captured by research_question_answered for the seven point item and linked to the task by task_id</li>
+<li>Path analysis uses sequences of open_filter, apply_filter, and site_search before select_cause</li>
+</ul>
+<p>4D mapping<br/>
+Doability time and success<br/>
+Dependability perceived ease<br/>
+Desire save favorite if used in this step</p>
+<p>Research readout</p>
+<ul>
+<li>Median time to selection by segment</li>
+<li>Share selecting via filters vs search vs navigation</li>
+<li>Ease rating distribution with confidence intervals</li>
+<li>Qual themes from open text for discovery choices</li>
+</ul>
+<hr/>
+<h1 id="task-2">Task 2</h1>
+<p>Understand cause details and allocation</p>
+<p>Objective<br/>
+Assess comprehension of how donations are used and perceived clarity.</p>
+<p>User facing instruction<br/>
+Review the selected cause and focus on how your donation will be used.</p>
+<p>GA events to capture</p>
+<ul>
+<li>view_item cause_id cause_category</li>
+<li>read_depth_percent value optional if instrumented</li>
+<li>info_disclosure_shown element_id such as allocation_indicator or testimonial or banner</li>
+<li>research_question_answered q_trust_confidence value 1 to 7</li>
+<li>research_question_answered q_info_clarity value 1 to 7</li>
+<li>research_task_completed task_id t2_details success true</li>
+</ul>
+<p>Derived metrics</p>
+<ul>
+<li>Time on page from first view_item to research_task_completed for t2_details</li>
+<li>Trust confidence high share value 6 or 7</li>
+<li>SUPR Q trust or clarity subitem distribution if used</li>
+<li>Interaction with allocation components via info_disclosure_shown counts</li>
+</ul>
+<p>4D mapping<br/>
+Dependability trust and clarity<br/>
+Delight perceived appearance trust if using SUPR Q trust subscale</p>
+<p>Research readout</p>
+<ul>
+<li>Lift in trust when allocation indicators are present</li>
+<li>Clarity scores by cause category</li>
+<li>Open text drivers of confidence</li>
+</ul>
+<hr/>
+<h1 id="task-3">Task 3</h1>
+<p>Simulated donation and MWTP prompt</p>
+<p>Objective<br/>
+Simulate checkout and capture willingness to pay up to twenty five dollars post flow.</p>
+<p>User facing instruction<br/>
+Proceed as if donating. Complete the flow. Then answer the MWTP prompt.</p>
+<p>GA events to capture</p>
+<ul>
+<li>research_task_started task_id t3_checkout</li>
+<li>begin_donation donation_flow single or recurring</li>
+<li>select_amount amount_tier custom_amount frequency</li>
+<li>add_donation_info payment_type</li>
+<li>donation_complete donation_amount tier frequency</li>
+<li>research_question_answered q_ease_checkout value 1 to 7</li>
+<li>research_question_answered q_mwtp_absolute value numeric 0 to 25</li>
+<li>research_task_completed task_id t3_checkout success true or false</li>
+</ul>
+<p>Derived metrics</p>
+<ul>
+<li>Task time from research_task_started to donation_complete or task end</li>
+<li>Ease of use rating distribution</li>
+<li>MWTP absolute distribution and median</li>
+<li>Regression ready panel linking MWTP to ease, trust from Task 2, and design variant</li>
+</ul>
+<p>4D mapping<br/>
+Doability time and success<br/>
+Dependability ease and confidence<br/>
+Desire donation tier behavior and future intent proxy through MWTP</p>
+<p>Research readout</p>
+<ul>
+<li>Checkout time and ease by segment</li>
+<li>MWTP medians and tails</li>
+<li>Influence of allocation indicators from Task 2 on MWTP</li>
+</ul>
+<hr/>
+<h1 id="task-4">Task 4</h1>
+<p>Navigate using filters</p>
+<p>Objective<br/>
+Evaluate category filter clarity and functional effectiveness.</p>
+<p>User facing instruction<br/>
+Use filters to find Education or Emergency Relief.</p>
+<p>GA events to capture</p>
+<ul>
+<li>research_task_started task_id t4_filters</li>
+<li>open_filter filter_name</li>
+<li>apply_filter filter_name result_count</li>
+<li>select_cause cause_id cause_category</li>
+<li>research_question_answered q_ease_filters value 1 to 7</li>
+<li>research_task_completed task_id t4_filters success true or false</li>
+</ul>
+<p>Derived metrics</p>
+<ul>
+<li>Time on task from start to selection</li>
+<li>Filter use sequences and success rates</li>
+<li>Ease rating for filters</li>
+</ul>
+<p>4D mapping<br/>
+Doability time and success<br/>
+Dependability perceived ease of filters<br/>
+Desire save favorite actions if available</p>
+<p>Research readout</p>
+<ul>
+<li>Which filters reduce time most</li>
+<li>Misleading labels or unused filters</li>
+<li>Recommendations for copy and defaults</li>
+</ul>
+<hr/>
+<h1 id="task-5">Task 5</h1>
+<p>Evaluate trust indicators and social proof</p>
+<p>Objective<br/>
+Assess how participants seek and interpret credibility cues.</p>
+<p>User facing instruction<br/>
+Before donating find reviews, testimonials, or other trust signals.</p>
+<p>GA events to capture</p>
+<ul>
+<li>trust_element_viewed element_type testimonial badge partner_logo review</li>
+<li>trust_element_clicked element_id element_type</li>
+<li>research_question_answered q_trust_overall value 1 to 7</li>
+<li>research_question_answered q_nps_0_10 value 0 to 10</li>
+<li>research_task_completed task_id t5_trust success true</li>
+</ul>
+<p>Derived metrics</p>
+<ul>
+<li>Trust score distribution</li>
+<li>NPS distribution and computed NPS</li>
+<li>Heatmap of trust elements viewed and clicked before begin_donation</li>
+</ul>
+<p>4D mapping<br/>
+Dependability trust and NPS<br/>
+Delight spontaneous comments if collected as open text</p>
+<p>Research readout</p>
+<ul>
+<li>Which trust elements correlate with higher trust and with donation start</li>
+<li>Placement and copy improvements for high performing signals</li>
+</ul>
+<hr/>
+<h1 id="task-6">Task 6</h1>
+<p>Catch trial search for a non existent cause</p>
+<p>Objective<br/>
+Evaluate resilience and recovery in a controlled failure.</p>
+<p>User facing instruction<br/>
+Search for clean water access in urban communities. This does not exist.</p>
+<p>GA events to capture</p>
+<ul>
+<li>site_search query result_count</li>
+<li>no_results_shown query suggested_count</li>
+<li>suggestion_clicked suggestion_type cause_id optional</li>
+<li>rage_click flag true with element_id if collected</li>
+<li>research_question_answered q_difficulty_no_results value 1 to 7</li>
+<li>research_question_answered q_recovery_open response_text</li>
+<li>research_task_completed task_id t6_catch success based on recovery rules</li>
+</ul>
+<p>Derived metrics</p>
+<ul>
+<li>Time to recovery or abandonment</li>
+<li>Frustration markers rage clicks looping navigation</li>
+<li>Use of suggested alternatives</li>
+</ul>
+<p>4D mapping<br/>
+Doability error handling<br/>
+Dependability difficulty perception<br/>
+Desire whether users continue exploring after failure</p>
+<p>Research readout</p>
+<ul>
+<li>Best performing fallback patterns</li>
+<li>Copy changes for zero results states</li>
+<li>Filter or taxonomy adjustments</li>
+</ul>
+<hr/>
+<h1 id="task-7-optional">Task 7 optional</h1>
+<p>Post donation feedback and follow up</p>
+<p>Objective<br/>
+Assess emotional closure and follow up engagement opportunities.</p>
+<p>User facing instruction<br/>
+Check the confirmation or thank you. Look for share or update options.</p>
+<p>GA events to capture</p>
+<ul>
+<li>donation_complete donation_amount tier frequency</li>
+<li>confirmation_seen confirmation_template_id</li>
+<li>share_referral_clicked channel</li>
+<li>updates_opt_in_clicked update_type email or sms</li>
+<li>research_question_answered q_csat_confirmation value 1 to 7</li>
+<li>research_task_completed task_id t7_follow_up success true</li>
+</ul>
+<p>Derived metrics</p>
+<ul>
+<li>Confirmation engagement rate</li>
+<li>CSAT on confirmation</li>
+<li>Share and updates opt in rates</li>
+</ul>
+<p>4D mapping<br/>
+Dependability CSAT<br/>
+Delight emotion words in open comments<br/>
+Desire shares and opt ins</p>
+<p>Research readout</p>
+<ul>
+<li>Which confirmation templates drive higher CSAT and shares</li>
+<li>Recommended copy and layout for gratitude and next steps</li>
+</ul>
+<hr/>
+<h2 id="data-model-and-joins">Data model and joins</h2>
+<ul>
+<li>Each research task has a unique task_id and is bracketed by research_task_started and research_task_completed</li>
+<li>Survey answers use research_question_answered with stable question_id codes so the same metrics can be repeated over time</li>
+<li>Behavioral events are joined by session and timestamps to create task level panels for analysis</li>
+<li>For segment analysis set donor_segment and donor_history user properties at session start</li>
+</ul>
+<h2 id="qa-plan">QA plan</h2>
+<ul>
+<li>Validate event firing with GA4 DebugView for every task path</li>
+<li>Check parameter presence and types against the event dictionary</li>
+<li>Confirm timing windows measure start and end correctly</li>
+<li>Verify suppression rules for intercept prompts if any study prompts are used</li>
+</ul>
+<h2 id="reporting-views">Reporting views</h2>
+<p>UX research dashboard</p>
+<ul>
+<li>Per task time, success, ease, trust, CSAT</li>
+<li>Heatmaps for filter and trust element interactions</li>
+<li>Open text themes linked to task outcomes</li>
+</ul>
+<p>Product and engineering dashboard</p>
+<ul>
+<li>Funnel from view_item to donation_complete with filter and trust interactions</li>
+<li>Zero results frequency and recovery rates</li>
+<li>Confirmation engagement and downstream repeat visit indicators</li>
+</ul>
+<h2 id="alignment-with-the-4d-scorecard">Alignment with the 4D scorecard</h2>
+<p>The above instrumentation feeds all four 4D buckets for the Causes experience and supports executive friendly reporting</p>
+<ul>
+<li>Doability measures are time, success, and errors at the task level</li>
+<li>Dependability measures are confidence, CSAT, and NPS where applicable</li>
+<li>Delight measures are feeling scale words and open comments on experience quality</li>
+<li>Desire measures are referral clicks, save favorite, and repeat behaviors over time</li>
+</ul>
+<h2 id="notes">Notes:</h2>
+<ul>
+<li>Keep question wording stable and reference by question_id so we can trend</li>
+<li>Use the same seven point scales across tasks for ease, trust, and CSAT to simplify analysis</li>
+<li>When running experiments, log ab_variant at session start and on first task event so variant assignment is unambiguous</li>
+</ul>
+<hr/>
+<p>End of Doc</p>
+<hr/>
+</article><footer class="footer">CVG Research Hub · Local edition <a href="../search.html">All pages</a></footer></main></div></body></html>
