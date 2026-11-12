@@ -1,0 +1,85 @@
+.marmot .site-header { position: relative; }
+.marmot .site-nav { overflow: visible; flex-wrap: wrap; }
+.marmot .site-nav a { padding-inline: 10px; }
+.marmot :focus-visible { outline: 2px solid #111; outline-offset: 4px; }
+.marmot .button:focus-visible { outline-offset: 4px; }
+.marmot .skip-link { position: absolute; top: 12px; left: 12px; z-index: 40; padding: 10px 16px; background: #fff; transform: translateY(-160%); }
+.marmot .skip-link:focus { transform: none; }
+.marmot h1, .marmot h2 { max-width: none; }
+.marmot .book-hero { align-items: start; grid-template-columns: minmax(0, 1fr) minmax(200px, .66fr); gap: clamp(24px, 4vw, 64px); }
+.marmot .book-hero h1 { font-size: clamp(2.35rem, 4.4vw, 4.15rem); text-wrap: balance; }
+.book-ident { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); }
+.book-ident h2 { font-size: clamp(1.3rem, 2vw, 1.9rem); }
+.book-ident p { margin: 8px 0 0; }
+.book-copy { max-width: 56ch; margin-top: 20px; }
+.book-copy p { margin: 0 0 .55em; }
+.book-cover { display: block; width: 100%; max-width: 390px; height: auto; justify-self: end; border: 1px solid var(--line); box-shadow: var(--shadow); }
+.marmot .read-first { margin-top: 20px; }
+.marmot .hero-actions { margin-top: 12px; }
+.offer-note { margin-bottom: 0; font-size: .9rem; color: var(--muted); max-width: 52ch; }
+.feature, .book-section { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 5fr); gap: clamp(24px, 5vw, 75px); padding: clamp(24px, 5vw, 56px); border-top: 1px solid var(--line); }
+.feature h2 { font-size: clamp(1.8rem, 3.8vw, 3.3rem); text-wrap: balance; }
+.feature-copy, .section-copy { max-width: 58ch; }
+.feature-copy p, .section-copy p { margin: 0 0 1em; }
+.feature-copy .feature-subtitle, .feature-line { font-family: "Fraunces", Georgia, serif; font-size: 1.25rem; }
+.feature-line { border-left: 3px solid var(--accent); padding-left: 16px; }
+.diy-cover { display: block; width: min(56%, 185px); height: auto; margin-top: 24px; border: 1px solid var(--line); }
+.book-section h2 { font-size: clamp(1.55rem, 3vw, 2.65rem); text-wrap: balance; }
+.payment-status { margin: 20px 0; border-top: 1px solid var(--line); }
+.payment-status div { display: flex; flex-wrap: wrap; gap: 2px 14px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.payment-status dt { min-width: 5rem; font-weight: 800; }
+.payment-status dd { margin: 0; }
+.marmot .book-footer { display: flex; justify-content: space-between; gap: 12px; padding: 20px 28px; }
+.excerpt { margin: 38px auto 0; max-width: 76ch; padding: clamp(22px, 5vw, 48px); background: var(--surface-strong); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.manuscript { font-family: Georgia, serif; font-size: clamp(1.08rem, 2vw, 1.23rem); line-height: 1.72; overflow-wrap: anywhere; }
+.manuscript h1 { font-size: clamp(1.95rem, 5vw, 3.5rem); }
+.manuscript h2 { margin-top: 1.3em; font-size: clamp(1.3rem, 3vw, 1.85rem); }
+.excerpt-links { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-bottom: 0; }
+.flyer-toolbar { text-align: right; margin: 10px auto; max-width: 740px; }
+.flyer-toolbar [hidden] { display: none; }
+.flyer { max-width: 740px; margin: 0 auto; padding: clamp(20px, 5vw, 45px); border: 1px solid var(--line); background: #fff; }
+.flyer h1 { font-size: clamp(2rem, 6vw, 4rem); text-wrap: balance; }
+.flyer-book { margin: 20px 0 0; }
+.flyer-book strong { font-family: "Fraunces", Georgia, serif; font-size: 1.32rem; }
+.flyer-hooks { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin: 28px 0; padding: 20px 0; border-block: 1px solid var(--line); }
+.flyer-hooks section { margin: 0; }
+.flyer h2 { font-size: clamp(1.1rem, 3vw, 1.55rem); }
+.flyer-hooks p { margin: 10px 0 0; }
+.flyer-bottom { display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+.flyer-bottom img { width: min(28%, 160px); height: auto; }
+.flyer-bottom a { overflow-wrap: anywhere; font-weight: 800; }
+
+@media (max-width: 760px) {
+  .marmot .site-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .marmot .site-nav { gap: 2px; }
+  .marmot .site-nav a { padding: 6px 8px; }
+  .marmot .book-hero, .feature, .book-section { grid-template-columns: 1fr; }
+  .book-cover { justify-self: start; width: min(72%, 295px); }
+  .feature-heading:has(.diy-cover) { display: contents; }
+  .feature .diy-cover { grid-row: 3; margin: 0; width: 140px; }
+}
+@media (max-width: 440px) {
+  .flyer-hooks { grid-template-columns: 1fr; }
+}
+@page { size: Letter; margin: .55in; }
+@media print {
+  .flyer-page, .flyer-page .page-shell { width: auto; min-height: 0; margin: 0; padding: 0; color: #000; background: #fff; }
+  .flyer-page::before, .flyer-page .site-header, .flyer-page .book-footer, .flyer-page .skip-link, .flyer-toolbar { display: none; }
+  .flyer { max-width: none; margin: 0; padding: .32in; border: 1pt solid #000; color: #000; background: #fff; break-inside: avoid; }
+  .flyer h1 { font-size: 36pt; }
+  .flyer h2 { font-size: 16pt; }
+  .flyer p, .flyer a { font-size: 12pt; }
+  .flyer-hooks { grid-template-columns: 1fr 1fr; border-color: #000; }
+  .flyer-bottom img { width: 1.4in; }
+}
+
+/* Keep promotional copy easy to skim and give manuscript paragraphs room. */
+.book-copy, .feature-copy, .section-copy { font-size: 1.06rem; line-height: 1.72; }
+.book-copy p { margin-bottom: .75em; }
+.feature-copy p, .section-copy p { margin-bottom: 1.15em; }
+.feature-copy strong, .section-copy strong, .offer-note strong { color: var(--text); }
+.offer-note + .offer-note { margin-top: .4em; }
+.scan-list { margin: 0 0 1.25em; padding-inline-start: 1.25em; }
+.scan-list li + li { margin-top: .55em; }
+.manuscript p { margin-block: 0 1.1em; }
+.manuscript h1 + p, .manuscript h2 + p { margin-top: .7em; }
