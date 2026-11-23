@@ -1,0 +1,62 @@
+[
+  {
+    "term": "SUS",
+    "url": "https://measuringu.com/sus/"
+  },
+  {
+    "term": "NASA TLX",
+    "url": "https://www.nasa.gov/human-systems-integration-division/nasa-task-load-index-tlx/"
+  },
+  {
+    "term": "NPS",
+    "url": "https://www.netpromotersystem.com/about/measuring-your-net-promoter-score/"
+  },
+  {
+    "term": "CSAT",
+    "url": "https://www.qualtrics.com/articles/customer-experience/what-is-csat/"
+  },
+  {
+    "term": "SUPR-Q",
+    "url": "https://measuringu.com/10-things-suprq/"
+  },
+  {
+    "term": "UMUX-Lite",
+    "url": "https://measuringu.com/umux-lite/"
+  },
+  {
+    "term": "HEART",
+    "url": "https://research.google/pubs/measuring-the-user-experience-on-a-large-scale-user-centered-metrics-for-web-applications/"
+  },
+  {
+    "term": "MaxDiff",
+    "url": "https://sawtoothsoftware.com/maxdiff"
+  },
+  {
+    "term": "Card sorting",
+    "url": "https://www.nngroup.com/articles/card-sorting-definition/"
+  },
+  {
+    "term": "Usability testing",
+    "url": "https://www.nngroup.com/articles/usability-testing-101/"
+  },
+  {
+    "term": "Usability heuristics",
+    "url": "https://www.nngroup.com/articles/ten-usability-heuristics/"
+  },
+  {
+    "term": "Eight golden rules",
+    "url": "https://www.cs.umd.edu/users/ben/goldenrules.html"
+  },
+  {
+    "term": "Confidence intervals",
+    "url": "https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm"
+  },
+  {
+    "term": "Human computer interaction",
+    "url": "https://sigchi.org/"
+  },
+  {
+    "term": "Single Ease Question",
+    "url": "https://measuringu.com/guide-to-study-based-ux-metrics/"
+  }
+]

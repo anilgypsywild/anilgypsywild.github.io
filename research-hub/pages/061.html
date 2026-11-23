@@ -1,9 +1,9 @@
 <!DOCTYPE html>
+
 <html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="noindex,nofollow" name="robots"/><title>Learning Cause Affinity via Supervised Multiclass Classification · UX Research Field Guide</title><link href="../wiki.css" rel="stylesheet"/></head><body><a class="skip" href="#main">Skip to content</a><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span aria-hidden="true" class="brand-icon">UX</span>Research Hub</a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../search.html">Search the wiki</a></nav></div></header><div class="shell"><aside class="side"><p class="kicker">Research library</p><nav aria-label="Wiki sections"><a aria-current="true" href="080.html">Causes research</a><a href="095.html">Research summaries</a><a href="132.html">Methods and toolkit</a><a href="205.html">Research portfolio</a><a href="207.html">Templates</a><a href="187.html">Community research</a></nav></aside><main id="main"><nav aria-label="Breadcrumb" class="crumb"><a href="../index.html">Home</a> <span aria-hidden="true">/</span> <a href="080.html">Causes research</a></nav><article class="doc"><p class="kicker">Research article</p><h1 id="learning-cause-affinity-via-supervised-multiclass-classification">Learning Cause Affinity via Supervised Multiclass Classification</h1>
 <h2 id="bounded-exploratory-poc-for-ux-product-and-design-review">Bounded Exploratory POC for UX, Product, and Design Review</h2>
 <p><strong>Signal Tags:</strong> <span class="emoji">🤖</span> <code>Machine Learning</code> · <span class="emoji">📊</span> <code>Statistical Ranking</code> · <span class="emoji">🌳</span> <code>Interpretable Rules</code> · <span class="emoji">🧭</span> <code>UX Decision Support</code></p>
-<p><strong>Author:</strong> [account removed]<br/>
-<strong>Scope:</strong> Exploratory feasibility only<br/>
+<p><strong>Scope:</strong> Exploratory feasibility only<br/>
 <strong>Initial Review Format:</strong> 20-minute team huddle / design review<br/>
 <strong>Project Type:</strong> Research-grounded statistical learning proof of concept</p>
 <hr/>
@@ -73,11 +73,11 @@
 </ul>
 <hr/>
 <h2 id="3-research-objective">3. Research Objective</h2>
-<table>
+<div aria-label="Research table 1" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Item</th>
-<th>Description</th>
+<th scope="col">Item</th>
+<th scope="col">Description</th>
 </tr>
 </thead>
 <tbody>
@@ -114,14 +114,14 @@
 <td><code>Keep in exploratory scope, refine further, or pause</code></td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <hr/>
 <h2 id="4-formal-learning-setup">4. Formal Learning Setup</h2>
-<table>
+<div aria-label="Research table 2" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Component</th>
-<th>Definition</th>
+<th scope="col">Component</th>
+<th scope="col">Definition</th>
 </tr>
 </thead>
 <tbody>
@@ -150,21 +150,21 @@
 <td><code>Reorder first-view cause paths and first-view cause cards</code></td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <h3 id="first-view-ranking-interpretation">First-view ranking interpretation</h3>
 <p><span class="math display"><em>X</em> ⊂ ℝ<sup><em>d</em></sup>,  <em>Y</em> ∈ {1, 2, …, <em>K</em>},  <em>S</em> = {(<em>x</em><sub><em>i</em></sub>, <em>y</em><sub><em>i</em></sub>)}<sub><em>i</em> = 1</sub><sup><em>n</em></sup></span></p>
 <p><span class="math display"><em>f</em>(<em>x</em>) = [<em>p</em><sub>1</sub>(<em>x</em>), <em>p</em><sub>2</sub>(<em>x</em>), …, <em>p</em><sub><em>K</em></sub>(<em>x</em>)]  where  <em>p</em><sub><em>k</em></sub>(<em>x</em>) = <em>P</em>(<em>Y</em> = <em>k</em> ∣ <em>X</em> = <em>x</em>)</span></p>
-<p><span class="math display">$$\sum_{k=1}^{K} p_k(x) = 1$$</span></p>
+<p><span class="math display"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><msub><mi>p</mi><mi>k</mi></msub><mo form="prefix" stretchy="false">(</mo><mi>x</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\sum_{k=1}^{K} p_k(x) = 1</annotation></semantics></math></span></p>
 <p>The product uses the three largest probabilities to determine which three cause paths should lead the first view:</p>
 <p><span class="math display">Top3 (<em>f</em>(<em>x</em>))</span></p>
 <h3 id="primary-evaluation-metric">Primary evaluation metric</h3>
-<p><span class="math display">$$\operatorname{Top3Acc}
+<p><span class="math display"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">Top3Acc</mi><mo>⁡</mo></mrow><mo>=</mo><mfrac><mn>1</mn><mi>n</mi></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mn mathvariant="bold">𝟏</mn><mspace width="-0.167em"></mspace><mrow><mo form="prefix" stretchy="true">{</mo><msub><mi>y</mi><mi>i</mi></msub><mo>∈</mo><mi mathvariant="normal">Top3</mi><mo form="prefix" stretchy="false">(</mo><mi>f</mi><mo form="prefix" stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo form="postfix" stretchy="false">)</mo><mo form="postfix" stretchy="false">)</mo><mo form="postfix" stretchy="true">}</mo></mrow></mrow><annotation encoding="application/x-tex">\operatorname{Top3Acc}
 =
 \frac{1}{n}
 \sum_{i=1}^{n}
 \mathbf{1}\!\left\{
 y_i \in \operatorname{Top3}(f(x_i))
-\right\}$$</span></p>
+\right\}</annotation></semantics></math></span></p>
 <p>Where:</p>
 <ul>
 <li><code>I[...]</code> is the indicator function</li>
@@ -177,11 +177,11 @@ y_i \in \operatorname{Top3}(f(x_i))
 <h2 id="5-ux-and-product-interpretation">5. UX And Product Interpretation</h2>
 <p>The statistical output is not the final user experience.</p>
 <p>The output is translated into a page-level intervention:</p>
-<p><span class="math display">$$\text{Visitor Signals}
+<p><span class="math display"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Visitor Signals</mtext><mo>→</mo><mtext mathvariant="normal">Ranked Cause Types</mtext><mo>→</mo><mtext mathvariant="normal">Ordered First-View Content</mtext></mrow><annotation encoding="application/x-tex">\text{Visitor Signals}
 \rightarrow
 \text{Ranked Cause Types}
 \rightarrow
-\text{Ordered First\text{-}View Content}$$</span></p>
+\text{Ordered First-View Content}</annotation></semantics></math></span></p>
 <h3 id="what-changes-in-the-experience">What changes in the experience</h3>
 <ul>
 <li>which cause path leads first</li>
@@ -206,12 +206,12 @@ y_i \in \operatorname{Top3}(f(x_i))
 <hr/>
 <h2 id="6-cold-start-and-warm-start">6. Cold Start And Warm Start</h2>
 <p>The same framework supports both new and known visitors.</p>
-<table>
+<div aria-label="Research table 3" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Visitor State</th>
-<th>Available Signal</th>
-<th>POC Value</th>
+<th scope="col">Visitor State</th>
+<th scope="col">Available Signal</th>
+<th scope="col">POC Value</th>
 </tr>
 </thead>
 <tbody>
@@ -226,7 +226,7 @@ y_i \in \operatorname{Top3}(f(x_i))
 <td>Helps returning users see more relevant and deeper next steps</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <h3 id="cold-start-requirement">Cold-start requirement</h3>
 <p>The POC must be viable under minimal features:</p>
 <p><span class="math display"><em>X</em><sub>cold</sub> = {session context, device, referral source, lightweight behavior}</span></p>
@@ -236,12 +236,12 @@ y_i \in \operatorname{Top3}(f(x_i))
 <hr/>
 <h2 id="7-data-structure">7. Data Structure</h2>
 <h3 id="71-core-data-layers">7.1 Core Data Layers</h3>
-<table>
+<div aria-label="Research table 4" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Table / Layer</th>
-<th>Meaning</th>
-<th>Role</th>
+<th scope="col">Table / Layer</th>
+<th scope="col">Meaning</th>
+<th scope="col">Role</th>
 </tr>
 </thead>
 <tbody>
@@ -266,13 +266,13 @@ y_i \in \operatorname{Top3}(f(x_i))
 <td>Encodes engaged cause category</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <h3 id="72-feature-domains">7.2 Feature Domains</h3>
-<table>
+<div aria-label="Research table 5" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Domain</th>
-<th>Example Variables</th>
+<th scope="col">Domain</th>
+<th scope="col">Example Variables</th>
 </tr>
 </thead>
 <tbody>
@@ -297,13 +297,13 @@ y_i \in \operatorname{Top3}(f(x_i))
 <td>Friction, interaction depth, content exposure</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <h3 id="73-target-variable">7.3 Target Variable</h3>
-<table>
+<div aria-label="Research table 6" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Variable</th>
-<th>Definition</th>
+<th scope="col">Variable</th>
+<th scope="col">Definition</th>
 </tr>
 </thead>
 <tbody>
@@ -312,16 +312,16 @@ y_i \in \operatorname{Top3}(f(x_i))
 <td>Category associated with meaningful session interaction or donation-aligned engagement</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <hr/>
 <h2 id="8-baseline-and-poc-model-classes">8. Baseline And POC Model Classes</h2>
 <h3 id="81-static-baselines">8.1 Static Baselines</h3>
-<table>
+<div aria-label="Research table 7" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Baseline</th>
-<th>Description</th>
-<th>Purpose</th>
+<th scope="col">Baseline</th>
+<th scope="col">Description</th>
+<th scope="col">Purpose</th>
 </tr>
 </thead>
 <tbody>
@@ -336,14 +336,14 @@ y_i \in \operatorname{Top3}(f(x_i))
 <td>Static “one-size-fits-most” ranking reference</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>These represent what the product is effectively doing if no visitor-specific inference is used.</p>
 <h3 id="82-primary-predictive-model-robot">8.2 Primary Predictive Model <span class="emoji">🤖</span></h3>
-<table>
+<div aria-label="Research table 8" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Component</th>
-<th>Specification</th>
+<th scope="col">Component</th>
+<th scope="col">Specification</th>
 </tr>
 </thead>
 <tbody>
@@ -364,7 +364,7 @@ y_i \in \operatorname{Top3}(f(x_i))
 <td>Interpretable probability ranking baseline</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <h3 id="why-logistic-regression-first">Why logistic regression first</h3>
 <p>Design-friendly explanation:</p>
 <ul>
@@ -372,10 +372,10 @@ y_i \in \operatorname{Top3}(f(x_i))
 <li>converts those scores into probabilities</li>
 <li>returns a ranked list the page can use directly</li>
 </ul>
-<p><span class="math display">$$P(Y = k \mid x)
+<p><span class="math display"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo form="prefix" stretchy="false">(</mo><mi>Y</mi><mo>=</mo><mi>k</mi><mo>∣</mo><mi>x</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mfrac><mrow><mrow><mi mathvariant="normal">exp</mi><mo>⁡</mo></mrow><mo form="prefix" stretchy="false">(</mo><msubsup><mi>β</mi><mi>k</mi><mi>⊤</mi></msubsup><mi>x</mi><mo form="postfix" stretchy="false">)</mo></mrow><mrow><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><mrow><mi mathvariant="normal">exp</mi><mo>⁡</mo></mrow><mo form="prefix" stretchy="false">(</mo><msubsup><mi>β</mi><mi>j</mi><mi>⊤</mi></msubsup><mi>x</mi><mo form="postfix" stretchy="false">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">P(Y = k \mid x)
 =
 \frac{\exp(\beta_k^\top x)}
-{\sum_{j=1}^{K}\exp(\beta_j^\top x)}$$</span></p>
+{\sum_{j=1}^{K}\exp(\beta_j^\top x)}</annotation></semantics></math></span></p>
 <p>Where:</p>
 <ul>
 <li><code>beta_k</code> is the coefficient vector for class <code>k</code></li>
@@ -389,12 +389,12 @@ y_i \in \operatorname{Top3}(f(x_i))
 <li>third choice</li>
 </ul>
 <h3 id="83-interpretation-layer-deciduous_tree">8.3 Interpretation Layer <span class="emoji">🌳</span></h3>
-<table>
+<div aria-label="Research table 9" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Model</th>
-<th>Purpose</th>
-<th>Notes</th>
+<th scope="col">Model</th>
+<th scope="col">Purpose</th>
+<th scope="col">Notes</th>
 </tr>
 </thead>
 <tbody>
@@ -404,7 +404,7 @@ y_i \in \operatorname{Top3}(f(x_i))
 <td>High interpretability, lower complexity</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <h3 id="why-include-a-tree">Why include a tree</h3>
 <p>The tree is not necessarily the best ranking model.</p>
 <p>It is valuable because it creates a readable explanation such as:</p>
@@ -416,11 +416,11 @@ y_i \in \operatorname{Top3}(f(x_i))
 <hr/>
 <h2 id="9-evaluation-protocol">9. Evaluation Protocol</h2>
 <h3 id="91-validation-design-bar_chart">9.1 Validation Design <span class="emoji">📊</span></h3>
-<table>
+<div aria-label="Research table 10" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Method</th>
-<th>Specification</th>
+<th scope="col">Method</th>
+<th scope="col">Specification</th>
 </tr>
 </thead>
 <tbody>
@@ -437,13 +437,13 @@ y_i \in \operatorname{Top3}(f(x_i))
 <td>Mean performance and stability across resamples</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <h3 id="92-quantitative-metrics">9.2 Quantitative Metrics</h3>
-<table>
+<div aria-label="Research table 11" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Metric</th>
-<th>Purpose</th>
+<th scope="col">Metric</th>
+<th scope="col">Purpose</th>
 </tr>
 </thead>
 <tbody>
@@ -468,14 +468,14 @@ y_i \in \operatorname{Top3}(f(x_i))
 <td>Improvement over static baseline</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <h3 id="93-ux-supportive-interpretation-metrics">9.3 UX-Supportive Interpretation Metrics</h3>
 <p>These are not yet production measurements, but they are the UX-facing interpretation layer of the POC:</p>
-<table>
+<div aria-label="Research table 12" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>UX Question</th>
-<th>POC Proxy</th>
+<th scope="col">UX Question</th>
+<th scope="col">POC Proxy</th>
 </tr>
 </thead>
 <tbody>
@@ -492,13 +492,13 @@ y_i \in \operatorname{Top3}(f(x_i))
 <td>Different visitors receive meaningfully different ranked first views</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <h3 id="94-statistical-confidence">9.4 Statistical Confidence</h3>
-<table>
+<div aria-label="Research table 13" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Method</th>
-<th>Description</th>
+<th scope="col">Method</th>
+<th scope="col">Description</th>
 </tr>
 </thead>
 <tbody>
@@ -507,7 +507,7 @@ y_i \in \operatorname{Top3}(f(x_i))
 <td>Estimate variability of lift</td>
 </tr>
 <tr>
-<td>Confidence Interval</td>
+<td><a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm" rel="noopener noreferrer" target="_blank" title="Reference: Confidence intervals">Confidence Interval</a></td>
 <td><code>95% CI for lift using bootstrap standard error</code></td>
 </tr>
 <tr>
@@ -515,19 +515,19 @@ y_i \in \operatorname{Top3}(f(x_i))
 <td>CI excludes zero lift</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>Bootstrap confidence interval form:</p>
-<p><span class="math display">$$\widehat{\operatorname{Lift}}
+<p><span class="math display"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi mathvariant="normal">Lift</mi><mo accent="true">̂</mo></mover><mo>±</mo><mn>1.96</mn><mo>⋅</mo><mi>S</mi><msub><mi>E</mi><mtext mathvariant="normal">boot</mtext></msub><mo form="prefix" stretchy="false">(</mo><mover><mi mathvariant="normal">Lift</mi><mo accent="true">̂</mo></mover><mo form="postfix" stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\widehat{\operatorname{Lift}}
 \pm
 1.96 \cdot
-SE_{\text{boot}}(\widehat{\operatorname{Lift}})$$</span></p>
+SE_{\text{boot}}(\widehat{\operatorname{Lift}})</annotation></semantics></math></span></p>
 <hr/>
 <h2 id="10-success-criteria">10. Success Criteria</h2>
-<table>
+<div aria-label="Research table 14" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Criterion</th>
-<th>Threshold</th>
+<th scope="col">Criterion</th>
+<th scope="col">Threshold</th>
 </tr>
 </thead>
 <tbody>
@@ -552,7 +552,7 @@ SE_{\text{boot}}(\widehat{\operatorname{Lift}})$$</span></p>
 <td>Output supports a visibly clearer first-view hierarchy</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <h3 id="failure-condition">Failure condition</h3>
 <p>The POC should be treated as insufficient if:</p>
 <ul>
@@ -562,11 +562,11 @@ SE_{\text{boot}}(\widehat{\operatorname{Lift}})$$</span></p>
 </ul>
 <hr/>
 <h2 id="11-deliverables">11. Deliverables</h2>
-<table>
+<div aria-label="Research table 15" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Deliverable</th>
-<th>Description</th>
+<th scope="col">Deliverable</th>
+<th scope="col">Description</th>
 </tr>
 </thead>
 <tbody>
@@ -591,7 +591,7 @@ SE_{\text{boot}}(\widehat{\operatorname{Lift}})$$</span></p>
 <td><code>Keep exploring, refine, or pause</code></td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <hr/>
 <h2 id="12-theoretical-framing">12. Theoretical Framing</h2>
 <p>Cause ranking at the first view is not only a design choice.</p>
@@ -658,12 +658,12 @@ SE_{\text{boot}}(\widehat{\operatorname{Lift}})$$</span></p>
 <hr/>
 <h2 id="appendix-a-key-textbook-references">Appendix A: Key Textbook References</h2>
 <p>The POC is intentionally lightweight, but the underlying framing is consistent with standard statistical learning, model evaluation, and experimental design references.</p>
-<table>
+<div aria-label="Research table 16" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Reference</th>
-<th>Why It Matters Here</th>
-<th>Most Relevant Chapters / Topics</th>
+<th scope="col">Reference</th>
+<th scope="col">Why It Matters Here</th>
+<th scope="col">Most Relevant Chapters / Topics</th>
 </tr>
 </thead>
 <tbody>
@@ -693,7 +693,7 @@ SE_{\text{boot}}(\widehat{\operatorname{Lift}})$$</span></p>
 <td>Experimental Design Basics, Blocking, Factorial Design, Sources of Variability</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <h3 id="practical-takeaway-from-these-references">Practical takeaway from these references</h3>
 <p>Across these texts, the recurring themes are the same:</p>
 <ul>

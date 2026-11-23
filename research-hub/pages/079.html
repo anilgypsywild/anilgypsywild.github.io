@@ -1,6 +1,7 @@
 <!DOCTYPE html>
+
 <html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="noindex,nofollow" name="robots"/><title>🧭 outcome-based browsing concept: Review · UX Research Field Guide</title><link href="../wiki.css" rel="stylesheet"/></head><body><a class="skip" href="#main">Skip to content</a><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span aria-hidden="true" class="brand-icon">UX</span>Research Hub</a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../search.html">Search the wiki</a></nav></div></header><div class="shell"><aside class="side"><p class="kicker">Research library</p><nav aria-label="Wiki sections"><a aria-current="true" href="080.html">Causes research</a><a href="095.html">Research summaries</a><a href="132.html">Methods and toolkit</a><a href="205.html">Research portfolio</a><a href="207.html">Templates</a><a href="187.html">Community research</a></nav></aside><main id="main"><nav aria-label="Breadcrumb" class="crumb"><a href="../index.html">Home</a> <span aria-hidden="true">/</span> <a href="080.html">Causes research</a> <span aria-hidden="true">/</span> Story Behind Story Research</nav><article class="doc"><p class="kicker">Research article</p><h1 id="research-section-2"><span class="emoji">🧭</span> outcome-based browsing concept: Review</h1>
-<table>
+<div aria-label="Research table 1" class="table-scroll" role="region" tabindex="0"><table>
 <tr>
 <th>
 <h2 id="bookmark_tabs"><span class="emoji">📑</span></h2>
@@ -49,12 +50,12 @@
 </td>
 <td>
 <ul>
-<li><a>Version 1: Causes First, the browse concept Second</a></li>
-<li><a>Version 2: the browse concept First, Causes Second</a></li>
+<li>Version 1: Causes First, the browse concept Second</li>
+<li>Version 2: the browse concept First, Causes Second</li>
 </ul>
 </td>
 </tr>
-</table>
+</table></div>
 <blockquote>
 <p><span class="emoji">💡</span> <strong>Key point:</strong> this review is about matching each decision to the right evidence.</p>
 </blockquote>
@@ -79,12 +80,12 @@
 <hr/>
 <h2 id="triangular_ruler-how-the-request-was-processed"><span class="emoji">📐</span> How The Request Was Processed</h2>
 <p>The intake was translated into the actual <strong>decisions</strong> it implies:</p>
-<table>
+<div aria-label="Research table 2" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Intake ask</th>
-<th>Real decision</th>
-<th>Valid evidence source</th>
+<th scope="col">Intake ask</th>
+<th scope="col">Real decision</th>
+<th scope="col">Valid evidence source</th>
 </tr>
 </thead>
 <tbody>
@@ -104,7 +105,7 @@
 <td>live analytics or experiment</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>Two things are true at once:</p>
 <ul>
 <li>the asks are strategically related</li>
@@ -116,11 +117,11 @@
 <hr/>
 <h2 id="bar_chart-what-the-current-data-suggests"><span class="emoji">📊</span> What The Current Data Suggests</h2>
 <p>The existing GA snapshot gives a <strong>directional</strong> story:</p>
-<table>
+<div aria-label="Research table 3" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Step</th>
-<th>Reported rate</th>
+<th scope="col">Step</th>
+<th scope="col">Reported rate</th>
 </tr>
 </thead>
 <tbody>
@@ -149,7 +150,7 @@
 <td><code>68.6%</code></td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>The strongest interpretation of this pattern is:</p>
 <ul>
 <li><strong>discovery</strong> looks <strong>weaker</strong> than it should</li>
@@ -187,7 +188,7 @@
 <p>Other limitations:</p>
 <ul>
 <li>no sample counts</li>
-<li>no confidence intervals</li>
+<li>no <a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm" rel="noopener noreferrer" target="_blank" title="Reference: Confidence intervals">confidence intervals</a></li>
 <li>no exact event definitions</li>
 <li>no segment cuts by device, channel, or cohort</li>
 </ul>
@@ -222,11 +223,11 @@
 <p>The requested <strong>lift</strong> is:</p>
 <pre class="text"><code>35% - 24% = 11 points</code></pre>
 <p>At a baseline of <code>24%</code>, the approximate 95% margin of error for a small prototype sample is:</p>
-<table>
+<div aria-label="Research table 4" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Sample size</th>
-<th>Approx. margin of error</th>
+<th scope="col">Sample size</th>
+<th scope="col">Approx. margin of error</th>
 </tr>
 </thead>
 <tbody>
@@ -247,7 +248,7 @@
 <td><strong><code>+/- 11.8</code> points</strong></td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>This means:</p>
 <ul>
 <li>prototype-scale samples are useful for <strong>directionality</strong></li>
@@ -261,11 +262,11 @@
 <p>Approximate requirement to detect <code>24% -&gt; 35%</code>:</p>
 <pre class="text"><code>about 269 observations per arm</code></pre>
 <p>Approximate requirements for conversion:</p>
-<table>
+<div aria-label="Research table 5" class="table-scroll" role="region" tabindex="0"><table>
 <thead>
 <tr>
-<th>Comparison</th>
-<th>Sample <em>per</em> arm</th>
+<th scope="col">Comparison</th>
+<th scope="col">Sample <em>per</em> arm</th>
 </tr>
 </thead>
 <tbody>
@@ -278,7 +279,7 @@
 <td><code>~4,084</code></td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>This is the scale difference.</p>
 <ul>
 <li>CTR claims require live traffic</li>
@@ -389,5 +390,5 @@
 <hr/>
 <h1 id="appendix">Appendix</h1>
 <p>Slides</p>
-<p><a>story_behind_story_research team_review_gitlab_polished_v1_2026-03-16.pptx</a></p>
-</article><section class="listing related"><h2>In this chapter</h2><ul class="rows"><li class="row"><a href="078.html"><span class="kind">Topic</span><span class="row-title"><b>outcome-based browsing concept the browse concept Prototype Evaluation</b></span><span aria-hidden="true" class="tile-arrow">→</span></a></li><li class="row"><a href="075.html"><span class="kind">Article</span><span class="row-title"><b>Backtracking as a Behavioral Signal of Usability Breakdown</b></span><span aria-hidden="true" class="tile-arrow">→</span></a></li></ul></section><footer class="footer">UX Research Field Guide <a href="../search.html">All pages</a></footer></main></div></body></html>
+<p>story_behind_story_research team_review_gitlab_polished_v1_2026-03-16.pptx</p>
+</article><section class="listing related"><h2>In this chapter</h2><ul class="rows"><li class="row"><a href="078.html"><span class="kind">Topic</span><span class="row-title"><b>Outcome Based Browsing: Prototype Evaluation</b></span><span aria-hidden="true" class="tile-arrow">→</span></a></li><li class="row"><a href="075.html"><span class="kind">Article</span><span class="row-title"><b>Backtracking as a Behavioral Signal of Usability Breakdown</b></span><span aria-hidden="true" class="tile-arrow">→</span></a></li></ul></section><footer class="footer">UX Research Field Guide <a href="../search.html">All pages</a></footer></main></div></body></html>
