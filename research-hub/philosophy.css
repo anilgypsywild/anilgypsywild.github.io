@@ -1,0 +1,18 @@
+
+.philosophy{max-width:1080px}.ph-hero{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;padding:34px;background:#fff;border:1px solid var(--line);border-radius:14px}.ph-hero h1{font-size:clamp(2.5rem,4.3vw,4rem);margin:0 0 20px}.ph-lead{font:700 1.55rem/1.3 Georgia,serif;color:var(--green)}.ph-hero figure,.ph-section figure{margin:0}.philosophy img{display:block;max-width:100%;height:auto;border-radius:7px}.philosophy figure a{display:block}.ph-hero figure img{background:#142c41}.ph-jump{font-weight:700}.ph-contents{display:flex;flex-wrap:wrap;gap:12px 23px;padding:24px 0;border-bottom:1px solid var(--line);font-size:.93rem}.ph-section{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;padding:40px 0;border-bottom:1px solid var(--line)}.ph-section h2{margin:.15rem 0 20px;font-size:2rem}.ph-section p{font-size:1.05rem;line-height:1.7}.ph-wide{grid-template-columns:1fr}.ph-wide>div:first-child{max-width:80ch}.ph-pair{display:grid;grid-template-columns:1fr 1fr;gap:22px}.ph-note,.philosophy figcaption{font-size:.88rem!important;color:var(--muted);line-height:1.55}.ph-finding{padding:30px;border-left:4px solid var(--orange);background:#fff}.ph-finding h3{margin:.4rem 0}.philosophy details{border:1px solid var(--line);border-radius:8px;padding:18px;background:#fff}.philosophy summary{cursor:pointer;font-weight:700}.philosophy details img{max-height:620px;width:auto;margin:auto}.ph-related{padding:35px 0}.ph-related h2{margin:.2rem 0 24px}.ph-related>div{display:grid;grid-template-columns:1fr 1fr;gap:12px}.ph-related a{display:block;padding:16px;border:1px solid var(--line);border-radius:7px;background:white;font-weight:650}.philosophy .footer a{margin:0 16px 0 0}@media(max-width:1000px){.ph-hero,.ph-section{grid-template-columns:1fr}.ph-hero figure{max-width:660px}.ph-hero{padding:24px}}@media(max-width:600px){.ph-pair,.ph-related>div{grid-template-columns:1fr}.ph-section{padding:28px 0}.ph-hero h1{font-size:2.7rem}.ph-contents{gap:12px 18px}.ph-hero figure img{width:100%}}
+
+/* Lead with the human expectation, illustrated by Scotty. */
+.ph-hero{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:36px;padding:30px;background:linear-gradient(135deg,#fff 45%,#f0f4ee);box-shadow:0 12px 35px rgba(20,53,42,.06)}
+.ph-hero>figure{width:100%;align-self:center;min-width:0}
+.ph-hero>figure>a{overflow:hidden;border-radius:12px;background:#14251f;box-shadow:0 10px 26px rgba(17,43,33,.18);border:1px solid rgba(17,43,33,.12)}
+.ph-hero figure img{width:100%;height:auto;border-radius:0;object-fit:contain}
+.ph-hero figcaption{padding:18px 4px 0;margin:0}
+.ph-hero figcaption strong{display:block;font:700 1.45rem/1.3 Georgia,serif;color:var(--green);margin-bottom:7px}
+.ph-hero figcaption span{display:block;max-width:44ch}
+.ph-hero figcaption small{display:block;font-size:.75rem;line-height:1.6;margin-top:12px}
+.ph-hero figcaption a{display:inline;text-decoration:underline}
+.ph-hero>div{align-self:center;min-width:0}
+.ph-hero h1{font-size:clamp(2.4rem,3.5vw,3.4rem);line-height:1.08}
+.ph-hero .ph-lead{font-size:1.55rem}
+@media(max-width:1100px){.ph-hero{grid-template-columns:1fr;gap:26px}.ph-hero>figure{max-width:660px;justify-self:start}.ph-hero h1{font-size:2.8rem}}
+@media(max-width:600px){.ph-hero{padding:20px;gap:24px}.ph-hero h1{font-size:2.4rem}}

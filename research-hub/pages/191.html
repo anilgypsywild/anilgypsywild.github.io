@@ -1,254 +1,35 @@
 <!DOCTYPE html>
 
-<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="noindex,nofollow" name="robots"/><title>Thailand FCP Visit · UX Research Field Guide</title><link href="../wiki.css" rel="stylesheet"/></head><body><a class="skip" href="#main">Skip to content</a><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span aria-hidden="true" class="brand-icon">UX</span>Research Hub</a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../search.html">Search the wiki</a></nav></div></header><div class="shell"><aside class="side"><p class="kicker">Research library</p><nav aria-label="Wiki sections"><a href="080.html">Causes research</a><a href="095.html">Research summaries</a><a href="132.html">Methods and toolkit</a><a href="205.html">Research portfolio</a><a href="207.html">Templates</a><a aria-current="true" href="187.html">Community research</a></nav></aside><main id="main"><nav aria-label="Breadcrumb" class="crumb"><a href="../index.html">Home</a> <span aria-hidden="true">/</span> <a href="187.html">Community research</a> <span aria-hidden="true">/</span> <a href="203.html">🧑🏿‍🤝‍🧑🏽FCP Research</a> <span aria-hidden="true">/</span> <a href="192.html">Prototype Usability and Cognitive Load Evaluation</a></nav><article class="doc"><p class="kicker">Research article</p><h1 id="thailand-fcp-visit">Thailand FCP Visit</h1>
-<hr/>
-<p><strong>DataSet:</strong></p>
-<p>AI_assistant_FCP_THVisit.csv</p>
-<h1 id="0objective">0.Objective</h1>
-<p>To evaluate how workflow design influences cognitive workload, usability, satisfaction, and recommendation likelihood during the Thailand FCP visit.</p>
-<p>The goal is to <strong>measure</strong> <em>how</em> mental effort (TLX) affects perceived usability (<a href="https://measuringu.com/sus/" rel="noopener noreferrer" target="_blank" title="Reference: SUS">SUS</a>), future-use intention (<a href="https://www.qualtrics.com/articles/customer-experience/what-is-csat/" rel="noopener noreferrer" target="_blank" title="Reference: CSAT">CSAT</a>), and advocacy (<a href="https://www.netpromotersystem.com/about/measuring-your-net-promoter-score/" rel="noopener noreferrer" target="_blank" title="Reference: NPS">NPS</a>), and <strong>quantitatively</strong> identify the <strong>strongest</strong> levers for improving FCP staff experience.</p>
-<hr/>
-<h1 id="1-high-level-summary"><strong>1. High-Level Summary</strong></h1>
-<p>This correlation matrix shows a <strong>consistent and interpretable pattern</strong>:</p>
-<h3 id="higher-mental-workload-tlx-is-strongly-associated-with-lower-usability-lower-satisfaction-and-lower-likelihood-to-recommend-or-reuse-the-workflow"><strong>Higher mental workload (TLX) is strongly associated with lower usability, lower satisfaction, and lower likelihood to recommend or reuse the workflow.</strong></h3>
-<p>This is the <strong>expected</strong> UX relationship in cognitive load research, and our data aligns with <a href="192.html#top-summary-tldr"><strong>prior</strong> studies</a> (<a href="https://www.nasa.gov/human-systems-integration-division/nasa-task-load-index-tlx/" rel="noopener noreferrer" target="_blank" title="Reference: NASA TLX">NASA TLX</a> × usability literature, Bangor SUS studies, etc.).</p>
-<h1 id="metric-by-metric-interpretation"><strong>Metric-by-Metric Interpretation</strong></h1>
-<h2 id="research-section-7"><strong>1. TLX → SUS (r = −0.46)</strong> <span class="emoji">👿</span></h2>
-<p>This is the <strong>strongest negative relationship</strong> in the matrix.</p>
-<ul>
-<li>When cognitive demand increases, participants rate the workflow as <strong>less usable</strong>.</li>
-<li>When TLX decreases (less effort), SUS increases (better perceived usability).</li>
-</ul>
-<p><strong>Interpretation:</strong> <strong>Workload</strong> is a meaningful determinant of usability perception in these workflows.</p>
-<h2 id="research-section-8"><strong>2. TLX → NPS (r = −0.39)</strong></h2>
-<p>Moderately strong negative link.</p>
-<ul>
-<li>Participants who felt mentally taxed were <strong>less likely to recommend</strong> the workflow.</li>
-<li>Lower workload = higher likelihood to promote.</li>
-</ul>
-<p><strong>Interpretation:</strong> Reducing cognitive friction improves the emotional and social endorsement of the workflow.</p>
-<h2 id="research-section-9"><strong>3. TLX → CSAT (r = −0.37)</strong></h2>
-<p>Almost identical pattern to TLX → NPS.</p>
-<ul>
-<li>Higher workload = lower expectation of future use.</li>
-<li>Lower workload = higher “I would use this again” scores.</li>
-</ul>
-<p><strong>Interpretation:</strong> Ease of mental processing is directly tied to reuse behavior.</p>
-<h2 id="research-section-10"><strong>4. SUS → CSAT (r = 0.57)</strong> <span class="emoji">😄</span></h2>
-<p>This is the <strong>strongest positive correlation</strong> found.</p>
-<ul>
-<li>When usability scores are high, participants are much more likely to reuse the workflow.</li>
-<li>This aligns with known UX–behavioral relationships: usability drives continued adoption.</li>
-</ul>
-<p><strong>Interpretation:</strong> Improving usability has a <strong>double benefit</strong>: better perception and higher behavioral intention.</p>
-<h2 id="research-section-11"><strong>5. NPS → CSAT (r = 0.51)</strong></h2>
-<p>Participants who intend to reuse the workflow are also those who would recommend it.</p>
-<p><strong>Interpretation:</strong> Satisfaction and advocacy rise together – a key indicator of product–market fit.</p>
-<h2 id="research-section-12"><strong>6. SUS → NPS (r = 0.40)</strong></h2>
-<p>Moderate positive relationship.</p>
-<ul>
-<li>When a workflow <em>feels</em> usable, participants are more likely to recommend it.</li>
-</ul>
-<p><strong>Interpretation:</strong> Usability enhancement improves not just performance but brand perception and donor/worker experience.</p>
-<hr/>
-<h1 id="what-this-means-for-product-decisions-thinking"><strong>What This Means for Product Decisions</strong> <span class="emoji">🤔</span></h1>
-<h3 id="1-reduce-mental-workload-biggest-roi"><strong>1. Reduce mental workload: biggest ROI</strong></h3>
-<p>Across all metrics, TLX shows the <strong>strongest negative relationships</strong>.</p>
-<p>Lowering mental effort should increase:</p>
-<ul>
-<li>SUS (usability)</li>
-<li>CSAT (reuse likelihood)</li>
-<li>NPS (advocacy)</li>
-</ul>
-<h3 id="2-improve-usability-to-drive-behavior"><strong>2. Improve usability to drive behavior</strong></h3>
-<p>SUS → CSAT correlation (0.57) is <strong>high</strong>, meaning:</p>
-<p><strong>Good</strong> usability directly increases:</p>
-<ul>
-<li>Reuse</li>
-<li>Engagement</li>
-<li>Trust in the system</li>
-</ul>
-<h3 id="3-these-metrics-validate-each-other"><strong>3. These metrics validate each other</strong></h3>
-<p>The matrix is coherent:</p>
-<ul>
-<li>Workload down → usability up → reuse up → advocacy up.</li>
-</ul>
-<p>This is a <strong>healthy and interpretable UX ecosystem</strong>.</p>
-<hr/>
-<h1 id="tldr"><strong>Tldr;</strong></h1>
-<blockquote>
-<p><strong>“Every point of reduction in cognitive workload lifts usability, reuse intention, and recommendation likelihood. Usability is the strongest predictor of continued workflow adoption, and workload is the strongest barrier.”</strong></p>
-</blockquote>
-<hr/>
-<h1 id="2-interpretation-of-tlx--nps-csat-sus-relationships"><strong>2. Interpretation of TLX → NPS, CSAT, SUS Relationships</strong></h1>
-<h2 id="1-mental-workload-tlx--nps-recommendation-likelihood"><strong>1. Mental Workload (TLX) → NPS (Recommendation Likelihood)</strong></h2>
-<ul>
-<li><strong>What the data shows:</strong> As TLX increases, <strong>NPS ratings decline.</strong></li>
-<li><strong>Meaning for Product:</strong> When a workflow feels mentally demanding, staff are less willing to recommend it to others.</li>
-<li><strong>Action:</strong> Reduce cognitive effort to increase confidence and advocacy.</li>
-</ul>
-<h2 id="2-mental-workload-tlx--csat-likelihood-of-reuse"><strong>2. Mental Workload (TLX) → CSAT (Likelihood of Reuse)</strong></h2>
-<ul>
-<li><strong>What the data shows:</strong> Higher workload predicts <strong>lower</strong> intention to <strong>reuse</strong> the workflow.</li>
-<li><strong>Meaning for Product:</strong> High TLX creates friction that discourages repeated use.</li>
-<li><strong>Action:</strong> Simplify task steps to make reuse feel easy and predictable.</li>
-</ul>
-<h2 id="3-mental-workload-tlx--sus-perceived-usability"><strong>3. Mental Workload (TLX) → SUS (Perceived Usability)</strong></h2>
-<ul>
-<li><strong>What the data shows:</strong> <strong>TLX has a strong negative relationship with SUS</strong>. The more mental effort required, the lower the perceived usability.</li>
-<li><strong>Meaning for Product:</strong> Usability perception is closely tied to how demanding the workflow feels.</li>
-<li><strong>Action:</strong> Improve clarity, reduce decision points, and <strong>streamline</strong> interactions.</li>
-</ul>
-<h2 id="overall-implication"><strong>Overall Implication</strong></h2>
-<p>Across all metrics:</p>
-<blockquote>
-<p><strong>Lowering mental workload consistently increases usability, satisfaction, and recommendation likelihood.</strong></p>
-</blockquote>
-<p><strong>Reducing TLX i</strong>s the most effective lever for improving the entire experience.</p>
-<hr/>
-<h1 id="3-key-findings-and-insights">3. <strong>Key Findings and Insights</strong></h1>
-<div aria-label="Research table 1" class="table-scroll" role="region" tabindex="0"><table>
-<tr>
-<th>
-<p>#</p>
-</th>
-<th>Insight</th>
-<th>Interpretation</th>
-</tr>
-<tr>
-<td>1</td>
-<td>
-</td>
-<td>
-<h2 id="nps-by-day"><strong>NPS by Day</strong></h2>
-<ul>
-<li>Most participants rated the workflow highly, with an average recommendation score close to 6.</li>
-<li>Scores cluster tightly between 5 and 7, showing consistent positive sentiment across users.</li>
-<li>Very few low scores were given, indicating the workflow is generally trusted and well accepted.</li>
-</ul>
-</td>
-</tr>
-<tr>
-<td>2</td>
-<td>
-</td>
-<td>
-<h2 id="sus-by-day"><strong>SUS by Day</strong></h2>
-<ul>
-<li>Day 1 and Day 2 show <strong>excellent usability</strong> (near or above the SUS 80 benchmark).</li>
-<li>Day 3 SUS drops into the <strong>OK range</strong>, signaling usability friction.</li>
-<li>Day 4 drops further and is <strong>lowest overall</strong>, indicating specific workflow or UI issues.</li>
-</ul>
-</td>
-</tr>
-<tr>
-<td>3</td>
-<td>
-</td>
-<td>
-<h2 id="tlx-mental-demand-by-day"><strong>TLX Mental Demand by Day</strong></h2>
-<ul>
-<li>Day 1 shows <strong>low workload</strong> with high variability.</li>
-<li>Day 2 and Day 3 increase toward <strong>medium workload</strong>, with Day 3 highest.</li>
-<li>Day 4 workload decreases again, indicating improved cognitive efficiency.</li>
-</ul>
-</td>
-</tr>
-<tr>
-<td>4</td>
-<td>
-</td>
-<td>
-<h2 id="csat-by-day"><strong>CSAT by Day</strong></h2>
-<ul>
-<li>Day 1 and Day 2 show consistently <strong>high satisfaction</strong> (6–7).</li>
-<li>Day 3 shows the <strong>lowest satisfaction</strong>, with clustered low scores.</li>
-<li>Day 4 partially recovers but remains <strong>below Days 1 and 2</strong>.</li>
-</ul>
-</td>
-</tr>
-<tr>
-<td>5</td>
-<td>
-</td>
-<td>
-<h2 id="mental-workload--usability-heatmap"><strong>Mental Workload × Usability Heatmap</strong></h2>
-<ul>
-<li>Higher TLX aligns with <strong>lower SUS</strong> across days, especially on Day 3.</li>
-<li>Days with lower workload (Day 1, Day 4) also show <strong>higher usability scores</strong>.</li>
-<li>Pattern reinforces: <strong>reduce cognitive demand → increase usability</strong>.</li>
-</ul>
-</td>
-</tr>
-<tr>
-<td>6</td>
-<td>
-</td>
-<td>
-<h2 id="mental-workload--nps-heatmap"><strong>Mental Workload × NPS Heatmap</strong></h2>
-<ul>
-<li>Day 1 shows both <strong>low TLX</strong> and <strong>very high NPS</strong>, a strong positive signal.</li>
-<li>Day 3 has <strong>highest TLX</strong> and <strong>lowest NPS</strong>, indicating a pain point.</li>
-<li>Days 2 and 4 land in the <strong>middle zone</strong>, consistent with moderate workload.</li>
-</ul>
-</td>
-</tr>
-<tr>
-<td>7</td>
-<td>
-</td>
-<td>
-<h2 id="regression-analysis-summary"><strong>Regression Analysis Summary</strong></h2>
-<ul>
-<li>This section summarizes the statistical models used to understand what <strong>predicts</strong> user recommendation (NPS), satisfaction (CSAT), and perceived usability (SUS).</li>
-<li>All models were evaluated using OLS regression and ranked by AIC to identify the best-fitting specification.</li>
-</ul>
-<p><strong>1. NPS Model (Outcome: Recommendation Likelihood)</strong></p>
-<p><strong>Best model:</strong> <code>NPS_raw ~ CSAT</code></p>
-<p><strong>Interpretation:</strong></p>
-<ul>
-<li>CSAT is the only significant predictor of NPS (t = 2.84, p = .009).</li>
-<li>Higher satisfaction with the workflow strongly predicts higher likelihood of recommending it.</li>
-<li>No other variables (SUS, TLX, Day) improved model performance.</li>
-</ul>
-<p><strong>Implication:</strong> Improving reuse satisfaction is the most direct path to improving user advocacy.</p>
-<p><strong>2. CSAT Model (Outcome: Likelihood of Reuse)</strong></p>
-<p><strong>Best model:</strong> <code>CSAT ~ CSAT + C(Day)</code> (This reflects that no additional predictors improved explanatory power.)</p>
-<p><strong>Interpretation:</strong></p>
-<ul>
-<li>CSAT is internally consistent and stable across days.</li>
-<li>Day effects are not statistically significant.</li>
-<li>TLX and SUS do not improve predictive accuracy within this dataset.</li>
-</ul>
-<p><strong>Implication:</strong> Satisfaction is not driven by day-to-day prototype differences but by underlying workflow design.</p>
-<p><strong>3. SUS Model (Outcome: Perceived Usability)</strong></p>
-<p><strong>Best model:</strong> <code>SUS ~ SUS + C(Day)</code> (Again, SUS is statistically self-determined with no added predictive value from other variables.)</p>
-<p><strong>Interpretation:</strong></p>
-<ul>
-<li>SUS scores do not differ significantly across study days.</li>
-<li>Day effects are not significant.</li>
-<li>TLX and CSAT do not improve the model within this sample.</li>
-</ul>
-<p><strong>Implication:</strong> Perceived usability is stable and not meaningfully altered by day-based workflow or prototype variations.</p>
-<p><strong>Overall Conclusions</strong></p>
-<ol type="1">
-<li><strong>Recommendation (NPS) is driven by satisfaction (CSAT).</strong> Users recommend the workflow when they feel it is worth reusing.</li>
-<li><strong>CSAT and SUS remain stable across study days.</strong> Day-level differences do not meaningfully shift satisfaction or usability perception.</li>
-<li><strong>Structural workflow qualities—not small UI differences—drive experience.</strong> Improvements should focus on reducing friction in core tasks rather than incremental adjustments.</li>
-</ol>
-</td>
-</tr>
-</table></div>
-<h1 id="appendix">Appendix</h1>
-<h2 id="a1-references">A1. References</h2>
-<ol type="1">
-<li><strong>System Usability Scale (SUS):</strong> [name omitted], J. (1996). <em>SUS: A quick and dirty usability scale</em>. Usability Evaluation in Industry.</li>
-<li><strong>NASA Task Load Index (TLX):</strong> Hart, S. G., &amp; Staveland, L. E. (1988). <em>Development of NASA-TLX (Task Load Index): Results of empirical and theoretical research</em>.</li>
-<li><strong>Net Promoter Score (NPS):</strong> Reichheld, F. F. (2003). <em>The One Number You Need to Grow</em>. Harvard Business Review.</li>
-<li>Customer Satisfaction (CSAT) standard measure of post-task satisfaction widely used in service design; discussed in:<br/>
-Goodman, J., K. Newman &amp; M. Rossmann (2014). <em>Customer Experience 3.0</em>.</li>
-</ol>
-<hr/>
-<p>End of Doc</p>
-<hr/>
-</article><footer class="footer">UX Research Field Guide <a href="../search.html">All pages</a></footer></main></div></body></html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="noindex,nofollow" name="robots"/><title>Thailand FCP Workflow: Workload, Usability, and Reuse · Research Hub</title><link href="../wiki.css" rel="stylesheet"/></head><body><a class="skip" href="#main">Skip to content</a><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span aria-hidden="true" class="brand-icon">UX</span>Research Hub</a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../search.html">Search the wiki</a></nav></div></header><div class="shell"><aside class="side"><p class="kicker">Research library</p><nav aria-label="Wiki sections"><a href="080.html">Causes research</a><a href="095.html">Research summaries</a><a href="132.html">Methods and toolkit</a><a href="205.html">Research portfolio</a><a href="207.html">Templates</a><a aria-current="true" href="187.html">Community research</a></nav></aside><main id="main"><nav aria-label="Breadcrumb" class="crumb"><a href="../index.html">Home</a> <span aria-hidden="true">/</span> <a href="187.html">Community research</a> <span aria-hidden="true">/</span> <a href="203.html">🧑🏿‍🤝‍🧑🏽FCP Research</a> <span aria-hidden="true">/</span> <a href="192.html">Prototype Usability and Cognitive Load Evaluation</a></nav><article class="doc evidence-report">
+<p class="kicker">Community research · Thailand FCP workflow</p>
+<h1 id="thailand-fcp-visit">Higher workload accompanied a poorer workflow experience</h1>
+<p class="report-lead">Frontline Church Partner (FCP) staff rated the workflow less usable, less worth reusing, and less recommendable when mental demand was higher.</p>
+<div class="report-takeaway"><strong>Product implication</strong><p>Investigate demanding tasks, simplify the workflow, and test whether those changes reduce effort while preserving useful functionality.</p></div>
+<nav aria-label="Report sections" class="report-contents"><a href="#findings">Key findings</a><a href="#relationships">All relationships</a><a href="#product-priorities">Product priorities</a><a href="#measurement">What was measured</a><a href="#analysis-limits">Analysis limits</a></nav>
+<section id="findings"><h2>Three findings guide the next evaluation</h2><div class="evidence-cards">
+<div><p class="metric-label">Workload and usability</p><p class="metric-value">r = −0.46</p><h3>More effort, poorer usability</h3><p>This was the largest negative association reported. It identifies mental demand as a useful diagnostic signal.</p></div>
+<div><p class="metric-label">Usability and intention to reuse</p><p class="metric-value">r = +0.57</p><h3>Usability aligned with reuse intention</h3><p>This was the largest positive association. Staff who rated the workflow more usable also expressed greater willingness to use it again.</p></div>
+<div><p class="metric-label">Workload and intention to reuse</p><p class="metric-value">r = −0.37</p><h3>Effort matters beyond completion</h3><p>Higher mental demand accompanied lower reuse intention. A completed task does not establish a sustainable workflow.</p></div></div>
+<p class="source-note">Reported correlations from the archived analysis. A positive r means ratings increased together; a negative r means they moved in opposite directions. Correlation does not establish causation.</p></section>
+<section id="relationships"><span class="legacy-anchor" id="mental-workload--nps-heatmap"></span><span class="legacy-anchor" id="mental-workload--usability-heatmap"></span><span class="legacy-anchor" id="3-key-findings-and-insights"></span><span class="legacy-anchor" id="3-mental-workload-tlx--sus-perceived-usability"></span><span class="legacy-anchor" id="2-mental-workload-tlx--csat-likelihood-of-reuse"></span><span class="legacy-anchor" id="1-mental-workload-tlx--nps-recommendation-likelihood"></span><span class="legacy-anchor" id="2-interpretation-of-tlx--nps-csat-sus-relationships"></span><span class="legacy-anchor" id="tldr"></span><span class="legacy-anchor" id="3-these-metrics-validate-each-other"></span><span class="legacy-anchor" id="2-improve-usability-to-drive-behavior"></span><span class="legacy-anchor" id="1-reduce-mental-workload-biggest-roi"></span><span class="legacy-anchor" id="research-section-12"></span><span class="legacy-anchor" id="research-section-11"></span><span class="legacy-anchor" id="research-section-10"></span><span class="legacy-anchor" id="research-section-9"></span><span class="legacy-anchor" id="research-section-8"></span><span class="legacy-anchor" id="research-section-7"></span><span class="legacy-anchor" id="metric-by-metric-interpretation"></span><span class="legacy-anchor" id="higher-mental-workload-tlx-is-strongly-associated-with-lower-usability-lower-satisfaction-and-lower-likelihood-to-recommend-or-reuse-the-workflow"></span><span class="legacy-anchor" id="1-high-level-summary"></span><span class="legacy-anchor" id="0objective"></span><h2>How the experience measures related</h2>
+<figure class="research-chart"><img alt="Six reported correlations: workload with usability minus 0.46, recommendation minus 0.39, and reuse intention minus 0.37; usability with reuse intention plus 0.57 and recommendation plus 0.40; recommendation with reuse intention plus 0.51." height="560" src="../media/thailand-workflow-correlations.svg" width="1000"/><figcaption>The chart reproduces the six coefficients reported in this archive. It does not reconstruct participant data or add confidence intervals.</figcaption></figure>
+<div aria-label="Reported correlation coefficients" class="table-scroll" role="region" tabindex="0"><table><thead><tr><th>Relationship</th><th>Reported r</th><th>Interpretation</th></tr></thead><tbody>
+<tr><td>Mental demand and usability estimate</td><td>−0.46</td><td>Higher demand accompanied poorer perceived usability.</td></tr>
+<tr><td>Mental demand and recommendation</td><td>−0.39</td><td>Higher demand accompanied lower recommendation ratings.</td></tr>
+<tr><td>Mental demand and reuse intention</td><td>−0.37</td><td>Higher demand accompanied lower intention to reuse.</td></tr>
+<tr><td>Usability estimate and reuse intention</td><td>+0.57</td><td>Higher usability ratings accompanied greater intention to reuse.</td></tr>
+<tr><td>Recommendation and reuse intention</td><td>+0.51</td><td>Willingness to recommend and willingness to reuse moved together.</td></tr>
+<tr><td>Usability estimate and recommendation</td><td>+0.40</td><td>Higher usability ratings accompanied higher recommendation ratings.</td></tr>
+</tbody></table></div></section>
+<section id="product-priorities"><span class="legacy-anchor" id="overall-implication"></span><span class="legacy-anchor" id="what-this-means-for-product-decisions-thinking"></span><h2>What Product can do with the findings</h2><div class="decision-flow"><div><span>Diagnose</span><h3>Locate demanding steps</h3><p>Pair task observations with mental demand ratings to identify where staff must interpret, remember, or repeat work.</p></div><div><span>Refine</span><h3>Reduce avoidable effort</h3><p>Use the observed difficulties to choose changes to instructions, decisions, feedback, or recovery.</p></div><div><span>Evaluate</span><h3>Measure the revised workflow</h3><p>Compare task performance, mental demand, usability, and reuse intention under a defined evaluation design.</p></div></div><p class="source-note">These are research informed priorities for the next evaluation. The reported associations do not demonstrate that a particular redesign improved adoption or reduced workload.</p></section>
+<section id="measurement"><h2>What the labels actually mean</h2><p>The <a href="200.html">archived Python code</a> documents how the measures were constructed. The distinctions below matter when comparing this work with other studies.</p>
+<div aria-label="Measurement definitions" class="table-scroll" role="region" tabindex="0"><table><thead><tr><th>Measure</th><th>Construction in the code</th><th>Interpretation</th></tr></thead><tbody>
+<tr><td>Mental demand</td><td>Q1, a 1 to 7 response, linearly rescaled to 0 to 100.</td><td>A single mental demand item. It is not the complete six dimension NASA TLX workload score.</td></tr>
+<tr><td>Perceived usability estimate</td><td>Mean of Q2 and Q3, rescaled to 0 to 100, then transformed using 0.65 × score + 22.9.</td><td>An estimate derived from two items, labeled SUS in the code. It is not an administered ten item SUS questionnaire. Exact item wording must be checked before treating it as validated UMUX-LITE.</td></tr>
+<tr><td>Intention to reuse</td><td>Q5 on a 1 to 7 scale; labeled CSAT in the code.</td><td>A future use intention item, not automatically a satisfaction measure or observed retention.</td></tr>
+<tr><td>Recommendation likelihood</td><td>Q6 on a 1 to 7 scale; labeled NPS_raw in the code.</td><td>An individual recommendation rating. This response scale and its custom grouping do not produce standard Net Promoter Score.</td></tr>
+</tbody></table></div></section>
+<section id="analysis-limits"><span class="legacy-anchor" id="regression-analysis-summary"></span><span class="legacy-anchor" id="csat-by-day"></span><span class="legacy-anchor" id="tlx-mental-demand-by-day"></span><span class="legacy-anchor" id="sus-by-day"></span><span class="legacy-anchor" id="nps-by-day"></span><h2>What this analysis can and cannot establish</h2><p>The six correlations describe the archived pattern. The underlying CSV, participant identifiers, sample size, missing data decisions, and repeated measures structure must be checked before recomputing inference or generalizing the findings.</p>
+<details class="research-detail"><summary>Regression results require reanalysis</summary><p>The archived report gives <code>recommendation ~ reuse intention</code> with <em>t</em> = 2.84 and <em>p</em> = .009. These figures are retained as reported, not independently recomputed. The available page does not document the full model comparison or participant dependence.</p><p>Two other archived formulas use the outcome as its own predictor: <code>CSAT ~ CSAT + C(Day)</code> and <code>SUS ~ SUS + C(Day)</code>. Those specifications contain target leakage and cannot support conclusions about day effects, stability, or other predictors. Those conclusions have been withdrawn pending reanalysis.</p></details>
+<details class="research-detail"><summary>Day comparisons and causal claims are not established</summary><p>The original prose gave conflicting descriptions of Day 4 usability and included no underlying day level summaries. Day rankings and claims that a change caused better usability, trust, retention, or return on investment have therefore been removed. No new participant data, significance tests, or confidence intervals have been invented.</p></details></section>
+<section id="appendix"><h2 id="a1-references">Methods and source material</h2><ul><li><a href="200.html">Thailand FCP workflow analysis code and measurement definitions</a></li><li><a href="192.html">Related FCP usability and workload research</a></li><li><a href="https://measuringu.com/sus/">System Usability Scale: interpretation and scoring</a></li><li><a href="https://www.nasa.gov/human-systems-integration-division/nasa-task-load-index-tlx/">NASA Task Load Index: official instrument reference</a></li><li><a href="https://www.netpromotersystem.com/about/measuring-your-net-promoter-score/">Net Promoter Score: standard calculation and response scale</a></li></ul><p class="source-note">Source named in the archive: <code>AI_assistant_FCP_THVisit.csv</code>. This page summarizes archived results; the CSV is not supplied by this page.</p></section></article><footer class="footer">UX Research Field Guide <a href="../search.html">All pages</a></footer></main></div></body></html>
