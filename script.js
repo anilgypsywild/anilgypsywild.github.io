@@ -341,3 +341,17 @@ document.querySelectorAll(".reveal").forEach((section) => {
 });
 
 renderCaseStudies();
+
+// Resolve the footer anchor after dynamic case studies and fonts have settled.
+function scrollToFooterIfRequested() {
+  const anchor = window.location.hash;
+  if (anchor !== "#footer" && anchor !== "#mumia") return;
+  document.fonts.ready.then(() => {
+    if (window.location.hash !== anchor) return;
+    const target = document.getElementById(anchor.slice(1));
+    target?.closest(".reveal")?.classList.add("is-visible");
+    target?.scrollIntoView({ behavior: "instant", block: anchor === "#footer" ? "end" : "start" });
+  });
+}
+window.addEventListener("load", scrollToFooterIfRequested);
+window.addEventListener("hashchange", scrollToFooterIfRequested);
