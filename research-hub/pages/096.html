@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 
-<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="noindex,nofollow" name="robots"/><title>🗒️ Introduction · UX Research Field Guide</title><link href="../wiki.css" rel="stylesheet"/></head><body><a class="skip" href="#main">Skip to content</a><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span aria-hidden="true" class="brand-icon">UX</span>Research Hub</a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../search.html">Search the wiki</a></nav></div></header><div class="shell"><aside class="side"><p class="kicker">Research library</p><nav aria-label="Wiki sections"><a href="080.html">Causes research</a><a href="095.html">Research summaries</a><a aria-current="true" href="132.html">Methods and toolkit</a><a href="205.html">Research portfolio</a><a href="207.html">Templates</a><a href="187.html">Community research</a></nav></aside><main id="main"><nav aria-label="Breadcrumb" class="crumb"><a href="../index.html">Home</a> <span aria-hidden="true">/</span> <a href="132.html">Methods and toolkit</a></nav><article class="doc"><p class="kicker">Research article</p><h1 id="notepad_spiral-introduction">🗒️ <strong>Introduction</strong></h1>
-<p>At Compassion, we strive to design meaningful experiences that foster trust and connection between our supporters and the causes they care about. <strong>Surveys</strong> are one of our most <strong>valuable</strong> tools for understanding user needs and <strong>measuring</strong> the impact of our product efforts.</p>
-<p>However, <strong>surveys are far more than just a set of questions</strong> followed by a list of answers.</p>
-<p>Without careful design, survey results can lead to <strong>misleading insights</strong>, bias, and even <strong>damage</strong> <strong>trust</strong> with our users.</p>
-<p>To unlock the full potential of surveys, we need a <strong>foundation in statistical rigor</strong>: methods that ensure our data is reliable, valid, and actionable.</p>
-<p>This article will outline <strong>key principles</strong> of <strong>survey design</strong> <em>(see refs)</em> , explain their purpose, and demonstrate practical applications through examples of good and bad survey practices.</p>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="noindex,nofollow" name="robots"/><title>Quantitative Survey Design · UX Research Field Guide</title><link href="../wiki.css" rel="stylesheet"/></head><body><a class="skip" href="#main">Skip to content</a><header class="top"><div class="top-inner"><a class="brand" href="../index.html"><span aria-hidden="true" class="brand-icon">UX</span>Research Hub</a><nav aria-label="Main navigation"><a href="../index.html">Home</a><a href="../search.html">Search the wiki</a></nav></div></header><div class="shell"><aside class="side"><p class="kicker">Research library</p><nav aria-label="Wiki sections"><a href="080.html">Causes research</a><a href="095.html">Research summaries</a><a aria-current="true" href="132.html">Methods and toolkit</a><a href="205.html">Research portfolio</a><a href="207.html">Templates</a><a href="187.html">Community research</a></nav></aside><main id="main"><nav aria-label="Breadcrumb" class="crumb"><a href="../index.html">Home</a> <span aria-hidden="true">/</span> <a href="132.html">Methods and toolkit</a></nav><article class="doc"><p class="kicker">Research article</p><h1 id="notepad_spiral-introduction">Quantitative Survey Design</h1>
+<p>Surveys help us measure what supporters experience, how those experiences vary across groups, and which product changes are worth testing. Start by defining the decision, the population it affects, and the amount of uncertainty the team can tolerate.</p>
+<p><a href="#quantitative-survey-workflow">Quantitative workflow</a> · <a href="#worked-preference-example">Worked example</a> · <a href="#survey-sampling-reading">Survey sampling textbook</a></p>
 <h2 id="purpose"><strong>Purpose</strong></h2>
 <p>The purpose of this article is to:</p>
 <ol type="1">
@@ -15,11 +12,37 @@
 <li>Inspire to embrace <strong>mixed-methods</strong> approaches for deeper insights.</li>
 </ol>
 <hr/>
+<h2 id="quantitative-survey-workflow">A Quantitative Survey Workflow</h2>
+<h3>Define the decision and the estimate</h3>
+<p>Write the product question and the number you need before drafting items. If the team is deciding whether to revise the impact summary, define the primary measure as the share of eligible supporters who can correctly identify where their gift goes after seeing the summary. Specify who is eligible, how you will score answers, and what size of improvement would justify a change. Use a separate rating to measure confidence.</p>
+
+<h3>Choose a sampling design and plan for precision</h3>
+<p>Define the target population and the sampling frame. If you can randomly invite eligible supporters, stratify by groups that matter to the decision, such as first-time and returning donors. Oversample smaller groups if you need precise estimates for each. If recruiting from an opt-in panel or using an in-product intercept, document the selection process and who the study can reach.</p>
+<p>For a large population and a simple random sample, estimating one proportion to within about ±5 percentage points at 95% confidence takes 385 completes under the conservative assumption that the proportion is 50%. Clustering, unequal weights, and subgroup targets can increase the requirement. Set invitation counts separately using the expected response rate. For a comparison, power the study using the baseline, minimum meaningful difference, and whether observations are paired or independent.</p>
+
+<h3>Pilot the questionnaire and check fieldwork</h3>
+<p>Use cognitive interviews to check how people interpret questions, then run a small pilot to test skip logic, mobile readability, and completion time. Randomize unordered attributes or counterbalance prototype order where relevant. During fieldwork, track coverage, response, and breakoff by segment. Set quality rules before examining outcomes, and use multiple signals to flag suspect responses.</p>
+
+<h3>Weight with a benchmark and report uncertainty</h3>
+<p>Start with inverse selection probabilities when known. Use credible population totals to adjust for measured differences in response or calibrate the sample. For example, if first-time supporters are 60% of respondents and 40% of the target population, their normalized adjustment is 0.40 / 0.60 ≈ 0.67 in a simple two-group calibration. Returning supporters receive 0.60 / 0.40 = 1.50. Calibration can address measured imbalances. Its performance depends on benchmark quality and how well the adjustment variables explain selection and survey outcomes.</p>
+<p>For a complex design, estimate standard errors using the weights, strata, and clusters or the supplied replicate weights. Report unweighted bases, how weights were built, and weighted estimates with intervals. Compare weighted and unweighted findings and examine whether extreme weights drive the result. A conventional probability-sampling margin of error requires a probability design or an explicitly justified model.</p>
+
+<h3>Match the method to the product question</h3>
+<ul>
+  <li><strong>Compare segments.</strong> Start with cross-tabs and uncertainty for each estimate. Use an interaction test when the question is whether an effect differs by segment. Label exploratory comparisons and plan how to handle multiple tests.</li>
+  <li><strong>Identify drivers.</strong> Use a model suited to the outcome, such as logistic regression for a binary response or ordinal regression for an ordered rating. Report predicted probabilities or marginal effects with intervals. Survey associations can generate product hypotheses for experimental follow-up.</li>
+  <li><strong>Prioritize preferences.</strong> Use MaxDiff to rank relative priorities among a set of items. Use conjoint when the decision involves trade-offs across product attributes. Explain which choices and populations the results represent.</li>
+  <li><strong>Track change.</strong> Keep the target population, wording, scale, and fielding approach stable across waves. If a change is necessary, test the old and new instruments side by side to help distinguish a measurement shift from a real trend.</li>
+</ul>
+
+<h3 id="worked-preference-example">Worked Example Comparing Two Designs</h3>
+<p>In a hypothetical randomized test, 232 of 400 eligible supporters (58%) correctly interpret a revised impact summary, compared with 200 of 400 (50%) for the current version. The estimated gain is 8 percentage points, with an approximate 95% confidence interval of +1.1 to +14.9 points under independent sampling. If the team needs at least a 5-point gain to justify a rollout, the estimate favors the revision and the interval still includes gains below that threshold. Report the difference, interval, denominators, and decision threshold together.</p>
+
 <h2 id="key-quantitative-concepts-in-survey-design"><strong>Key Quantitative Concepts in Survey Design</strong></h2>
 <h2 id="1-reliability-and-internal-consistency"><strong>1. Reliability and Internal Consistency</strong></h2>
-<p>Reliability ensures that a survey <strong>consistently</strong> measures <strong>what it intends to measure</strong>. One way to assess reliability is with <strong>Cronbach’s Alpha</strong>, a metric that evaluates the <strong>internal</strong> consistency of a group of related questions.</p>
+<p>Reliability describes the consistency of scores. Validity concerns how well evidence supports the intended interpretation of those scores. One way to assess reliability is with <strong>Cronbach’s Alpha</strong>, a metric that evaluates the <strong>internal</strong> consistency of a group of related questions.</p>
 <ul>
-<li><strong>What it does:</strong> Cronbach’s Alpha measures how well items in a survey scale work together. A high alpha (≥ 0.7) indicates consistency, while values &gt; 0.9 might suggest redundancy.</li>
+<li><strong>What it does:</strong> Cronbach’s Alpha measures how well items in a survey scale work together. Interpret alpha in light of the construct, item count, and intended use. A high value can reflect repeated wording. Assess dimensionality before interpreting a single scale score.</li>
 <li><strong>Practical Tip:</strong> Test scales early and remove questions that don’t contribute new information.</li>
 </ul>
 <h2 id="2-redundancy-and-dimensionality-reduction"><strong>2. Redundancy and Dimensionality Reduction</strong></h2>
@@ -31,7 +54,7 @@
 <h2 id="3-mitigating-non-response-bias">3. Mitigating <strong>Non-Response Bias</strong></h2>
 <p>Non-response bias occurs when <strong>certain types of users don’t participate</strong> in a survey, <strong>skewing</strong> results. Addressing this involves proactive strategies like weighting or imputation.</p>
 <ul>
-<li><strong>What it does:</strong> <strong>Weighting</strong> adjusts survey results to better reflect the true population. <strong>Imputation</strong> techniques fill in missing data without distorting patterns.</li>
+<li><strong>What it does:</strong> <strong>Weighting</strong> can adjust for documented differences in selection and response. <strong>Imputation</strong> can address missing items under stated assumptions.</li>
 <li><strong>Practical Tip:</strong> Use friendly language and mobile-friendly formats to reduce drop-offs.</li>
 </ul>
 <hr/>
@@ -116,7 +139,7 @@
 <li><strong>Adjustment Techniques</strong>:</li>
 <li><strong>Weighting</strong>: Apply post-stratification weights to balance underrepresented groups using auxiliary data (e.g., census benchmarks).
 <ul>
-<li>Weight <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mi>i</mi></msub><mo>=</mo><mfrac><mi>N</mi><msub><mi>n</mi><mi>i</mi></msub></mfrac></mrow><annotation encoding="application/x-tex">w_i = \frac{N}{n_i}</annotation></semantics></math></span> where <span class="math inline"><em>N</em></span> is the population size and <span class="math inline"><em>n</em><sub><em>i</em></sub></span> is the sample size for stratum <span class="math inline"><em>i</em></span>.</li>
+<li>In simple post-stratification with equal starting weights, the expansion weight for group <em>h</em> is <em>N</em><sub>h</sub> / <em>n</em><sub>h</sub>, where <em>N</em><sub>h</sub> is the population count and <em>n</em><sub>h</sub> is the respondent count in that group.</li>
 </ul></li>
 <li><strong>Imputation Methods</strong>: Handle missing data (e.g., multiple imputation, hot-deck imputation) to minimize bias.
 <ul>
@@ -145,7 +168,7 @@
 <li><strong>Sampling Design</strong>:
 <ul>
 <li>A <strong>stratified random sample</strong> ensures representation across key subgroups, reducing sampling error.</li>
-<li>Calculate sample size using power analysis: <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mfrac><mrow><msup><mi>Z</mi><mn>2</mn></msup><mi>P</mi><mo form="prefix" stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>P</mi><mo form="postfix" stretchy="false">)</mo></mrow><msup><mi>d</mi><mn>2</mn></msup></mfrac></mrow><annotation encoding="application/x-tex">n = \frac{Z^2 P (1-P)}{d^2}</annotation></semantics></math></span>, where:
+<li>Approximate the sample size for estimating a single proportion under simple random sampling in a large population: <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mfrac><mrow><msup><mi>Z</mi><mn>2</mn></msup><mi>P</mi><mo form="prefix" stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>P</mi><mo form="postfix" stretchy="false">)</mo></mrow><msup><mi>d</mi><mn>2</mn></msup></mfrac></mrow><annotation encoding="application/x-tex">n = \frac{Z^2 P (1-P)}{d^2}</annotation></semantics></math></span>, where:
 <ul>
 <li><span class="math inline"><em>Z</em></span>: Z-score for desired confidence level.</li>
 <li><span class="math inline"><em>P</em></span>: Estimated proportion.</li>
@@ -154,7 +177,7 @@
 </ul></li>
 <li><strong>External Validity</strong>:
 <ul>
-<li>Assess representativeness through <strong>design effect</strong> (<span class="math inline"><em>D</em><em>E</em><em>F</em><em>F</em></span>), capturing variance inflation due to clustering:
+<li>Describe how the sampling design changes an estimate’s variance using the <strong>design effect</strong> (<span class="math inline"><em>D</em><em>E</em><em>F</em><em>F</em></span>), which is the variance under the actual design divided by the variance under a comparable simple random sample. For equal-sized clusters with a common intracluster correlation, a planning approximation is:
 <ul>
 <li><span class="math inline"><em>D</em><em>E</em><em>F</em><em>F</em> = 1 + (<em>m</em> − 1)<em>ρ</em></span>, where <span class="math inline"><em>m</em></span> is cluster size and <span class="math inline"><em>ρ</em></span> is intra-cluster correlation.</li>
 </ul></li>
@@ -204,9 +227,12 @@
 </ul>
 <h2 id="research-section-26"><strong>Takeaway:</strong></h2>
 <p>Statistical design elevates surveys <strong>beyond mere question-answer exchanges</strong> by embedding rigor and reliability into every phase: from item crafting to analysis.</p>
-<p>Techniques like Cronbach’s Alpha, IRT, SEM, and RRT are <strong>essential</strong> for ensuring validity, reliability, and bias mitigation, ensuring the data truly reflects reality.</p>
+<p>Use specialized methods when the research question and design call for them. A well-defined sample, clear instrument, and transparent analysis are the starting points.</p>
 <p>Thoughtful statistical design transforms surveys into powerful tools for meaningful insight.</p>
-<h2 id="references">References:</h2>
+<h2 id="references">References</h2>
+<h3 id="survey-sampling-reading">Survey Sampling Textbook</h3>
+<p>Sharon L. Lohr. <cite>Sampling: Design and Analysis</cite>, third edition. Chapman &amp; Hall/CRC. Covers probability sampling, complex survey design, nonresponse, weighting, and nonprobability samples.</p>
+<p><a href="https://www.amazon.com/dp/0367279509"><svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" style="vertical-align:middle;margin-inline-end:.35em"><text x="12" y="15" text-anchor="middle" font-family="Georgia,serif" font-weight="bold" font-size="20" fill="currentColor">a</text><path d="M3 17.5c5.4 3.3 11.1 3.8 17.1.2m-4.2-.8 4.6.2-.8 3.5" fill="none" stroke="#a94f00" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"/></svg>View on Amazon</a> · <a href="https://www.sharonlohr.com/sampling-design-and-analysis-3e">Book resources and R companion</a></p>
 <p class="table-hint">Scroll horizontally to view all columns.</p><div aria-label="Research table 1" class="table-scroll" role="region" tabindex="0"><table class="wide-table">
 <thead>
 <tr>

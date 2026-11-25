@@ -342,16 +342,17 @@ document.querySelectorAll(".reveal").forEach((section) => {
 
 renderCaseStudies();
 
-// Resolve the footer anchor after dynamic case studies and fonts have settled.
-function scrollToFooterIfRequested() {
+// Resolve Personal section and footer links after case studies and fonts load.
+function scrollToSectionIfRequested() {
   const anchor = window.location.hash;
-  if (anchor !== "#footer" && anchor !== "#mumia") return;
+  if (!["#personal", "#the-marmot-ate-beans", "#mumia", "#footer"].includes(anchor)) return;
   document.fonts.ready.then(() => {
     if (window.location.hash !== anchor) return;
     const target = document.getElementById(anchor.slice(1));
     target?.closest(".reveal")?.classList.add("is-visible");
-    target?.scrollIntoView({ behavior: "instant", block: anchor === "#footer" ? "end" : "start" });
+    const alignment = anchor === "#footer" ? "end" : anchor === "#the-marmot-ate-beans" ? "center" : "start";
+    target?.scrollIntoView({ behavior: "instant", block: alignment });
   });
 }
-window.addEventListener("load", scrollToFooterIfRequested);
-window.addEventListener("hashchange", scrollToFooterIfRequested);
+window.addEventListener("load", scrollToSectionIfRequested);
+window.addEventListener("hashchange", scrollToSectionIfRequested);
