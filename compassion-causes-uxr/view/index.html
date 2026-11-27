@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#171716">
+  <title>Protected presentation</title>
+  <style id="gate-style">
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; color: #f5f1eb; background: #171716; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    .gate { display: grid; place-items: center; min-height: 100dvh; padding: 1rem; background: radial-gradient(ellipse at top, #2d251d, #171716 70%); }
+    .panel { width: min(100%, 26rem); padding: clamp(1.4rem, 7vw, 2.4rem); background: #22211e; border: 1px solid #494039; border-radius: .9rem; box-shadow: 0 1rem 4rem #0006; }
+    .panel h1 { margin: 0 0 1.65rem; font-size: clamp(1.35rem, 5vw, 1.75rem); letter-spacing: -.025em; }
+    .panel h1::before { content: ""; display: block; width: 2rem; height: .22rem; margin-bottom: .85rem; border-radius: .2rem; background: #ff9251; }
+    .panel label { display: block; font-size: .9rem; font-weight: 650; margin-bottom: .45rem; }
+    .panel input, .panel button { display: block; width: 100%; min-height: 2.75rem; border-radius: .5rem; font: inherit; }
+    .panel input { padding: .6rem .75rem; background: #151514; color: inherit; border: 1px solid #696056; }
+    .panel button { margin-top: .85rem; border: none; color: #23160c; background: #ff9251; font-weight: 700; cursor: pointer; }
+    .panel button:hover { background: #ffab78; }
+    .panel button:disabled { cursor: progress; opacity: .7; }
+    .panel :focus-visible { outline: 2px solid #ffab78; outline-offset: 3px; }
+    #unlock-status { color: #ded4c9; font-size: .9rem; margin: .85rem 0 0; }
+    #unlock-status:empty { display: none; }
+  </style>
+  <script defer src="unlock.js"></script>
+</head>
+<body>
+  <main class="gate">
+    <form class="panel" id="unlock-form">
+      <h1>Protected presentation</h1>
+      <label for="password">Password</label>
+      <input type="password" id="password" required autocomplete="current-password" aria-describedby="unlock-status">
+      <button type="submit" id="unlock">Unlock presentation</button>
+      <p id="unlock-status" role="status"></p>
+      <noscript>Enable JavaScript to unlock the presentation.</noscript>
+    </form>
+  </main>
+</body>
+</html>
